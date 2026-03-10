@@ -20,6 +20,7 @@ export default function SystemReady() {
     const [profileLoading, setProfileLoading] = useState(true);
     const [showUpgrade, setShowUpgrade] = useState(false);
     const [debugInfo, setDebugInfo] = useState<any>(null);
+    const [usageInfo, setUsageInfo] = useState<{ usage: number, limit: number, plan: string, userName: string } | null>(null);
 
     // Context / RAG variables
     const [showContextModal, setShowContextModal] = useState(false);
@@ -60,8 +61,31 @@ export default function SystemReady() {
             if (personaData) setCustomPersona(personaData);
 
             setProfileLoading(false);
+
+            // Fetch usage info
+            try {
+                const res = await fetch('/api/usage');
+                const data = await res.json();
+                if (data.usage !== undefined) setUsageInfo(data);
+            } catch (e) {
+                console.error("Failed to fetch usage:", e);
+            }
         })();
     }, []);
+
+    async function handleBilling() {
+        try {
+            const res = await fetch('/api/stripe/portal', { method: 'POST' });
+            const data = await res.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                router.push('/pricing');
+            }
+        } catch (e) {
+            router.push('/pricing');
+        }
+    }
 
     async function start() {
         setLoading(true);
@@ -176,15 +200,44 @@ export default function SystemReady() {
                 </div>
 
                 <div className="p-4 mt-auto hidden md:block">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 group cursor-pointer hover:bg-white/10 transition-colors">
-                        <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-[#afff33]/30 flex-shrink-0 relative">
-                            <img alt="User Avatar" className="w-full h-full rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAiDCH1C_T1-srX_TVc918wGFKMxefnGfu78tEfqtbThgUqTAyHfD3yDXUBb7rPNYGh2PqVMb1fz5XW3I4uu7fitmkLmN_T_xJuKc5ikjeNxmMG6AduXx1QGsN7GWNjd5x5oCtDXrdSFABo8LE6qp457tNEsU9hSXLEXp1hc_yiFrPMpMmUEzx9Y8ES7G7ch4VgmyOpAc8RnyQbaDfIloDG9nJURg1L9EfibP7-llCDQBZvnUJYJzdNilNoXPELmceJSyFPBjod_79" />
-                            <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#afff33] border-2 border-[#161616] rounded-full animate-pulse"></div>
+                    <div className="flex flex-col gap-2 p-3 rounded-xl bg-white/5 border border-white/10 group transition-colors">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-[#afff33]/30 flex-shrink-0 relative">
+                                <img alt="User Avatar" className="w-full h-full rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAiDCH1C_T1-srX_TVc918wGFKMxefnGfu78tEfqtbThgUqTAyHfD3yDXUBb7rPNYGh2PqVMb1fz5XW3I4uu7fitmkLmN_T_xJuKc5ikjeNxmMG6AduXx1QGsN7GWNjd5x5oCtDXrdSFABo8LE6qp457tNEsU9hSXLEXp1hc_yiFrPMpMmUEzx9Y8ES7G7ch4VgmyOpAc8RnyQbaDfIloDG9nJURg1L9EfibP7-llCDQBZvnUJYJzdNilNoXPELmceJSyFPBjod_79" />
+                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#afff33] border-2 border-[#161616] rounded-full animate-pulse"></div>
+                            </div>
+                            <div className="hidden lg:block overflow-hidden flex-1">
+                                <p className="text-sm font-semibold truncate font-display text-white">
+                                    {usageInfo?.userName || 'Loading...'}
+                                </p>
+                                <p className="text-[9px] text-slate-500 uppercase tracking-widest font-mono">ID: {userId.substring(0, 6) || '---'}</p>
+                            </div>
                         </div>
-                        <div className="hidden lg:block overflow-hidden">
-                            <p className="text-sm font-semibold truncate font-display">Auth Active</p>
-                            <p className="text-[9px] text-slate-500 uppercase tracking-widest font-mono">ID: {userId.substring(0, 6) || '---'}</p>
-                        </div>
+
+                        {usageInfo && (
+                            <div className="hidden lg:block mt-2 pt-2 border-t border-white/5">
+                                <div className="flex items-center justify-between text-[10px] uppercase font-mono mb-2">
+                                    <span className="text-slate-500">Sessions</span>
+                                    <span className={usageInfo.usage >= usageInfo.limit ? "text-red-400" : "text-[#afff33]"}>
+                                        {usageInfo.usage} / {usageInfo.limit}
+                                    </span>
+                                </div>
+                                <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-[#00f2ff] to-[#afff33] transition-all duration-1000"
+                                        style={{ width: `${Math.min(100, (usageInfo.usage / usageInfo.limit) * 100)}%` }}
+                                    ></div>
+                                </div>
+
+                                <button
+                                    onClick={handleBilling}
+                                    className="w-full mt-3 py-1.5 rounded-lg bg-[#00f2ff]/10 border border-[#00f2ff]/20 text-[#00f2ff] text-[10px] font-bold uppercase tracking-widest hover:bg-[#00f2ff]/20 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined text-[12px]">payments</span>
+                                    Manage Billing
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </aside>
