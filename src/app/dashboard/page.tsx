@@ -52,6 +52,10 @@ export default async function DashboardPage() {
                     </div>
 
                     <div className="flex gap-4 items-center">
+                        <a href="/api/stripe/portal" className="hidden md:flex items-center gap-2 px-4 py-2 text-[10px] font-mono font-bold uppercase tracking-widest border border-slate-700 rounded bg-slate-800/50 hover:bg-slate-800 hover:border-slate-600 transition-colors text-slate-300">
+                            <span className="material-symbols-outlined text-[14px]">payments</span>
+                            Billing
+                        </a>
                         <a href="/api/audit/export" className="hidden md:flex items-center gap-2 px-4 py-2 text-[10px] font-mono font-bold uppercase tracking-widest border border-slate-700 rounded bg-slate-800/50 hover:bg-slate-800 hover:border-slate-600 transition-colors text-slate-300">
                             <span className="material-symbols-outlined text-[14px]">download</span>
                             Export

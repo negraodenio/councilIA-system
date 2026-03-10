@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Stripe configuration missing' }, { status: 500 });
     }
 
-    const stripe = new Stripe(stripeKey, { apiVersion: '2026-01-28.clover' as any });
+    const stripe = new Stripe(stripeKey, { apiVersion: '2024-06-20' as any });
     const supabase = createAdminClient();
     const body = await req.text();
     const sig = req.headers.get('stripe-signature')!;

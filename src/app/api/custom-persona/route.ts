@@ -73,8 +73,24 @@ export async function POST(req: NextRequest) {
         const count = existing?.length || 0;
         console.log(`[Custom Persona API] Current persona count: ${count}`);
 
-        if (count >= 3) {
-            return NextResponse.json({ error: "Maximum personas reached for your plan (limit: 3)" }, { status: 403 });
+        // Get subscription for gating
+        const { data: sub } = await supabase
+            .from("subscriptions")
+            .select("plan")
+            .eq("tenant_id", tenantId)
+            .maybeSingle();
+
+        const plan = (sub?.plan || 'free').toLowerCase();
+
+        if (plan !== 'team' && plan !== 'unlimited') {
+            return NextResponse.json({
+                error: "Custom Experts are exclusive to the Team plan. Please upgrade to create your own.",
+                code: 'UPGRADE_REQUIRED'
+            }, { status: 403 });
+        }
+
+        if (count >= 10) { // Limit for Team plan
+            return NextResponse.json({ error: "Maximum personas reached for your plan (limit: 10)" }, { status: 403 });
         }
 
         const { data: persona, error } = await supabase

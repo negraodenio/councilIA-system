@@ -122,7 +122,7 @@ export function PricingCards() {
 
     return (
         <div className="space-y-12">
-            {/* Toggle */}
+            {/* Toggle - Hidden until annual plans are configured
             <div className="flex items-center justify-center gap-4">
                 <span className={`text-sm ${!isAnnual ? "text-neutral-900 font-semibold" : "text-neutral-400"}`}>Monthly</span>
                 <button
@@ -138,6 +138,7 @@ export function PricingCards() {
                     </span>
                 </div>
             </div>
+            */}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 {activePlans.map((plan) => (
