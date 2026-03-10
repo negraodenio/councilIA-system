@@ -1,7 +1,11 @@
 import { Client } from "@upstash/qstash";
 
+const rawToken = process.env.QSTASH_TOKEN || process.env.QSTOKEN || "";
+// Strip potential prefix found in some Vercel setups
+const cleanToken = rawToken.startsWith("ASH_") ? rawToken.substring(4) : rawToken;
+
 const qstashClient = new Client({
-    token: process.env.QSTASH_TOKEN || "",
+    token: cleanToken,
 });
 
 export async function dispatchRepoIndexTask(repoId: string, shardId: string) {
