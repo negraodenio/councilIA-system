@@ -8,10 +8,10 @@
                         <div className="size-10 bg-neon-cyan/10 rounded-lg flex items-center justify-center border border-neon-cyan/30 shadow-[0_0_15px_rgba(0,240,255,0.2)] shrink-0 overflow-hidden">
                             <span className="material-symbols-outlined text-neon-cyan font-bold select-none">account_tree</span>
                         </div>
-                        <span className="text-xl font-black tracking-tighter uppercase font-display">Council<span className="text-neon-cyan">IA</span></span>
+                        <span className="text-xl font-black tracking-tighter uppercase font-display">Council<span className="text-neon-cyan">AI</span></span>
                     </div>
                     <nav className="hidden md:flex items-center gap-8 font-display" aria-label="Main navigation">
-                        <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="#how-it-works" aria-label="Learn how CouncilIA works">How it works</a>
+                        <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="#how-it-works" aria-label="Learn how CouncilAI works">How it works</a>
                         <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="#the-council" aria-label="Meet the AI Council">The Council</a>
                         <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="#use-cases" aria-label="Explore use cases">Use cases</a>
                         <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="/pricing">Pricing</a>
@@ -62,12 +62,12 @@
                             <div className="px-3 py-1 bg-neon-magenta/10 text-neon-magenta text-[10px] font-black uppercase rounded tracking-tighter flex items-center gap-1.5">
                                 <span className="size-1.5 bg-neon-magenta rounded-full"></span> LIVE
                             </div>
-                            <h2 className="text-sm font-mono text-[#c4c4ff]/70">SESSION #0847: Coffee Shop Expansion in Lisbon</h2>
+                            <h2 className="text-sm font-mono text-[#c4c4ff]/70 tracking-widest uppercase">SESSION #0214: Cold Email Tool for Solo Founders ($99/mo)</h2>
                         </div>
                         <div className="flex gap-1.5">
-                            <div className="size-3 rounded-full bg-[rgba(0,240,255,0.2)]"></div>
-                            <div className="size-3 rounded-full bg-[rgba(0,240,255,0.2)]"></div>
-                            <div className="size-3 rounded-full bg-[rgba(0,240,255,0.2)]"></div>
+                            <div className="size-3 rounded-full bg-red-500/40"></div>
+                            <div className="size-3 rounded-full bg-yellow-500/40"></div>
+                            <div className="size-3 rounded-full bg-green-500/40"></div>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
@@ -81,7 +81,7 @@
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold text-orange-500 tracking-widest uppercase">VISIONARY</p>
                                     <div className="p-4 bg-panel-blue/40 rounded-xl rounded-tl-none border border-[rgba(0,240,255,0.1)] text-sm leading-relaxed text-[#c4c4ff]">
-                                        Lisbon&apos;s specialty coffee scene is booming. Expansion is the only path to survival. We need to capture the digital nomad market in Arroios immediately.
+                                        Solo founders are drowning in low-quality tools. A premium $99/mo solution that actually guarantees deliverability is a blue ocean. High friction means high retention.
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +93,23 @@
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold text-neon-magenta tracking-widest uppercase">DEVIL&apos;S ADVOCATE</p>
                                     <div className="p-4 bg-panel-blue/40 rounded-xl rounded-tl-none border border-[rgba(0,240,255,0.1)] text-sm leading-relaxed text-[#c4c4ff]">
-                                        The market is saturated. There are three Roaster-cafes within 200m of your target spot. Rent spikes in Lisbon are predatory; your 2-year ROI model ignores the potential 30% lease hike.
+                                        Delusional. Solo founders have a $0 budget for &quot;premium&quot; email. Instantly and Lemlist own the $30-$50 tier. You&apos;re pricing yourself into a graveyard.
+                                    </div>
+                                </div>
+                            </div>
+                            {/* The 7th Expert (HIGHLIGHTED) */}
+                            <div className="flex gap-4 relative">
+                                <div className="absolute -inset-2 bg-indigo-500/5 rounded-2xl blur-lg animate-pulse pointer-events-none"></div>
+                                <div className="size-10 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0 border border-indigo-500/40 shadow-[0_0_15px_rgba(99,102,241,0.3)] relative z-10">
+                                    <span className="material-symbols-outlined text-indigo-400 text-sm">psychology</span>
+                                </div>
+                                <div className="space-y-1 relative z-10">
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-[10px] font-bold text-indigo-400 tracking-widest uppercase font-display">THE 7th EXPERT</p>
+                                        <span className="px-1 py-0.5 bg-indigo-500 text-[6px] font-black text-white rounded uppercase tracking-tighter">Proprietary Training</span>
+                                    </div>
+                                    <div className="p-4 bg-indigo-500/10 rounded-xl rounded-tl-none border border-indigo-500/30 text-sm leading-relaxed text-indigo-100 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+                                        &quot;According to our **Internal Benchmarking Data (SaaS Index 2024)**, solo founders convert 3x better at higher price points if setup time is reduced by 80%. Our proprietary 'Warm-up 2.0' logic bypasses the latest Google/Yahoo spam filters.&quot;
                                     </div>
                                 </div>
                             </div>
@@ -105,7 +121,7 @@
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold text-neon-cyan tracking-widest uppercase">TECH LEAD</p>
                                     <div className="p-4 bg-panel-blue/40 rounded-xl rounded-tl-none border border-[rgba(0,240,255,0.1)] text-sm leading-relaxed text-[#c4c4ff]">
-                                        Operational stack needs 24/7 automation. If you&apos;re targeting nomads, the local grid in Arroios is unstable. You need a dedicated fiber backup or you lose your core demographic.
+                                        Warm-up 2.0 verified. If the deliverability delta is &gt;15%, the $99 price point is technically justifiable. Moving to deployment validation.
                                     </div>
                                 </div>
                             </div>
@@ -115,21 +131,21 @@
                             <div className="mb-8 relative">
                                 <svg className="size-40 rotate-[-90deg]">
                                     <circle className="text-[rgba(0,240,255,0.1)]" cx="80" cy="80" fill="none" r="70" stroke="currentColor" strokeWidth="12"></circle>
-                                    <circle className="text-neon-lime transition-all duration-1000 shadow-[0_0_20px_rgba(175,255,51,0.5)]" cx="80" cy="80" fill="none" r="70" stroke="currentColor" strokeDasharray="440" strokeDashoffset="185" strokeWidth="12"></circle>
+                                    <circle className="text-neon-lime transition-all duration-1000 shadow-[0_0_20px_rgba(175,255,51,0.5)]" cx="80" cy="80" fill="none" r="70" stroke="currentColor" strokeDasharray="440" strokeDashoffset="310" strokeWidth="12"></circle>
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-4xl font-black font-display text-neon-lime tracking-tighter">58</span>
-                                    <span className="text-[10px] text-[#00f0ff]/70 font-mono tracking-widest mt-1">SCORE/100</span>
+                                    <span className="text-4xl font-black font-display text-neon-lime tracking-tighter">72</span>
+                                    <span className="text-[10px] text-[#00f0ff]/70 font-mono tracking-widest mt-1">FINAL SCORE</span>
                                 </div>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display">Judge Verdict: <span className="text-neon-lime">Conditional Go</span></h3>
-                            <ul className="text-sm text-[#c4c4ff] leading-relaxed mb-8 text-left space-y-2 list-disc list-inside bg-space-black/40 p-4 rounded-xl border border-[rgba(0,240,255,0.1)]">
-                                <li><strong>Strong Merit:</strong> Conceptual model is highly scalable.</li>
-                                <li><strong>Critical Flaw:</strong> Lacks immediate financial liquidity.</li>
-                                <li><strong>Action Item:</strong> Revise CapEx and verify energy backups.</li>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Judge Verdict: <span className="text-neon-lime">Strategic Approval</span></h3>
+                            <ul className="text-sm text-[#c4c4ff] leading-relaxed mb-8 text-left space-y-2 list-disc list-inside bg-space-black/40 p-4 rounded-xl border border-[rgba(0,240,255,0.1)] shadow-inner">
+                                <li><strong>Advantage:</strong> Proprietary Warm-up logic is defensible.</li>
+                                <li><strong>Mitigation:</strong> High-ticket solo founder niche exists.</li>
+                                <li><strong>Action Item:</strong> Focus MVP on setup speed (Cold-to-Live).</li>
                             </ul>
-                            <button className="w-full py-3 bg-panel-blue border border-[rgba(0,240,255,0.3)] rounded-xl text-sm font-bold hover:bg-[rgba(0,240,255,0.1)] text-neon-cyan transition-colors">
-                                Read Full Reasoning (12 Pages)
+                            <button className="w-full py-4 bg-neon-cyan text-black rounded-xl text-xs font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all transform active:scale-95">
+                                Download Analysis Report
                             </button>
                         </div>
                     </div>
@@ -261,19 +277,25 @@
                         <p className="text-xs text-[#c4c4ff] leading-relaxed italic">&quot;Burn rate is the primary metric of failure. I look for hidden costs and over-optimistic ROI windows.&quot;</p>
                     </div>
                     {/* The Custom Expert */}
-                    <div className="p-6 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/40 hover:border-indigo-500/50 transition-all group">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="size-10 rounded bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500 transition-colors">
-                                <span className="material-symbols-outlined text-indigo-500 text-xl group-hover:text-black">psychology</span>
+                    <div className="p-6 rounded-2xl border-2 border-indigo-500/40 bg-indigo-500/5 hover:border-indigo-500 transition-all group relative overflow-hidden shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+                        <div className="absolute -right-4 -top-4 size-24 bg-indigo-500/10 blur-2xl rounded-full group-hover:bg-indigo-500/20 transition-colors"></div>
+                        <div className="flex items-center gap-3 mb-6 relative z-10">
+                            <div className="size-10 rounded bg-indigo-500/20 flex items-center justify-center group-hover:bg-indigo-500 transition-colors">
+                                <span className="material-symbols-outlined text-indigo-400 text-xl group-hover:text-black">psychology</span>
                             </div>
                             <div>
-                                <h4 className="font-bold text-sm font-display">Custom Expert</h4>
-                                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Internal Data</p>
+                                <div className="flex items-center gap-2">
+                                    <h4 className="font-bold text-sm font-display">The 7th Expert</h4>
+                                    <span className="px-1.5 py-0.5 bg-indigo-500 text-[8px] font-black text-white rounded uppercase tracking-tighter">Premium</span>
+                                </div>
+                                <p className="text-[10px] text-indigo-400 uppercase tracking-widest font-black">Proprietary Training</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed italic mb-4">&quot;I represent your company's proprietary knowledge. I ensure external strategies align with internal context.&quot;</p>
-                        <a href="/login" className="inline-flex items-center gap-2 text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest transition-colors">
-                            Train Yours <span className="material-symbols-outlined text-[12px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        <p className="text-xs text-slate-200 leading-relaxed font-medium mb-6 relative z-10">
+                            &quot;Train a 7th agent on your company&apos;s internal data. Your strategy docs, your customer insights, your past decisions — all debating alongside the council.&quot;
+                        </p>
+                        <a href="/login" className="inline-flex items-center gap-2 text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest transition-colors relative z-10">
+                            Create Your 7th Agent <span className="material-symbols-outlined text-[12px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </a>
                     </div>
                     {/* The Judge */}
@@ -394,7 +416,7 @@
                                     <span className="material-symbols-outlined shrink-0 select-none text-yellow-500 text-2xl drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]">monetization_on</span>
                                 </div>
                                 <div className="bg-black/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-yellow-500 text-xs font-bold text-white shadow-[0_4px_15px_rgba(0,0,0,0.5)]">Finance</div>
-                                <div className="bg-black/90 backdrop-blur-md border border-yellow-500/40 px-3 py-2 rounded-lg text-[9px] text-yellow-300 font-mono w-36 truncate text-center shadow-xl">"A elaborar argumento..."</div>
+                                <div className="bg-black/90 backdrop-blur-md border border-yellow-500/40 px-3 py-2 rounded-lg text-[9px] text-yellow-300 font-mono w-36 truncate text-center shadow-xl">"Crafting argument..."</div>
                             </div>
 
                             {/* Agent 4: Ethics (Bottom) */}
@@ -413,7 +435,7 @@
                                     <span className="material-symbols-outlined shrink-0 select-none text-[#ff00e5] text-2xl drop-shadow-[0_0_10px_rgba(255,0,229,0.8)]">skull</span>
                                 </div>
                                 <div className="bg-black/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#ff00e5] text-xs font-bold text-white shadow-[0_4px_15px_rgba(0,0,0,0.5)]">Advocate</div>
-                                <div className="bg-black/90 backdrop-blur-md border border-[#ff00e5]/40 px-3 py-2 rounded-lg text-[9px] text-[#ff00e5] font-mono w-36 text-center shadow-xl leading-relaxed whitespace-normal min-h-[30px] flex items-center justify-center">"Challenging 📊 Market Analyst: The..."</div>
+                                <div className="bg-black/90 backdrop-blur-md border border-[#ff00e5]/40 px-3 py-2 rounded-lg text-[9px] text-[#ff00e5] font-mono w-36 text-center shadow-xl leading-relaxed whitespace-normal min-h-[30px] flex items-center justify-center">"Challenging 📊 Market Analysis: The..."</div>
                             </div>
 
                             {/* Agent 6: Visionary (Top-Left) */}
@@ -439,6 +461,79 @@
             </section>
 
 
+
+            {/* Proprietary Intelligence / The 7th Agent Section */}
+            <section className="py-24 px-6 overflow-hidden bg-space-black relative border-t border-indigo-500/10">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none"></div>
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div className="relative z-10">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/5 text-indigo-400 text-[10px] font-bold uppercase tracking-widest mb-6 font-display">
+                            The 7th Protocol
+                        </div>
+                        <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] font-display">
+                            Your Internal Data.<br />
+                            <span className="text-indigo-400">The 7th Expert.</span>
+                        </h2>
+                        <p className="text-xl text-slate-300 font-medium leading-relaxed mb-10 max-w-xl">
+                            Train a 7th agent on your company&apos;s internal data. Your strategy docs, your customer insights, your past decisions — all debating alongside the council.
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div className="flex items-center gap-4 group">
+                                <div className="size-12 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 group-hover:border-indigo-500 transition-colors">
+                                    <span className="material-symbols-outlined text-indigo-400">description</span>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-black text-white uppercase tracking-tight">Strategy Docs</p>
+                                    <p className="text-[10px] text-slate-500">PDF, TXT, Markdown</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4 group">
+                                <div className="size-12 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 group-hover:border-indigo-500 transition-colors">
+                                    <span className="material-symbols-outlined text-indigo-400">groups</span>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-black text-white uppercase tracking-tight">Customer Insights</p>
+                                    <p className="text-[10px] text-slate-500">Feedback & Research</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="relative">
+                        <div className="glass-card rounded-3xl p-1 border-indigo-500/30 bg-indigo-500/5 relative overflow-hidden group hover:border-indigo-500 transition-all duration-500 shadow-2xl">
+                            <div className="p-8 bg-space-black/40 backdrop-blur-sm rounded-[22px]">
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center gap-3">
+                                        <div className="size-10 rounded-lg bg-indigo-500 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.5)]">
+                                            <span className="material-symbols-outlined text-black">psychology</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">Active Intelligence</p>
+                                            <p className="text-sm font-bold text-white">The 7th Expert</p>
+                                        </div>
+                                    </div>
+                                    <div className="px-2 py-1 rounded bg-green-500/10 border border-green-500/20 text-[8px] font-black text-green-400 uppercase tracking-tighter animate-pulse">
+                                        Processing Context
+                                    </div>
+                                </div>
+                                <div className="space-y-4 mb-8">
+                                    <div className="p-4 bg-white/5 rounded-xl border border-white/10 italic text-sm text-slate-300 leading-relaxed font-body">
+                                        &quot;Based on our internal strategy docs, this move risk diluting the brand premium. My analysis suggests staying in the Corporate segment...&quot;
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <div className="h-1.5 w-12 bg-indigo-500 rounded-full"></div>
+                                        <div className="h-1.5 w-24 bg-white/10 rounded-full"></div>
+                                        <div className="h-1.5 w-8 bg-white/10 rounded-full"></div>
+                                    </div>
+                                </div>
+                                <a href="/login" className="w-full py-4 bg-indigo-500 text-white rounded-xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] transition-all transform group-hover:scale-[1.02] active:scale-95">
+                                    Hire Your 7th Expert
+                                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Pricing Section */}
             <section className="py-24 px-6 max-w-7xl mx-auto" id="pricing">
@@ -536,7 +631,7 @@
                             <div className="size-8 bg-neon-cyan/10 border border-[rgba(0,240,255,0.3)] rounded flex items-center justify-center shrink-0 overflow-hidden">
                                 <span className="material-symbols-outlined text-neon-cyan text-sm font-bold select-none">account_tree</span>
                             </div>
-                            <span className="text-lg font-black tracking-tighter uppercase font-display">Council<span className="text-neon-cyan">IA</span></span>
+                            <span className="text-lg font-black tracking-tighter uppercase font-display">Council<span className="text-neon-cyan">AI</span></span>
                         </div>
                         <p className="text-slate-500 text-sm mb-6 leading-relaxed">
                             Part of the Antigravity Ecosystem. Built in Lisbon, Portugal for high-stakes decision validation.
