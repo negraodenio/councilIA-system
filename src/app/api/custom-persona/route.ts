@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // GET — List user's custom personas
 export async function GET() {
@@ -57,40 +58,51 @@ export async function POST(req: NextRequest) {
         }
 
         const tenantId = profile?.tenant_id || user.id;
-        console.log(`[Custom Persona API] Using tenantId: ${tenantId}`);
+        console.log(`[Custom Persona API] User: ${user.id}, Tenant: ${tenantId}`);
 
-        // Check plan limits (free users cannot create custom personas)
-        const { data: existing, error: countErr } = await supabase
-            .from("custom_personas")
-            .select("id")
-            .eq("user_id", user.id);
-
-        if (countErr) {
-            console.error("[Custom Persona API] Count check error:", countErr);
-            return NextResponse.json({ error: "Database error checking limits" }, { status: 500 });
-        }
-
-        const count = existing?.length || 0;
-        console.log(`[Custom Persona API] Current persona count: ${count}`);
-
-        // Get subscription for gating
-        const { data: sub } = await supabase
+        // 1. Get subscription for gating using ADMIN client to bypass RLS
+        const adminSupabase = createAdminClient();
+        const { data: sub, error: subErr } = await adminSupabase
             .from("subscriptions")
             .select("plan")
             .eq("tenant_id", tenantId)
             .maybeSingle();
 
-        const plan = (sub?.plan || 'free').toLowerCase();
+        if (subErr) {
+            console.error("[Custom Persona API] Admin Subscription check error:", subErr);
+        }
 
-        if (plan !== 'team' && plan !== 'unlimited') {
+        const plan = (sub?.plan || 'free').toLowerCase();
+        console.log(`[Custom Persona API] Resolved plan: ${plan}`);
+
+        // Note: Stripe 'team' plan corresponds to the 'Corporate' tier in UI
+        if (plan !== 'team' && plan !== 'unlimited' && plan !== 'corporate') {
+            console.log(`[Custom Persona API] Plan ${plan} not allowed for custom personas`);
             return NextResponse.json({
-                error: "Custom Experts are exclusive to the Team plan. Please upgrade to create your own.",
+                error: "The 7th Protocol (Custom Experts) is exclusive to the Corporate plan. Please upgrade to unlock proprietary data training.",
                 code: 'UPGRADE_REQUIRED'
             }, { status: 403 });
         }
 
+        // 2. Check persona count limits for allowed plans using ADMIN client
+        const { data: existing, error: countErr } = await adminSupabase
+            .from("custom_personas")
+            .select("id")
+            .eq("user_id", user.id);
+
+        if (countErr) {
+            console.error("[Custom Persona API] Admin Count check error:", countErr);
+            return NextResponse.json({
+                error: "Internal error validating account limits.",
+                details: countErr.message
+            }, { status: 500 });
+        }
+
+        const count = existing?.length || 0;
+        console.log(`[Custom Persona API] Current persona count for ${plan} user: ${count}`);
+
         if (count >= 10) { // Limit for Team plan
-            return NextResponse.json({ error: "Maximum personas reached for your plan (limit: 10)" }, { status: 403 });
+            return NextResponse.json({ error: "Maximum personas reached (limit: 10). Delete old ones to create new." }, { status: 403 });
         }
 
         const { data: persona, error } = await supabase

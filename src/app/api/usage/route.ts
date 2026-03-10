@@ -12,39 +12,49 @@ export async function GET(req: Request) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // 2. Get Tenant
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('tenant_id')
-        .eq('id', user.id)
-        .maybeSingle();
+    try {
+        // 2. Get Tenant
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('tenant_id')
+            .eq('id', user.id)
+            .maybeSingle();
 
-    const t_id = profile?.tenant_id || user.id;
+        const t_id = profile?.tenant_id || user.id;
 
-    // 3. Fetch Usage & Subscription
-    const now = new Date();
-    const periodMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        // 3. Fetch Usage & Subscription
+        const now = new Date();
+        const periodMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-    const { data: subscription } = await supabase
-        .from('subscriptions')
-        .select('plan')
-        .eq('tenant_id', t_id)
-        .maybeSingle();
+        const { data: subscription } = await supabase
+            .from('subscriptions')
+            .select('plan')
+            .eq('tenant_id', t_id)
+            .maybeSingle();
 
-    const { data: usage } = await supabase
-        .from('usage_records')
-        .select('validations_count')
-        .eq('tenant_id', t_id)
-        .eq('period_month', periodMonth)
-        .maybeSingle();
+        const { data: usage } = await supabase
+            .from('usage_records')
+            .select('validations_count')
+            .eq('tenant_id', t_id)
+            .eq('period_month', periodMonth)
+            .maybeSingle();
 
-    const limit = getLimitForPlan(subscription?.plan);
-    const currentUsage = usage?.validations_count || 0;
+        const limit = getLimitForPlan(subscription?.plan);
+        const currentUsage = usage?.validations_count || 0;
 
-    return NextResponse.json({
-        usage: currentUsage,
-        limit,
-        plan: subscription?.plan || 'free',
-        userName: user.user_metadata?.full_name || user.email
-    });
+        return NextResponse.json({
+            usage: currentUsage,
+            limit,
+            plan: subscription?.plan || 'free',
+            userName: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Council Member'
+        });
+    } catch (e) {
+        console.error('[Usage API Error]', e);
+        return NextResponse.json({
+            usage: 0,
+            limit: 2,
+            plan: 'free',
+            userName: user.email?.split('@')[0] || 'Council Member'
+        });
+    }
 }

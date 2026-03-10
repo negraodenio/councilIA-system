@@ -39,6 +39,7 @@ export default function CustomPersonaPage() {
     const [description, setDescription] = useState('');
     const [color, setColor] = useState('#6366f1');
     const [emoji, setEmoji] = useState('🏢');
+    const [pendingFiles, setPendingFiles] = useState<File[]>([]);
 
 
     const fetchPersonas = useCallback(async () => {
@@ -61,11 +62,32 @@ export default function CustomPersonaPage() {
             });
             const data = await res.json();
             if (res.ok) {
+                const newPersonaId = data.persona.id;
+
+                // Upload pending files if any
+                if (pendingFiles.length > 0) {
+                    setUploading(true);
+                    for (const file of pendingFiles) {
+                        const formData = new FormData();
+                        formData.append('persona_id', newPersonaId);
+                        formData.append('file', file);
+                        formData.append('filename', file.name);
+                        await fetch('/api/custom-persona/upload', { method: 'POST', body: formData });
+                    }
+                    setUploading(false);
+                }
+
                 setName(''); setDescription('');
+                setPendingFiles([]);
                 await fetchPersonas();
             } else {
                 console.error('[Create Persona Error]', data);
-                alert(`Failed to create expert: ${data.error || 'Unknown error'}`);
+                if (data.code === 'UPGRADE_REQUIRED') {
+                    alert(`Access Denied: ${data.error}`);
+                    window.location.href = '/pricing';
+                } else {
+                    alert(`Failed to create expert: ${data.error || 'Unknown error'}`);
+                }
             }
         } catch (err) {
             console.error('[Create Persona Exception]', err);
@@ -164,7 +186,7 @@ export default function CustomPersonaPage() {
                             />
                         </div>
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-6">
                         <label className="text-[11px] text-slate-500 uppercase tracking-widest font-bold block mb-1">Description (Optional)</label>
                         <textarea
                             value={description} onChange={e => setDescription(e.target.value)}
@@ -173,7 +195,33 @@ export default function CustomPersonaPage() {
                             className="w-full bg-deep-blue border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:border-neon-cyan/50 focus:outline-none transition resize-none"
                         />
                     </div>
-                    <div className="flex items-center gap-6 mb-4">
+
+                    {/* NEW: Training Data Input */}
+                    <div className="mb-6">
+                        <label className="text-[11px] text-slate-500 uppercase tracking-widest font-bold block mb-2">Training Data (.txt, .md, .pdf)</label>
+                        <div className="flex flex-col gap-3">
+                            <label className="flex items-center gap-3 w-full bg-white/5 border border-dashed border-white/10 rounded-xl px-4 py-3 cursor-pointer hover:border-neon-cyan/30 transition">
+                                <input type="file" multiple accept=".txt,.md,.pdf" className="hidden"
+                                    onChange={e => e.target.files && setPendingFiles([...pendingFiles, ...Array.from(e.target.files)])} />
+                                <span className="text-xl">📁</span>
+                                <span className="text-xs text-slate-400">Click to attach training documents</span>
+                            </label>
+
+                            {pendingFiles.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                    {pendingFiles.map((f, idx) => (
+                                        <div key={idx} className="flex items-center gap-2 bg-neon-cyan/10 border border-neon-cyan/20 rounded-lg px-3 py-1.5">
+                                            <span className="text-[10px] text-neon-cyan font-mono truncate max-w-[150px]">{f.name}</span>
+                                            <button onClick={() => setPendingFiles(pendingFiles.filter((_, i) => i !== idx))}
+                                                className="text-neon-cyan/60 hover:text-neon-cyan text-xs">✕</button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-6 mb-6">
                         <div>
                             <label className="text-[11px] text-slate-500 uppercase tracking-widest font-bold block mb-2">Color</label>
                             <div className="flex gap-2">
@@ -198,7 +246,7 @@ export default function CustomPersonaPage() {
                     </div>
                     <button onClick={handleCreate} disabled={creating || !name.trim()}
                         className="px-6 py-2.5 bg-neon-cyan text-black font-bold text-sm rounded-xl hover:scale-105 active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                        {creating ? 'Creating...' : 'Create Expert'}
+                        {creating || uploading ? (uploading ? 'Processing Data...' : 'Creating...') : 'Create Expert'}
                     </button>
                 </div>
 
