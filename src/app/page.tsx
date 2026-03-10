@@ -8,10 +8,10 @@
                         <div className="size-10 bg-neon-cyan/10 rounded-lg flex items-center justify-center border border-neon-cyan/30 shadow-[0_0_15px_rgba(0,240,255,0.2)] shrink-0 overflow-hidden">
                             <span className="material-symbols-outlined text-neon-cyan font-bold select-none">account_tree</span>
                         </div>
-                        <span className="text-xl font-black tracking-tighter uppercase font-display">Council<span className="text-neon-cyan">AI</span></span>
+                        <span className="text-xl font-black tracking-tighter uppercase font-display">Council<span className="text-neon-cyan">IA</span></span>
                     </div>
                     <nav className="hidden md:flex items-center gap-8 font-display" aria-label="Main navigation">
-                        <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="#how-it-works" aria-label="Learn how CouncilAI works">How it works</a>
+                        <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="#how-it-works" aria-label="Learn how CouncilIA works">How it works</a>
                         <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="#the-council" aria-label="Meet the AI Council">The Council</a>
                         <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="#use-cases" aria-label="Explore use cases">Use cases</a>
                         <a className="text-sm font-medium hover:text-neon-cyan transition-colors" href="/pricing">Pricing</a>
@@ -631,7 +631,7 @@
                             <div className="size-8 bg-neon-cyan/10 border border-[rgba(0,240,255,0.3)] rounded flex items-center justify-center shrink-0 overflow-hidden">
                                 <span className="material-symbols-outlined text-neon-cyan text-sm font-bold select-none">account_tree</span>
                             </div>
-                            <span className="text-lg font-black tracking-tighter uppercase font-display">Council<span className="text-neon-cyan">AI</span></span>
+                            <span className="text-lg font-black tracking-tighter uppercase font-display">Council<span className="text-neon-cyan">IA</span></span>
                         </div>
                         <p className="text-slate-500 text-sm mb-6 leading-relaxed">
                             Part of the Antigravity Ecosystem. Built in Lisbon, Portugal for high-stakes decision validation.
@@ -662,7 +662,7 @@
                     <nav aria-label="Footer Legal and Support Links">
                         <h5 className="font-bold text-sm mb-6 uppercase tracking-widest text-[#c4c4ff] font-display">Legal &amp; Support</h5>
                         <ul className="space-y-4">
-                            <li><a className="text-sm text-slate-500 hover:text-neon-cyan transition-colors" href="mailto:support@councilia.ai" aria-label="Email Support">support@councilia.ai</a></li>
+                            <li><a className="text-sm text-slate-500 hover:text-neon-cyan transition-colors" href="mailto:support@councilia.com" aria-label="Email Support">support@councilia.com</a></li>
                             <li><a className="text-sm text-slate-500 hover:text-neon-cyan transition-colors" href="/privacy" aria-label="Privacy Policy">Privacy Policy</a></li>
                             <li><a className="text-sm text-slate-500 hover:text-neon-cyan transition-colors" href="/cookies" aria-label="Cookies Policy">Cookies Policy</a></li>
                             <li><a className="text-sm text-slate-500 hover:text-neon-cyan transition-colors" href="/terms" aria-label="Terms of Service">Terms of Service</a></li>
