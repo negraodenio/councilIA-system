@@ -143,6 +143,12 @@ function detectLanguage(text: string): string {
             /\bnoi\b/, /\bvoi\b/, /\bloro\b/, /\bquesto\b/, /\bquesto\b/,
             /\bessere\b/, /\bavere\b/, /\bandare\b/, /\bdovere\b/, /\bpotere\b/,
         ],
+        Dutch: [
+            /\bik\b/, /\bwil\b/, /\bopenen\b/, /\bwinkel\b/, /\bbedrijf\b/,
+            /\bhoe\b/, /\bkan\b/, /\bmaken\b/, /\bondernemen\b/, /\bmarkt\b/,
+            /\bgeld\b/, /\bwerk\b/, /\bschilderen\b/, /\bsculptuur\b/,
+            /\boverleven\b/, /\bverdienen\b/, /\bcreëren\b/, /\bleven\b/,
+        ],
     };
 
     const scores: Record<string, number> = {};
@@ -170,8 +176,7 @@ function detectLanguage(text: string): string {
 }
 
 function langInstruction(lang: string): string {
-    if (lang === 'English') return '';
-    return `\n\nCRITICAL: You MUST respond entirely in ${lang}. All analysis, headings, bullet points, verdicts, and recommendations must be written in ${lang}. Do NOT use English.`;
+    return `\n\nCRITICAL: You MUST respond entirely in ${lang}. All analysis, headings, bullet points, verdicts, and recommendations must be written in ${lang}. Do NOT use any other language than ${lang}.`;
 }
 
 function inferGeoContext(idea: string, lang: string): string {
