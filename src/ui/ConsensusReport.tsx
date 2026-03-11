@@ -6,7 +6,7 @@ import PDFReportTemplate from './PDFReportTemplate';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer-continued';
-import { calculateVaR, getPrecisionLevel, getAllianceClustering, getScientificBadge } from '@/lib/verdict-engine';
+import { calculateVaR, getPrecisionLevel, getAllianceClusteringV3, getScientificBadge, parsePersonaResponseV3, type SmartVerdictMetadata } from '@/lib/verdict-engine';
 import TensionMap from './TensionMap';
 import Link from 'next/link';
 
@@ -83,27 +83,21 @@ export default function ConsensusReport({ validation, patches }: {
             : 'bg-red-400/10 text-red-300 border-red-400/30';
     const statusDot = score >= 70 ? 'bg-emerald-400' : score >= 40 ? 'bg-amber-400' : 'bg-red-400';
 
-    // Extract real per-persona scores from Round 3 (final scores)
+    // Extract real per-persona scores and metadata from Round 3 (final scores)
+    const personaData: { id: string, metadata: SmartVerdictMetadata }[] = [];
+    const roundToParse = round3.length > 0 ? round3 : round1;
+    
+    for (const r of roundToParse) {
+        personaData.push({
+            id: r.id,
+            metadata: parsePersonaResponseV3(r.text)
+        });
+    }
+
     const personaScores: Record<string, number> = {};
-    for (const r of round3) {
-        const matches = r.text.match(/(\d{1,3})\/100/g);
-        if (matches && matches.length > 0) {
-            const lastMatch = matches[matches.length - 1];
-            const num = parseInt(lastMatch.replace('/100', ''), 10);
-            if (num >= 0 && num <= 100) personaScores[r.id] = num;
-        }
-    }
-    // Fallback: try round1 if round3 is empty
-    if (Object.keys(personaScores).length === 0) {
-        for (const r of round1) {
-            const matches = r.text.match(/(\d{1,3})\/100/g);
-            if (matches && matches.length > 0) {
-                const lastMatch = matches[matches.length - 1];
-                const num = parseInt(lastMatch.replace('/100', ''), 10);
-                if (num >= 0 && num <= 100) personaScores[r.id] = num;
-            }
-        }
-    }
+    personaData.forEach(d => {
+        personaScores[d.id] = d.metadata.score;
+    });
 
     const scoreValues = Object.values(personaScores);
     const realDissent = scoreValues.length >= 2
@@ -113,7 +107,7 @@ export default function ConsensusReport({ validation, patches }: {
         ? 100 - realDissent
         : align;
 
-    const alliances = getAllianceClustering(personaScores);
+    const alliances = getAllianceClusteringV3(roundToParse.map(r => ({ id: r.id, text: r.text })));
 
     const ringColor = score >= 70 ? '#22c55e' : score >= 40 ? '#f59e0b' : '#ef4444';
 
@@ -560,23 +554,80 @@ export default function ConsensusReport({ validation, patches }: {
                                                     </div>
                                                 )}
 
-                                                {/* 3. Strategic Recommendations */}
-                                                {recommendations && (
-                                                    <div className="p-8 rounded-2xl bg-gradient-to-r from-panel-blue to-black border border-neon-cyan/20">
-                                                        <div className="flex items-center gap-2 mb-6 text-neon-cyan">
-                                                            <span className="text-2xl">💡</span>
-                                                            <h3 className="font-display font-black uppercase tracking-[0.2em] text-sm">Strategic Roadmap</h3>
+                                                {/* 3. Strategic Roadmap - UPGRADED WITH SMART VERDICT V3 */}
+                                                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                                                    {recommendations && (
+                                                        <div className="p-8 rounded-2xl bg-gradient-to-r from-panel-blue to-black border border-neon-cyan/20">
+                                                            <div className="flex items-center gap-2 mb-6 text-neon-cyan">
+                                                                <span className="text-2xl">💡</span>
+                                                                <h3 className="font-display font-black uppercase tracking-[0.2em] text-sm">Strategic Roadmap</h3>
+                                                            </div>
+                                                            <div className="prose prose-invert prose-base max-w-none 
+                                                                prose-ol:space-y-4 prose-li:text-slate-200 prose-li:pl-2
+                                                                prose-li:marker:text-neon-cyan prose-li:marker:font-mono">
+                                                                <ReactMarkdown>{recommendations.content}</ReactMarkdown>
+                                                            </div>
                                                         </div>
-                                                        <div className="prose prose-invert prose-base max-w-none 
-                                                            prose-ol:space-y-4 prose-li:text-slate-200 prose-li:pl-2
-                                                            prose-li:marker:text-neon-cyan prose-li:marker:font-mono">
-                                                            <ReactMarkdown>{recommendations.content}</ReactMarkdown>
-                                                        </div>
-                                                    </div>
-                                                )}
+                                                    )}
 
-                                                {/* 4. Methodological Moat (Refined) */}
-                                                <MethodologyMoat score={score} lang={lang} />
+                                                    {/* Smart Verdict: Antifragile & B2B Metrics */}
+                                                    <div className="flex flex-col gap-4">
+                                                        {(() => {
+                                                            const devilData = personaData.find(d => d.id === 'devil')?.metadata;
+                                                            const marketeerData = personaData.find(d => d.id === 'marketeer')?.metadata;
+                                                            
+                                                            if (!devilData && !marketeerData) return null;
+
+                                                            return (
+                                                                <>
+                                                                    {devilData && (
+                                                                        <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+                                                                            <div className="flex items-center justify-between mb-4">
+                                                                                <div className="flex items-center gap-2 text-red-400">
+                                                                                    <span className="material-symbols-outlined text-xl">vaccines</span>
+                                                                                    <span className="font-display font-black uppercase tracking-widest text-[10px]">Antifragile Vaccine</span>
+                                                                                </div>
+                                                                                <span className="text-[9px] font-mono text-red-500/50 uppercase">Strategic Patch</span>
+                                                                            </div>
+                                                                            <p className="text-xs text-red-100 font-medium italic mb-3">"{devilData.vaccine || 'N/A'}"</p>
+                                                                            <div className="flex items-center gap-2 p-2 bg-black/40 rounded border border-red-500/20">
+                                                                                <span className="material-symbols-outlined text-xs text-red-400">warning</span>
+                                                                                <span className="text-[9px] font-mono text-red-200">CIRCUIT BREAKER: {devilData.circuitBreaker || 'Abort if ROI < 1x'}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+
+                                                                    {marketeerData && (
+                                                                        <div className="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+                                                                            <div className="flex items-center justify-between mb-4">
+                                                                                <div className="flex items-center gap-2 text-indigo-400">
+                                                                                    <span className="material-symbols-outlined text-xl">person_pin_circle</span>
+                                                                                    <span className="font-display font-black uppercase tracking-widest text-[10px]">Champion Profile</span>
+                                                                                </div>
+                                                                                <span className="text-[9px] font-mono text-indigo-500/50 uppercase">{marketeerData.procurementLane || 'Standard'} Lane</span>
+                                                                            </div>
+                                                                            <p className="text-xs text-indigo-100 font-bold mb-2">{marketeerData.championProfile || 'C-Level Executive'}</p>
+                                                                            <div className="grid grid-cols-2 gap-2 text-[10px]">
+                                                                                <div className="p-2 bg-black/40 rounded border border-indigo-500/20">
+                                                                                    <p className="text-slate-500 uppercase tracking-tighter mb-1">Target Team</p>
+                                                                                    <p className="text-indigo-300 font-bold">{marketeerData.landTeam || 'N/A'}</p>
+                                                                                </div>
+                                                                                <div className="p-2 bg-black/40 rounded border border-indigo-500/20">
+                                                                                    <p className="text-slate-500 uppercase tracking-tighter mb-1">Key Performance KPI</p>
+                                                                                    <p className="text-indigo-300 font-bold">{marketeerData.metricOwned || 'LTV/CAC'}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </>
+                                                            );
+                                                        })()}
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-6">
+                                                    <MethodologyMoat score={score} lang={lang} validation={validation} />
+                                                </div>
                                             </div>
                                         );
                                     })()}
@@ -805,13 +856,12 @@ function PersonaCard({ entry, lang }: {
         </div>
     );
 }
-
 // ─── Methodology Moat ──────────────────────────────
-function MethodologyMoat({ score, lang }: { score: number, lang: UILang }) {
+function MethodologyMoat({ score, lang, validation }: { score: number, lang: UILang, validation: any }) {
     const varDisplay = calculateVaR(score);
     
     return (
-        <div className="mt-8 pt-8 border-t border-white/5">
+        <div className="mt-8 pt-8 border-t border-white/10">
             <div className="flex items-center gap-2 mb-6">
                 <span className="material-symbols-outlined text-indigo-400">verified</span>
                 <h3 className="font-display font-black uppercase tracking-[0.2em] text-sm text-white">Scientific Foundation & Validity</h3>
@@ -819,59 +869,92 @@ function MethodologyMoat({ score, lang }: { score: number, lang: UILang }) {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* 1. Clinical Precision */}
-                <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/20 flex flex-col gap-2 transition-all hover:bg-indigo-500/10 hover:border-indigo-500/40 group">
-                    <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-mono text-indigo-400 uppercase font-black tracking-widest">Pillar 01: Precision</span>
+                <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/20 flex flex-col gap-2 transition-all hover:bg-indigo-500/10 hover:border-indigo-500/40 group relative overflow-hidden">
+                    <div className="flex justify-between items-start z-10">
+                        <span className="text-[10px] font-mono text-indigo-400 uppercase font-black tracking-widest">{t(lang, 'pill_precision')}</span>
                         <span className="text-[9px] font-mono text-slate-500">Shaikh et al. (PLOS 2025)</span>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                        Architecture validates **97% accuracy** in high-stakes clinical exams. Multi-agent deliberation corrects **53% of errors** that simple majority voting would commit.
+                    <p className="text-xs text-slate-300 leading-relaxed z-10">
+                        <ReactMarkdown>{t(lang, 'pill_precision_desc')}</ReactMarkdown>
                     </p>
-                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
                         <span className="size-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
-                        <span className="text-[9px] font-mono text-indigo-300/80 uppercase">Inference Validation Active</span>
+                        <span className="text-[9px] font-mono text-indigo-300/80 uppercase tracking-tighter">Inference Logic Active</span>
                     </div>
+                    <div className="absolute top-0 right-0 size-24 bg-indigo-500/5 blur-2xl group-hover:bg-indigo-500/10 transition-all"></div>
                 </div>
 
                 {/* 2. Adversarial Alignment */}
-                <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/20 flex flex-col gap-2 transition-all hover:bg-purple-500/10 hover:border-purple-500/40 group">
-                    <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-mono text-purple-400 uppercase font-black tracking-widest">Pillar 02: Adversarial</span>
+                <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/20 flex flex-col gap-2 transition-all hover:bg-purple-500/10 hover:border-purple-500/40 group relative overflow-hidden">
+                    <div className="flex justify-between items-start z-10">
+                        <span className="text-[10px] font-mono text-purple-400 uppercase font-black tracking-widest">{t(lang, 'pill_alignment')}</span>
                         <span className="text-[9px] font-mono text-slate-500">Ellemers et al. (PNAS 2020)</span>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                        Based on **Adversarial Alignment enables competing models to engage in cooperative theory building** (Kahneman rules). Rival agents reframed to seek convergence.
+                    <p className="text-xs text-slate-300 leading-relaxed z-10">
+                        <ReactMarkdown>{t(lang, 'pill_alignment_desc')}</ReactMarkdown>
                     </p>
-                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
                         <span className="size-1.5 rounded-full bg-purple-400 animate-pulse"></span>
-                        <span className="text-[9px] font-mono text-purple-300/80 uppercase">Kahneman Rules Engaged</span>
+                        <span className="text-[9px] font-mono text-purple-300/80 uppercase tracking-tighter">Kahneman Rules Engaged</span>
                     </div>
+                    <div className="absolute top-0 right-0 size-24 bg-purple-500/5 blur-2xl group-hover:bg-purple-500/10 transition-all"></div>
                 </div>
 
                 {/* 3. Collective Intelligence */}
-                <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col gap-2 transition-all hover:bg-emerald-500/10 hover:border-emerald-500/40 group">
-                    <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-mono text-emerald-400 uppercase font-black tracking-widest">Pillar 03: Strategy</span>
-                        <span className="text-[9px] font-mono text-slate-500">MpFL (ICLR 2025)</span>
+                <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col gap-2 transition-all hover:bg-emerald-500/10 hover:border-emerald-500/40 group relative overflow-hidden">
+                    <div className="flex justify-between items-start z-10">
+                        <span className="text-[10px] font-mono text-emerald-400 uppercase font-black tracking-widest">{t(lang, 'pill_strategy')}</span>
+                        <span className="text-[9px] font-mono text-slate-500">MpFL (NeurIPS 2025)</span>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                        Rational agents with individual utility functions converge to an equilibrium. Validates the **Multiplayer Federated Learning** engine.
+                    <p className="text-xs text-slate-300 leading-relaxed z-10">
+                        <ReactMarkdown>{t(lang, 'pill_strategy_desc')}</ReactMarkdown>
                     </p>
-                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
                         <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span className="text-[9px] font-mono text-emerald-300/80 uppercase">Equilibrium Score: {score}/100</span>
+                        <span className="text-[9px] font-mono text-emerald-300/80 uppercase tracking-tighter">Equilibrium Score: {score}/100</span>
                     </div>
+                    <div className="absolute top-0 right-0 size-24 bg-emerald-500/5 blur-2xl group-hover:bg-emerald-500/10 transition-all"></div>
                 </div>
-            </div>
 
-            <div className="mt-4 p-3 rounded-lg bg-black/40 border border-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-[16px] text-slate-500">query_stats</span>
-                    <span className="text-[10px] font-mono text-slate-400 italic">"3-round discussion protocols optimize decision quality over simple majority voting." —— Kaesberg (ACL 2025)</span>
+                {/* 4. Protocol Optimality */}
+                <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 flex flex-col gap-2 transition-all hover:bg-amber-500/10 hover:border-amber-500/40 group relative overflow-hidden">
+                    <div className="flex justify-between items-start z-10">
+                        <span className="text-[10px] font-mono text-amber-400 uppercase font-black tracking-widest">{t(lang, 'pill_protocol')}</span>
+                        <span className="text-[9px] font-mono text-slate-500">Kaesberg (ACL 2025)</span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed z-10">
+                        <ReactMarkdown>{t(lang, 'pill_protocol_desc')}</ReactMarkdown>
+                    </p>
+                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
+                        <span className="size-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                        <span className="text-[9px] font-mono text-amber-300/80 uppercase tracking-tighter">Round Equilibrium Active</span>
+                    </div>
+                    <div className="absolute top-0 right-0 size-24 bg-amber-500/5 blur-2xl group-hover:bg-amber-500/10 transition-all"></div>
                 </div>
-                <div className="flex flex-col items-end">
-                    <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Est. Value at Risk</span>
-                    <span className="text-[11px] font-mono font-bold text-red-400">{varDisplay}</span>
+
+                {/* 5. Control & Clarity */}
+                <div className="p-4 rounded-xl bg-pink-500/5 border border-pink-500/20 flex flex-col gap-2 transition-all hover:bg-pink-500/10 hover:border-pink-500/40 group relative overflow-hidden">
+                    <div className="flex justify-between items-start z-10">
+                        <span className="text-[10px] font-mono text-pink-400 uppercase font-black tracking-widest">{t(lang, 'pill_interface')}</span>
+                        <span className="text-[9px] font-mono text-slate-500">Amershi (CHI 2019)</span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed z-10">
+                        <ReactMarkdown>{t(lang, 'pill_interface_desc')}</ReactMarkdown>
+                    </p>
+                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
+                        <span className="size-1.5 rounded-full bg-pink-400 animate-pulse"></span>
+                        <span className="text-[9px] font-mono text-pink-300/80 uppercase tracking-tighter">Human-in-the-Loop Active</span>
+                    </div>
+                    <div className="absolute top-0 right-0 size-24 bg-pink-500/5 blur-2xl group-hover:bg-pink-500/10 transition-all"></div>
+                </div>
+
+                {/* Tactical Footer Overlay */}
+                <div className="flex items-center justify-between col-span-1 md:col-span-2 lg:col-span-3 mt-4 pt-4 border-t border-white/5 opacity-50">
+                    <div className="flex items-center gap-2">
+                        <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Engine // ACE 3.0</span>
+                        <div className="size-1 rounded-full bg-slate-700"></div>
+                        <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Session // VAL-{validation.id.substring(0, 8).toUpperCase()}</span>
+                    </div>
                 </div>
             </div>
         </div>

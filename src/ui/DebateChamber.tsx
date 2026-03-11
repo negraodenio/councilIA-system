@@ -6,9 +6,7 @@ import ReactMarkdown from 'react-markdown';
 
 type UILang = 'pt' | 'en' | 'es';
 function resolveUILang(locale: string): UILang {
-    const l = locale.toLowerCase();
-    if (l.startsWith('pt')) return 'pt';
-    if (l.startsWith('es')) return 'es';
+    // Force English for the US Market
     return 'en';
 }
 
@@ -127,7 +125,7 @@ export default function DebateChamber({ runId }: { runId: string }) {
                     setMessages(parsed);
 
                     const names = Array.from(
-                        new Set(parsed.filter(m => !m.is_judge).map(m => m.expert_name))
+                        new Set(parsed.filter(m => !m.is_judge && m.expert_name.toLowerCase() !== 'founder').map(m => m.expert_name))
                     );
                     setExperts(names);
 

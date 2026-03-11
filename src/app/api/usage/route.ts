@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getLimitForPlan } from '@/config/limits';
 
@@ -6,7 +7,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
+    const adminSupabase = createAdminClient();
 
     // 1. Get User
     const { data: { user } } = await supabase.auth.getUser();
@@ -22,17 +24,17 @@ export async function GET(req: Request) {
 
         const t_id = profile?.tenant_id || user.id;
 
-        // 3. Fetch Usage & Subscription
+        // 3. Fetch Usage & Subscription (Using Admin to bypass RLS)
         const now = new Date();
         const periodMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-        const { data: subscription } = await supabase
+        const { data: subscription } = await adminSupabase
             .from('subscriptions')
             .select('plan')
             .eq('tenant_id', t_id)
             .maybeSingle();
 
-        const { data: usage } = await supabase
+        const { data: usage } = await adminSupabase
             .from('usage_records')
             .select('validations_count')
             .eq('tenant_id', t_id)

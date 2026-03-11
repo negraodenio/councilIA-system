@@ -1,0 +1,19 @@
+# MANUAL DE DIRETRIZES INTERNAS DA EMPRESA "OMEGA TECH"
+**Versão:** 2.4 (Estritamente Confidencial)
+**Data:** 10 de Março de 2026
+
+## 1. Visão Geral da Expansão
+A "Omega Tech" tem como objetivo principal para o próximo triénio (2026-2029) transitar do desenvolvimento de software generalista para tecnologia aeroespacial de baixo custo focada na recolha de dados ambientais em África.
+
+## 2. Regras de Orçamento e Aquisições
+- **Política de Aquisição (Regra de Ouro):** A Omega Tech está terminantemente PROIBIDA de adquirir (comprar) outras empresas, startups ou patentes até 2028.
+- **Justificação:** O bloqueio das contas ocorrido em 2024 devido a M&A desastrosos dita que todas as soluções tecnológicas devem ser desenvolvidas "in-house" (internamente) ou por via de parcerias open-source gratuitas.
+- O limite máximo para qualquer novo projeto interno de I&D é de $200.000. Qualquer projeto que exija mais do que este valor deve ser chumbado imediatamente.
+
+## 3. Gestão de Pessoal e Contratação
+- O trabalho remoto a 100% não é permitido para engenheiros seniores.
+- A contratação de freelancers é permitida apenas para design de UI/UX. Todo o desenvolvimento de backend e gestão de dados sensíveis (GDPR/Segurança Nacional) tem de ser feito por trabalhadores internos com contrato de efetividade.
+
+## 4. Parcerias Estratégicas
+- O nosso único parceiro de hardware aprovado para satélites é a "Angosat Components".
+- Qualquer sugestão de parceria com empresas concorrentes da América do Norte (EUA/Canadá) deve ser classificada de Risco Crítico devido à nossa atual dependência de acordos comerciais embargados.

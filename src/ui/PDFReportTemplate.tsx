@@ -2,7 +2,8 @@
 
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { type UILang } from '@/lib/i18n/ui-strings';
+import { type UILang, t } from '@/lib/i18n/ui-strings';
+import { calculateVaR, getScientificBadge, parsePersonaResponseV3, getAllianceClusteringV3 } from '@/lib/verdict-engine';
 
 interface PDFReportTemplateProps {
     validation: any;
@@ -21,168 +22,257 @@ const PERSONAS: Record<string, { lbl: string; pt: string; em: string; c: string 
 function gp(name: string, lang: UILang) {
     const key = Object.keys(PERSONAS).find(k => name.toLowerCase().includes(k));
     const p = key ? PERSONAS[key] : { lbl: name, pt: name, em: '🤖', c: '#6366F1' };
-    return { ...p, dn: (lang as string) === 'pt' ? p.pt : p.lbl };
+    return { ...p, dn: (lang as string) === 'Portuguese' ? p.pt : p.lbl };
 }
 
 export default function PDFReportTemplate({ validation, lang }: PDFReportTemplateProps) {
-    const score = validation.consensus_score || 0;
+    const score = Math.round(validation.consensus_score || 0);
     const dateStr = new Date(validation.created_at).toLocaleDateString();
 
-    // Parse result
     const r = validation.full_result || {};
     const judgeText = r.judge || '';
-    const round1 = r.round1 || [];
-    const round2 = r.round2 || [];
-    const round3 = r.round3 || [];
+    const round3 = (r.round3 || []) as any[];
+    const round1 = (r.round1 || []) as any[];
+    const roundToParse = round3.length > 0 ? round3 : round1;
 
-    // Calculate basic metrics
-    const conflictRate = round2.length > 0 ? 'High' : 'Low';
+    // v3.0 Strategic Metadata
+    const personaData = roundToParse.map(node => ({
+        id: node.id || node.name.toLowerCase(),
+        name: node.name,
+        text: node.text,
+        meta: parsePersonaResponseV3(node.text)
+    }));
 
-    // Clean judge text to remove headers if they exist
+    const devilData = personaData.find(d => d.id.includes('devil'))?.meta;
+    const marketeerData = personaData.find(d => d.id.includes('marketeer'))?.meta;
+
     let cleanJudgeText = typeof judgeText === 'string' ? judgeText.replace(/\\n/g, '\n') : '';
     cleanJudgeText = cleanJudgeText.replace(/## 🏛️ CouncilIA.*?Verdict Final\n/i, '');
-    cleanJudgeText = cleanJudgeText.replace(/### (Consensus Score|Puntuación de Consenso|Pontuação de Consenso|Score de Consensus|Konsens-Score|Punteggio di Consenso): \[?\d+\/100\]?\n/i, '');
+    
+    // Parse sections for styling
+    const sections: { id: string, title: string, content: string }[] = [];
+    const emojiMap: Record<string, string> = {
+        '📊': 'summary',
+        '✅': 'strengths',
+        '⚠️': 'risks',
+        '💡': 'recommendations',
+        '🎯': 'decision'
+    };
+    
+    const parts = cleanJudgeText.split(/###\s+/);
+    parts.forEach(part => {
+        const lines = part.trim().split('\n');
+        const firstLine = lines[0];
+        for (const [emoji, id] of Object.entries(emojiMap)) {
+            if (firstLine.includes(emoji)) {
+                sections.push({ id, title: firstLine.trim(), content: lines.slice(1).join('\n').trim() });
+                break;
+            }
+        }
+    });
 
-    // Chunk round 3 into pages of 4 cards max to avoid vertical overflow
-    const round3Chunks = [];
-    for (let i = 0; i < round3.length; i += 4) {
-        round3Chunks.push(round3.slice(i, i + 4));
-    }
+    const decision = sections.find(s => s.id === 'decision');
+    const strengths = sections.find(s => s.id === 'strengths');
+    const risks = sections.find(s => s.id === 'risks');
+    const recommendations = sections.find(s => s.id === 'recommendations');
 
     return (
-        <div id="pdf-report-container" className="bg-[#030712] text-slate-100 font-sans w-[210mm] relative overflow-hidden hidden-in-browser" style={{ fontFamily: "'Inter', sans-serif" }}>
-
+        <div id="pdf-report-container" className="bg-[#050810] text-white font-sans w-[210mm] relative overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
             <style dangerouslySetInnerHTML={{
                 __html: `
-                .pdf-page { width: 210mm; min-height: 297mm; padding: 40px; padding-bottom: 80px; position: relative; background-color: #030712; }
-                .pdf-page.cover { height: 297mm; }
-                .bg-gradient-mesh { background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent), radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.1), transparent); }
+                .pdf-page { width: 210mm; min-height: 297mm; padding: 60px; position: relative; background-color: #050810; border-bottom: 2px solid #111827; }
+                .pdf-page:last-child { border-bottom: none; }
                 .mono { font-family: monospace; }
+                h1, h2, h3, h4 { letter-spacing: -0.025em; font-weight: 800; }
+                .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; }
             `}} />
 
-            {/* --- PAGE 1: COVER --- */}
-            <section className="pdf-page cover bg-gradient-mesh flex flex-col justify-between">
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-xl italic text-white">C</div>
-                        <span className="font-bold tracking-tight text-xl text-white">CouncilIA</span>
+            {/* PAGE 1: Executive HUD */}
+            <section className="pdf-page">
+                {/* Glow Backgrounds */}
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-600/10 blur-[120px] rounded-full"></div>
+                
+                <div className="flex justify-between items-start mb-12 relative z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-400 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">C</div>
+                        <span className="font-bold text-2xl tracking-tight">CouncilIA <span className="text-cyan-400 opacity-60 text-xs align-top">V3.0</span></span>
                     </div>
-                    <div className="text-right text-xs mono text-slate-500 uppercase tracking-widest">
-                        Confidential / Internal Use Only<br />
-                        Ref: VAL-{validation.id.substring(0, 8).toUpperCase()}
+                    <div className="text-right">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Strategic Analysis Report</p>
+                        <p className="text-[10px] mono text-cyan-500/70">ID // VAL-{validation.id.substring(0, 12).toUpperCase()}</p>
                     </div>
                 </div>
 
-                <div className="my-auto text-center py-20 flex flex-col items-center">
-                    <h1 className="text-5xl font-extrabold tracking-tighter mb-4 text-white">
-                        Strategic Validation <br />
-                        <span className="text-indigo-400">Analysis Report</span>
-                    </h1>
-                    <div className="max-w-xl px-6 py-3 bg-indigo-900/40 border border-indigo-500/30 rounded-xl mb-12">
-                        <span className="text-indigo-200 mono text-sm font-medium leading-relaxed">{validation.idea.substring(0, 80)}{validation.idea.length > 80 ? '...' : ''}</span>
+                <div className="mb-12 relative z-10">
+                    <h1 className="text-4xl mb-6 leading-tight max-w-[90%]">Executive Briefing Consensus</h1>
+                    <div className="p-6 glass italic text-slate-400 text-sm leading-relaxed border-l-2 border-cyan-500/50">
+                        &quot;{validation.idea.substring(0, 300)}{validation.idea.length > 300 ? '...' : ''}&quot;
                     </div>
-                    <div className="grid grid-cols-2 gap-8 text-left min-w-[300px] pt-10 border-t border-white/10">
-                        <div>
-                            <p className="text-slate-500 text-xs uppercase font-bold mb-1">Generated On</p>
-                            <p className="font-medium text-white">{dateStr}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8 mb-12 relative z-10">
+                    <div className="p-8 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6 font-mono">Consensus Score</p>
+                        <div className="relative flex items-center justify-center">
+                            <div className="text-7xl font-black">{score}</div>
+                            <div className="absolute -inset-8 bg-cyan-400/10 blur-xl rounded-full"></div>
                         </div>
-                        <div>
-                            <p className="text-slate-500 text-xs uppercase font-bold mb-1">Engine Version</p>
-                            <p className="font-medium text-white">ACE Engine Formatter v2</p>
+                        <div className="flex gap-2 mt-4 mb-6">
+                             <div className={`size-2.5 rounded-full ${score >= 70 ? 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]' : 'bg-white/10'}`}></div>
+                             <div className={`size-2.5 rounded-full ${score >= 40 && score < 70 ? 'bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)]' : 'bg-white/10'}`}></div>
+                             <div className={`size-2.5 rounded-full ${score < 40 ? 'bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.5)]' : 'bg-white/10'}`}></div>
                         </div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 font-mono">STATUS: {score >= 70 ? 'VIABLE' : score >= 40 ? 'CAUTION' : 'HIGH RISK'}</p>
                     </div>
-                </div>
 
-                <div className="flex justify-between items-end border-t border-white/5 pt-8">
-                    <div className="text-xs text-slate-500 italic">Exported via CouncilIA OS</div>
-                    <div className="text-xs text-slate-500">Page 1</div>
-                </div>
-            </section>
-
-            {/* --- PAGE 2: VERDICT --- */}
-            <section className="pdf-page bg-gradient-mesh flex flex-col">
-                <div className="flex justify-between border-b border-white/5 pb-4 mb-8 shrink-0">
-                    <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Section 01 // Executive Summary</span>
-                    <span className="text-xs text-slate-500 italic">CouncilIA Report</span>
-                </div>
-
-                <div className="grid grid-cols-1 gap-8 flex-1 content-start">
-                    <div className="space-y-6">
-                        <h2 className="text-3xl font-bold text-white">Final Verdict</h2>
-
-                        <div className="p-6 bg-slate-900/50 border border-white/5 rounded-2xl flex items-center justify-between">
+                    <div className="p-8 glass flex flex-col justify-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-8 text-center font-mono">Diagnostics</p>
+                        <div className="space-y-6">
                             <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase mb-2">Consensus Score</p>
-                                <div className="flex items-baseline gap-2">
-                                    <span className={`text-6xl font-black ${score >= 70 ? 'text-emerald-400' : score >= 40 ? 'text-amber-400' : 'text-red-400'}`}>{score}</span>
-                                    <span className="text-2xl text-slate-500">/100</span>
+                                <div className="flex justify-between text-[10px] font-black mb-2 tracking-widest font-mono">
+                                    <span className="text-slate-400">MISSION CONFIDENCE</span>
+                                    <span className="text-cyan-400">{score}%</span>
                                 </div>
-                                <div className="flex items-center gap-2 mt-2">
-                                    <div className={`w-3 h-3 rounded-full ${score >= 70 ? 'bg-emerald-500' : score >= 40 ? 'bg-amber-500' : 'bg-red-500'}`}></div>
-                                    <span className="text-sm font-semibold text-white">
-                                        Strategic Viability: {score >= 70 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW RISK'}
-                                    </span>
+                                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-full bg-cyan-500" style={{ width: `${score}%` }}></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="flex justify-between text-[10px] font-black mb-2 tracking-widest font-mono">
+                                    <span className="text-slate-400">VALUE AT RISK (VaR)</span>
+                                    <span className="text-red-500">{calculateVaR(score)}</span>
+                                </div>
+                                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-full bg-red-500" style={{ width: `${100 - score}%` }}></div>
                                 </div>
                             </div>
                         </div>
-
-                        <div className="prose prose-invert prose-sm max-w-none 
-                            prose-headings:text-white prose-headings:font-bold prose-headings:mt-6 prose-headings:mb-3
-                            prose-h3:text-indigo-300 prose-h3:text-xs prose-h3:uppercase prose-h3:tracking-widest
-                            prose-p:text-slate-300 prose-p:leading-relaxed prose-p:text-sm
-                            prose-li:text-slate-300 prose-li:text-sm
-                            prose-strong:text-cyan-300">
-                            <ReactMarkdown>{cleanJudgeText}</ReactMarkdown>
-                        </div>
                     </div>
                 </div>
 
-                <div className="absolute bottom-10 left-10 right-10 flex justify-between shrink-0">
-                    <div className="text-xs text-slate-500">Page 2</div>
+                {/* Strategic Overlays (New v3.0) */}
+                <div className="grid grid-cols-2 gap-6 mb-12 relative z-10">
+                    {devilData && (
+                        <div className="p-6 rounded-2xl bg-red-500/5 border border-red-500/20">
+                            <div className="flex items-center gap-2 text-red-400 mb-3">
+                                <span className="text-[10px] font-black uppercase tracking-widest">Antifragile Vaccine</span>
+                            </div>
+                            <p className="text-xs text-red-100 italic font-medium">&quot;{devilData.vaccine || 'N/A'}&quot;</p>
+                            <p className="mt-4 py-2 px-3 bg-black/40 rounded border border-red-500/20 text-[9px] font-mono text-red-300 flex items-center gap-2">
+                                <span className="opacity-50">▲</span> CIRCUIT BREAKER: {devilData.circuitBreaker || 'ROI < 1x'}
+                            </p>
+                        </div>
+                    )}
+                    {marketeerData && (
+                        <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/20">
+                            <div className="flex items-center gap-2 text-indigo-400 mb-3">
+                                <span className="text-[10px] font-black uppercase tracking-widest">Champion Profile</span>
+                            </div>
+                            <p className="text-xs text-indigo-100 font-bold mb-1">{marketeerData.championProfile || 'N/A'}</p>
+                            <div className="grid grid-cols-2 gap-2 mt-4 text-[9px] font-mono">
+                                <div className="p-2 bg-black/40 rounded border border-indigo-500/10">
+                                    <span className="opacity-50 block mb-1">PROCUR. LANE</span>
+                                    <span className="text-indigo-200">{marketeerData.procurementLane || 'Standard'}</span>
+                                </div>
+                                <div className="p-2 bg-black/40 rounded border border-indigo-500/10">
+                                    <span className="opacity-50 block mb-1">METRIC OWNED</span>
+                                    <span className="text-indigo-200">{marketeerData.metricOwned || 'LTV/CAC'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="space-y-6 relative z-10">
+                    {decision && (
+                        <div className="p-8 bg-blue-600/10 border border-blue-500/20 rounded-[24px] relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl tracking-tighter">FINAL</div>
+                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 mb-4 flex items-center gap-2">🎯 STRATEGIC RECOMMENDATION</h3>
+                            <div className="text-lg font-bold text-white leading-relaxed"><ReactMarkdown>{decision.content}</ReactMarkdown></div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="absolute bottom-10 left-[60px] right-[60px] flex justify-between pt-6 border-t border-white/5 opacity-50 relative z-10">
+                    <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Engine // ACE 3.0 // PDF Synthesis</p>
+                    <p className="text-[10px] text-slate-500 font-bold flex items-center gap-2">
+                        <span className="size-1 rounded-full bg-cyan-500 animate-pulse"></span>
+                        PAGE 01
+                    </p>
                 </div>
             </section>
 
-            {/* --- AGENT INSIGHTS PAGES --- */}
-            {round3Chunks.map((chunk, pageIndex) => (
-                <section key={pageIndex} className="pdf-page bg-gradient-mesh flex flex-col">
-                    <div className="flex justify-between border-b border-white/5 pb-4 mb-8 shrink-0">
-                        <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Section 02 // Agent Synthesis (Round 3) {pageIndex > 0 ? '(Cont.)' : ''}</span>
-                        <span className="text-xs text-slate-500 italic">CouncilIA Report</span>
+            {/* PAGE 2: Methodology & Detailed Plan */}
+            <section className="pdf-page">
+                <div className="mb-12 relative z-10">
+                    <h2 className="text-2xl mb-10 flex items-center gap-4">
+                        <div className="w-1 h-6 bg-cyan-500 rounded-full"></div>
+                        Scientific Scrutiny Framework
+                    </h2>
+                    
+                    <div className="grid grid-cols-2 gap-4 mb-12">
+                         {[1, 2, 3, 4, 5].map(num => {
+                             const key = num === 1 ? 'pill_precision' : num === 2 ? 'pill_alignment' : num === 3 ? 'pill_strategy' : num === 4 ? 'pill_protocol' : 'pill_interface';
+                             const colorClass = num === 1 ? 'text-indigo-400 border-indigo-500/20' : num === 2 ? 'text-purple-400 border-purple-500/20' : num === 3 ? 'text-emerald-400 border-emerald-500/20' : num === 4 ? 'text-amber-400 border-amber-500/20' : 'text-pink-400 border-pink-500/20';
+                             return (
+                                <div key={num} className={`p-5 glass border ${colorClass} flex flex-col gap-2`}>
+                                    <div className="flex justify-between items-start opacity-70">
+                                        <p className="text-[10px] font-black uppercase tracking-widest">{t(lang, key)}</p>
+                                        <span className="text-[8px] mono">PILL // 0{num}</span>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
+                                        <ReactMarkdown>{t(lang, key + '_desc')}</ReactMarkdown>
+                                    </p>
+                                </div>
+                             );
+                         })}
                     </div>
 
-                    {pageIndex === 0 && <h2 className="text-2xl font-bold mb-6 text-white shrink-0">Multi-Agent Deliberation Synthesis</h2>}
+                    {recommendations && (
+                        <div className="mb-12">
+                            <div className="flex items-center gap-3 mb-6">
+                                <span className="size-6 bg-cyan-500/20 rounded flex items-center justify-center text-cyan-400 text-sm">💡</span>
+                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Execution Roadmap Protocol</h3>
+                            </div>
+                            <div className="bg-white/[0.02] p-8 rounded-2xl text-[11px] leading-relaxed text-slate-300 border border-white/5 prose prose-invert max-w-none prose-sm">
+                                <ReactMarkdown>{recommendations.content}</ReactMarkdown>
+                            </div>
+                        </div>
+                    )}
+                </div>
 
-                    <div className="grid grid-cols-2 gap-4 flex-1 content-start">
-                        {chunk.map((r: any) => {
-                            const persona = gp(r.name, lang);
-                            // Truncate text manually to avoid html2canvas line-clamp rendering failures
-                            const cleanText = r.text.length > 350 ? r.text.substring(0, 350).trim() + '...' : r.text;
-
+                <div className="mt-auto relative z-10">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-8 px-1">Council Node Verification</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        {personaData.slice(0, 6).map((r) => {
+                            const p = gp(r.name, lang);
+                            const badge = getScientificBadge(r.id, 100);
                             return (
-                                <div key={r.id} className="p-5 bg-slate-900/40 border border-white/5 rounded-xl relative overflow-hidden flex flex-col">
-                                    <div className="absolute top-0 right-0 w-32 h-32 blur-[40px] opacity-20 pointer-events-none" style={{ backgroundColor: persona.c }}></div>
-                                    <div className="flex items-center gap-3 mb-4 shrink-0">
-                                        <div className="w-12 h-12 rounded-full flex flex-col items-center justify-center border-2 shrink-0 bg-black/50" style={{ borderColor: persona.c + '50' }}>
-                                            <span className="text-2xl">{persona.em}</span>
-                                        </div>
+                                <div key={r.id} className="p-5 border border-white/10 rounded-2xl bg-white/[0.01] hover:bg-white/[0.03] transition-all">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-xl shadow-inner shadow-white/5">{p.em}</div>
                                         <div>
-                                            <h4 className="font-bold text-white text-sm">{persona.dn}</h4>
-                                            <span className="text-[9px] mono uppercase font-bold tracking-widest" style={{ color: persona.c }}>Council Expert</span>
+                                            <p className="text-[10px] font-black uppercase text-white tracking-widest">{p.dn}</p>
+                                            {badge && <p className="text-[8px] font-mono text-cyan-400/80 uppercase tracking-tighter">{badge.label}</p>}
                                         </div>
                                     </div>
-                                    <div className="prose prose-invert prose-sm text-slate-400 leading-relaxed text-xs">
-                                        <ReactMarkdown>{cleanText}</ReactMarkdown>
+                                    <div className="text-[10px] text-slate-400 leading-relaxed line-clamp-4 italic border-l-2 border-white/5 pl-4 ml-1">
+                                        <ReactMarkdown>{r.text.replace(/##.*/g, '').replace(/SCORE.*/s, '').trim().substring(0, 200) + '...'}</ReactMarkdown>
                                     </div>
                                 </div>
                             );
                         })}
                     </div>
+                </div>
 
-                    <div className="absolute bottom-10 left-10 right-10 flex justify-between shrink-0">
-                        <div className="text-xs text-slate-500">Page {3 + pageIndex}</div>
-                    </div>
-                </section>
-            ))}
+                <div className="absolute bottom-10 left-[60px] right-[60px] flex justify-between pt-6 border-t border-white/5 opacity-50 relative z-10">
+                    <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Verified Adversarial Alignment Mechanism</p>
+                    <p className="text-[10px] text-slate-500 font-bold flex items-center gap-2">
+                         <span className="size-1 rounded-full bg-slate-700"></span>
+                         PAGE 02
+                    </p>
+                </div>
+            </section>
         </div>
     );
 }

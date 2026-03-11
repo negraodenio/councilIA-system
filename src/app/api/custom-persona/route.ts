@@ -84,8 +84,8 @@ export async function POST(req: NextRequest) {
             }, { status: 403 });
         }
 
-        // 2. Check persona count limits for allowed plans using ADMIN client
-        const { data: existing, error: countErr } = await adminSupabase
+        // 2. Check persona count limits using the normal authenticated client (safeguards against missing service_role grants)
+        const { data: existing, error: countErr } = await supabase
             .from("custom_personas")
             .select("id")
             .eq("user_id", user.id);

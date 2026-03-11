@@ -9,7 +9,7 @@ const strings: Record<UILang, Record<string, string>> = {
         // SystemReady
         sys_status: 'System Status',
         sys_online: 'Online',
-        sys_sequence: 'Sequence 01 // Initialization',
+        sys_sequence: 'Sequence 3.0 // ACE Engine initialization',
         sys_ready: 'SYSTEM_READY:',
         sys_init: 'INITIALIZE SESSION',
         sys_sovereignty: 'Data sovereignty',
@@ -19,7 +19,7 @@ const strings: Record<UILang, Record<string, string>> = {
         sys_input_buffer: 'Input Buffer:',
         sys_execute: 'Execute Session',
         sys_executing: 'Executing…',
-        sys_protocol: 'Protocol 2.4.9-alpha // Authorized users only',
+        sys_protocol: 'Protocol 3.0.0-omega // ACE Engine Authorized',
         sys_dashboard: 'Dashboard',
         sys_marketplace: 'Marketplace',
         sys_vault: 'Vault',
@@ -29,7 +29,7 @@ const strings: Record<UILang, Record<string, string>> = {
 
         // DebateChamber
         dc_title: 'Live Debate Chamber',
-        dc_subtitle: 'CouncilIA v2 — 6 Experts, 3 Rounds',
+        dc_subtitle: 'CouncilIA v3.0 // ACE Engine — 6 Experts, 3 Rounds',
         dc_complete: 'COMPLETE',
         dc_connecting: '⏳ Connecting to council...',
         dc_waiting: '🏛️ Waiting for experts to begin...',
@@ -81,22 +81,34 @@ const strings: Record<UILang, Record<string, string>> = {
         cr_view_pr: 'View PR on GitHub →',
         cr_show_less: 'Show less',
         cr_read_full: 'Read full analysis',
+
+        // Methodology
+        pill_precision: 'Pillar 01: Precision',
+        pill_precision_desc: 'Architecture validates **97% accuracy** in high-stakes clinical exams. Multi-agent deliberation corrects **53% of errors**.',
+        pill_alignment: 'Pillar 02: Alignment',
+        pill_alignment_desc: 'Adversarial Alignment (Kahneman Rules) enables competing models to engage in cooperative theory building.',
+        pill_strategy: 'Pillar 03: Strategy',
+        pill_strategy_desc: 'MpFL (NeurIPS 2025). Rational agents with utility functions converge to a proven equilibrium via Multiplayer Federated Learning.',
+        pill_protocol: 'Pillar 04: Protocol',
+        pill_protocol_desc: 'Verified 3-round deliberation protocol (Synthesis Mode). Optimizes decision quality vs. simple majority.',
+        pill_interface: 'Pillar 05: Interface',
+        pill_interface_desc: 'Sovereign Override & G11 Guidelines. Implementing Microsoft Research standards for Human-AI Control.',
     },
 
     Portuguese: {
         sys_status: 'Estado do Sistema',
         sys_online: 'Online',
-        sys_sequence: 'Sequência 01 // Inicialização',
+        sys_sequence: 'Sequência 3.0 // Inicialização ACE Engine',
         sys_ready: 'SISTEMA_PRONTO:',
         sys_init: 'INICIAR SESSÃO',
         sys_sovereignty: 'Soberania de dados',
         sys_sovereignty_desc: 'Roteamento prioritário na UE para pedidos sensíveis, com retenção controlada por políticas e trilha de auditoria robusta.',
         sys_sovereignty_tip: 'Dica: ative "Privacidade Estrita (L3)" ao lidar com PII/regulamentado/código.',
-        sys_placeholder: 'Describe your objective...',
+        sys_placeholder: 'Descreva o seu objetivo...',
         sys_input_buffer: 'Buffer de Entrada:',
         sys_execute: 'Executar Sessão',
         sys_executing: 'A executar…',
-        sys_protocol: 'Protocolo 2.4.9-alpha // Apenas utilizadores autorizados',
+        sys_protocol: 'Protocolo 3.0.0-omega // ACE Engine Autorizado',
         sys_dashboard: 'Painel',
         sys_marketplace: 'Marketplace',
         sys_vault: 'Cofre',
@@ -105,7 +117,7 @@ const strings: Record<UILang, Record<string, string>> = {
         sys_train_persona_desc: 'Adicionar perspetiva de dados internos',
 
         dc_title: 'Câmara de Debate ao Vivo',
-        dc_subtitle: 'CouncilIA v2 — 6 Especialistas, 3 Rondas',
+        dc_subtitle: 'CouncilIA v3.0 // ACE Engine — 6 Especialistas, 3 Rondas',
         dc_complete: 'CONCLUÍDO',
         dc_connecting: '⏳ A conectar ao conselho...',
         dc_waiting: '🏛️ A aguardar início dos especialistas...',
@@ -156,6 +168,18 @@ const strings: Record<UILang, Record<string, string>> = {
         cr_view_pr: 'Ver PR no GitHub →',
         cr_show_less: 'Mostrar menos',
         cr_read_full: 'Ler análise completa',
+
+        // Methodology (PT)
+        pill_precision: 'Pilar 01: Precisão',
+        pill_precision_desc: 'Arquitetura valida **97% de precisão** em exames clínicos de alto risco. A deliberação multi-agente corrige **53% dos erros**.',
+        pill_alignment: 'Pilar 02: Alinhamento',
+        pill_alignment_desc: 'O Alinhamento Adversarial (Regras de Kahneman) permite que modelos concorrentes colaborem na construção de teorias.',
+        pill_strategy: 'Pillar 03: Estratégia',
+        pill_strategy_desc: 'MpFL (NeurIPS 2025). Agentes racionais com funções de utilidade convergem para um equilíbrio comprovado via Multiplayer Federated Learning.',
+        pill_protocol: 'Pilar 04: Protocolo',
+        pill_protocol_desc: 'Protocolo de deliberação verificado de 3 rondas (Modo Síntese). Otimiza a qualidade da decisão vs. maioria simples.',
+        pill_interface: 'Pilar 05: Interface',
+        pill_interface_desc: 'Sovereign Override & Diretrizes G11. Implementando padrões da Microsoft Research para Controle Humano-IA.',
     },
 
     Spanish: {
@@ -167,7 +191,7 @@ const strings: Record<UILang, Record<string, string>> = {
         sys_sovereignty: 'Soberanía de datos',
         sys_sovereignty_desc: 'Enrutamiento prioritario en la UE para solicitudes sensibles, con retención controlada por políticas y pista de auditoría robusta.',
         sys_sovereignty_tip: 'Consejo: active "Privacidad Estricta (L3)" al manejar PII/regulado/código.',
-        sys_placeholder: 'Describe your objective...',
+        sys_placeholder: 'Describe tu objetivo...',
         sys_input_buffer: 'Buffer de Entrada:',
         sys_execute: 'Ejecutar Sesión',
         sys_executing: 'Ejecutando…',
@@ -242,7 +266,7 @@ const strings: Record<UILang, Record<string, string>> = {
         sys_sovereignty: 'Souveraineté des données',
         sys_sovereignty_desc: 'Routage prioritaire UE pour les requêtes sensibles, avec rétention contrôlée par politique et piste d\'audit renforcée.',
         sys_sovereignty_tip: 'Conseil : activez « Vie privée Stricte (L3) » pour les données PII/réglementées/code.',
-        sys_placeholder: 'Describe your objective...',
+        sys_placeholder: 'Décrivez votre objectif...',
         sys_input_buffer: 'Tampon d\'entrée :',
         sys_execute: 'Exécuter la Session',
         sys_executing: 'Exécution…',
@@ -317,7 +341,7 @@ const strings: Record<UILang, Record<string, string>> = {
         sys_sovereignty: 'Datensouveränität',
         sys_sovereignty_desc: 'EU-priorisiertes Routing für sensible Anfragen, mit richtliniengesteuerter Aufbewahrung und gehärtetem Audit-Trail.',
         sys_sovereignty_tip: 'Tipp: Aktivieren Sie „Strenger Datenschutz (L3)" bei PII/regulierten Daten/Code.',
-        sys_placeholder: 'Describe your objective...',
+        sys_placeholder: 'Beschreiben Sie Ihr Ziel...',
         sys_input_buffer: 'Eingabepuffer:',
         sys_execute: 'Sitzung ausführen',
         sys_executing: 'Wird ausgeführt…',
@@ -392,7 +416,7 @@ const strings: Record<UILang, Record<string, string>> = {
         sys_sovereignty: 'Sovranità dei dati',
         sys_sovereignty_desc: 'Instradamento prioritario UE per richieste sensibili, con conservazione controllata da policy e traccia di audit rafforzata.',
         sys_sovereignty_tip: 'Suggerimento: attiva "Privacy Rigorosa (L3)" per PII/regolamentato/codice.',
-        sys_placeholder: 'Describe your objective...',
+        sys_placeholder: 'Descrivi il tuo obiettivo...',
         sys_input_buffer: 'Buffer di Input:',
         sys_execute: 'Esegui Sessione',
         sys_executing: 'In esecuzione…',
@@ -467,7 +491,7 @@ const strings: Record<UILang, Record<string, string>> = {
         sys_sovereignty: 'Datasoevereiniteit',
         sys_sovereignty_desc: 'EU-prioritaire routering voor gevoelige verzoeken, met beleidsgestuurde retentie en versterkte audittrail.',
         sys_sovereignty_tip: 'Tip: activeer "Strikte Privacy (L3)" bij PII/gereguleerde/code gegevens.',
-        sys_placeholder: 'Describe your objective...',
+        sys_placeholder: 'Beschrijf uw doel...',
         sys_input_buffer: 'Invoerbuffer:',
         sys_execute: 'Sessie Uitvoeren',
         sys_executing: 'Uitvoeren…',
@@ -541,20 +565,20 @@ export function resolveUILang(input?: string | null): UILang {
     if (!input) return 'English';
     const lower = input.toLowerCase().trim();
 
-    // Direct match from detectLanguage() output
+    // 1. Match direto (ex: "portuguese")
     const directMap: Record<string, UILang> = {
         english: 'English', portuguese: 'Portuguese', spanish: 'Spanish',
         french: 'French', german: 'German', italian: 'Italian', dutch: 'Dutch',
     };
     if (directMap[lower]) return directMap[lower];
 
-    // BCP-47 locale prefix match (e.g. "pt-BR", "de-DE", "fr")
+    // 2. Match BCP-47 (ex: "pt-BR" → "pt", "de-DE" → "de")
     const prefix = lower.split('-')[0];
     const localeMap: Record<string, UILang> = {
         en: 'English', pt: 'Portuguese', es: 'Spanish',
         fr: 'French', de: 'German', it: 'Italian', nl: 'Dutch',
     };
-    return localeMap[prefix] || 'English';
+    return localeMap[prefix] || 'English';  // Fallback seguro
 }
 
 /** Get a translated string. Falls back to English if key missing. */

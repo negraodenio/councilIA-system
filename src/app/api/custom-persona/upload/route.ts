@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { embedMistralCached } from "@/lib/embeddings/mistral";
-const pdf = require("pdf-parse");
 
 // Chunk text into overlapping segments
 function chunkText(text: string, maxChunkSize = 800, overlap = 100): string[] {
@@ -26,6 +25,7 @@ async function extractTextFromFile(file: File, filename: string): Promise<string
 
     if (ext === "pdf") {
         try {
+            const pdf = require("pdf-parse");
             const data = await pdf(buffer);
             // Clean and normalize extracted text
             let text = data.text || "";
@@ -136,6 +136,7 @@ export async function POST(req: NextRequest) {
         // Generate embeddings in batches of 10
         const batchSize = 10;
         let totalEmbedded = 0;
+        let firstError: string | null = null;
 
         for (let i = 0; i < chunks.length; i += batchSize) {
             const batch = chunks.slice(i, i + batchSize);
@@ -148,7 +149,6 @@ export async function POST(req: NextRequest) {
                     user_id: user.id,
                     chunk_content: chunk,
                     embedding: embeddings[idx], // Send as array, Supabase pgvector handles it
-                    document_id: docRecord.id, // Link to the document we just created
                 }));
 
                 const { error: insertErr } = await sbAdmin
@@ -157,11 +157,13 @@ export async function POST(req: NextRequest) {
 
                 if (insertErr) {
                     console.error(`[Upload API] Embedding insert error batch ${i}:`, insertErr);
+                    if (!firstError) firstError = `Insert Error: ${insertErr.message}`;
                 } else {
                     totalEmbedded += batch.length;
                 }
-            } catch (embErr) {
+            } catch (embErr: any) {
                 console.error(`[Upload API] Embedding generation error batch ${i}:`, embErr);
+                if (!firstError) firstError = `Embedding Error: ${embErr.message || String(embErr)}`;
             }
         }
 
@@ -172,7 +174,7 @@ export async function POST(req: NextRequest) {
             .update({
                 chunk_count: totalEmbedded,
                 status: totalEmbedded > 0 ? "ready" : "error",
-                error_message: totalEmbedded === 0 ? "Failed to generate embeddings" : null,
+                error_message: totalEmbedded === 0 ? (firstError || "Failed to generate embeddings") : null,
             })
             .eq("id", docRecord.id);
 

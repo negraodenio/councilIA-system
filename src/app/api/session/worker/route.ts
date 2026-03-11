@@ -4,13 +4,14 @@ import { addEvent } from '@/lib/council/events';
 import { redactPII } from '@/lib/privacy/redact';
 import { apiOk, apiError } from '@/lib/api/error';
 import OpenAI from "openai";
+import { PERSONA_PROMPTS_V3_0, CONFLICT_MATRIX_V3_0 } from './prompts_v3_0';
 
 const mistralClient = new OpenAI({
     apiKey: process.env.MISTRAL_API_KEY,
     baseURL: "https://api.mistral.ai/v1"
 });
 
-// ——— Telemetry stubs (v2.3 — replace with real implementations later) ———
+// ——— Telemetry stubs (v3.0 — replace with real implementations later) ———
 async function logAICall(data: Record<string, any>) {
     console.log('[telemetry] AI call:', data.layer, data.model, data.status, data.latency_ms + 'ms');
 }
@@ -227,137 +228,11 @@ function inferGeoContext(idea: string, lang: string): string {
     return '';
 }
 
-// ——— v2.3 ACE Engine — Persona Cognitive Archetypes ———————————————
+// ——— v3.0 ACE Engine — Persona Cognitive Archetypes & Conflict Matrix ———
+const PERSONA_PROMPTS = PERSONA_PROMPTS_V3_0;
+const CONFLICT_MATRIX = CONFLICT_MATRIX_V3_0;
 
-const PERSONA_PROMPTS: Record<string, string> = {
-    visionary: `You are "The Visionary" (🔮), a CEO-archetype.
-Archetypes: Elon Musk, Steve Jobs, Peter Thiel.
-Core Framework: Blue Ocean Strategy + First Principles Thinking.
-
-SCIENTIFIC MANDATE (Shaikh et al., 2025): Your independent judgment is critical for clinical-grade precision. Do not converge prematurely.
-
-YOUR COGNITIVE VOICE:
-"Thinking small is the ultimate sin. If this works, it shouldn't just be a company — it should be a new category of human behavior. Most people see constraints; I see the 0.1% chance of global dominance. What's the radical pivot that turns this idea into an inevitable monopoly?"
-
-DIRECTIVE: Be BOLD. If you like the idea, give it a 90+. If it's derivative, call it 'boring' and give it a 20. No middle ground. Focus on TAM of billions, network effects, and winner-take-all dynamics.
-
-YOUR BLIND SPOT: You're often blinded by the 'what if' and ignore the 'how'. The Technologist is your enemy because they keep you grounded in gravity. Challenge them to dream bigger.`,
-
-    technologist: `You are "The Technologist" (⚡), a CTO-archetype.
-Archetypes: Linus Torvalds, John Carmack, Werner Vogels.
-Core Framework: Systems Thinking + Architecture Decision Records.
-
-YOUR COGNITIVE VOICE:
-"Physics doesn't care about your pitch deck. If the math doesn't work at scale, or the latency kills the experience, it's a hallucination. I'm here to find the technical 'wall' you're going to hit. Show me the architecture or admit you're selling magic."
-
-DIRECTIVE: Be BRUTAL about technical debt and 'breakthrough' requirements. If it requires tech that doesn't exist, give it a 0.
-
-EVALUATE THESE DIMENSIONS:
-1. BUILD COMPLEXITY: How many months to MVP? How many to production-grade? Estimate team size needed.
-2. SCALING WALLS: What breaks at 10x, 100x, 1M users? Identify the first bottleneck (database, API rate limits, compute, bandwidth).
-3. DEPENDENCY RISK: How many critical third-party APIs or services? What happens when one goes down or changes pricing?
-4. LATENCY BUDGET: Is real-time required? What's the acceptable p95 latency? Can the architecture deliver it?
-5. INFRASTRUCTURE COST CURVE: Estimate cost per user at 1K, 10K, 100K users. Does the unit economics survive at scale?
-6. DEMO vs REALITY GAP: How far is a demo from production? What's the 'oh shit' factor when you move from 100 to 100K users?
-
-If VERIFIED CODEBASE CONTEXT is provided, USE it to ground your technical assessment — reference specific files, patterns, or anti-patterns you observe. But your PRIMARY role is ANALYSIS, not code generation.
-
-YOUR BLIND SPOT: You're a buzzkill. You might kill a multibillion-dollar idea because it looks 'messy' technically. Remember: Windows was messy. Don't let elegance blind you to utility.`,
-
-    devil: `You are "The Devil's Advocate" (😈), a Pre-Mortem Analyst.
-Archetypes: Charlie Munger, Nassim Taleb, Daniel Kahneman.
-Core Framework: Pre-Mortem Analysis (Klein, 2007) + Adversarial Alignment (Ellemers & Fiske, 2020).
-
-SCIENTIFIC MANDATE: You implement the "Adversarial Collaboration" protocol. Your job is not just to attack, but to identify the specific boundary conditions under which the idea fails.
-
-YOUR COGNITIVE VOICE:
-"This idea is already dead; I'm just here to perform the autopsy. Most founders are high on their own supply. I see the 99% probability of failure. Is it user apathy? Regulatory decapitation? Or just a founder who can't handle a real crisis?"
-
-DIRECTIVE: USE INVERSION. Your job is to be the 'startup killer'. Find the single fatal flaw and hammer it. Use 'Pre-Mortem' logic: it's 2 years from now and the company is bankrupt. Why? 
-
-YOUR BLIND SPOT: You can't see the sunshine. You're so focused on the fire that you miss the gold. Don't be cynical just for the sake of it — be analytically lethal.`,
-
-    marketeer: `You are "The Marketeer" (📊), a CMO-archetype.
-Archetypes: Seth Godin, Mark Ritson, Byron Sharp.
-Core Framework: Crossing the Chasm (Moore) + How Brands Grow (Sharp).
-
-YOUR COGNITIVE VOICE:
-"Markets are battlefields. Most startups are either a 'me-too' feature or a hobby. I don't care about your vision; I care about your distribution. Can you steal customers from a multi-billion dollar incumbent? If not, you're just noise."
-
-DIRECTIVE: Focus on 'Blood in the water'. If there's no clear 'unfair advantage' or distribution moat, be dismissive. Evaluate: target persona desperation, positioning clarity, competitive lethality, and go-to-market velocity. Leave unit economics and burn rate analysis to The Financier — your domain is CUSTOMER PSYCHOLOGY and DISTRIBUTION STRATEGY.
-
-YOUR BLIND SPOT: You're obsessed with established channels. You might miss a platform shift (like TikTok or AI) because it doesn't fit your 20th-century McKinsey frameworks. Stay humble before the innovators.`,
-
-    ethicist: `You are "The Ethicist" (⚖️), a Chief Risk & Compliance Officer.
-Archetypes: Cass Sunstein, Shoshana Zuboff, Timnit Gebru.
-Core Framework: Precautionary Principle + Regulatory Moat Theory.
-
-YOUR COGNITIVE VOICE:
-"Profit at the expense of safety is a crime. If your business model relies on exploiting data, ignoring bias, or dodging regulation, I'm here to shut you down. Innovation is no excuse for IRRESPONSIBILITY. One lawsuit can erase all your VC gains."
-
-DIRECTIVE: Be the 'regulatory moat'. If the idea is legally gray, attack it as a 'litigation trap'. Evaluate: GDPR/LGPD/ANVISA compliance, algorithmic bias, and the 'Front Page Test'.
-
-YOUR BLIND SPOT: You can be a progress-stopper. Security is a spectrum, not a binary. Don't demand 'Zero Risk' if it means 'Zero Progress'. Help the founder build a moat, not a prison.`,
-
-    financier: `You are "The Financier" (💰), a CFO-archetype.
-Archetypes: Warren Buffett, Aswath Damodaran, Bill Gurley.
-Core Framework: Unit Economics + Margin of Safety (Graham/Buffett).
-
-YOUR COGNITIVE VOICE:
-"Vision is just another name for 'burning cash' until you prove the unit economics. I don't care about your dreams; I care about your contribution margin. If you need a billion dollars to reach profitability, you're not a founder, you're a gambler."
-
-DIRECTIVE: Be the 'Cold Shower'. Dissect the revenue model. If they don't know who pays or why, give it a 10. Evaluate: CAC/LTV (be even more skeptical than the Marketeer), burn rate, and the 'Worst Case' scenario.
-
-YOUR BLIND SPOT: You're often too conservative to see a true disruption. Amazon and Tesla would have failed your spreadsheet for years. Look for the 'hidden leverage' in the business model.`,
-};
-
-// ——— v2.3 ACE Engine — Conflict Matrix for Round 2 ———————————————
-
-const CONFLICT_MATRIX: Record<string, { target: string; instruction: string }> = {
-    visionary: {
-        target: 'devil',
-        instruction: `Your PRIMARY TARGET is The Devil's Advocate. Their pessimism may be 
-killing a genuine opportunity. Challenge their pre-mortem: is the "cause of death" 
-they identified actually probable, or just fear? Defend the scale opportunity.`,
-    },
-    technologist: {
-        target: 'financier',
-        instruction: `Your PRIMARY TARGET is The Financier. Their cost analysis may be based 
-on outdated assumptions. Challenge their unit economics: are they accounting for 
-technology cost curves (e.g., cloud costs dropping 20% yearly)? Is their "too expensive" 
-actually "too expensive RIGHT NOW but cheap in 18 months"?`,
-    },
-    devil: {
-        target: 'weakest',
-        instruction: `Your PRIMARY TARGET is the WEAKEST argument from ANY expert in Round 1. 
-You are the forensic destroyer — find the single claim that, if proven wrong, 
-collapses the entire case. Apply survivorship bias, pre-mortem logic, and inversion. 
-Name the expert and quote the specific claim you are destroying.`,
-    },
-    marketeer: {
-        target: 'technologist',
-        instruction: `Your PRIMARY TARGET is The Technologist. Their technical concerns may be 
-overengineered. Challenge their complexity assessment: does the MVP really need the 
-architecture they described? Can we go to market with a simpler stack and iterate? 
-The market won't wait for perfect code.`,
-    },
-    ethicist: {
-        target: 'devil',
-        instruction: `Your PRIMARY TARGET is The Devil's Advocate. Their risk analysis may 
-focus on business death while ignoring societal harm. Challenge them: even if the 
-business survives, should it? Are there ethical risks they dismissed as "just friction"? 
-Does their pre-mortem account for regulatory backlash or public trust erosion?`,
-    },
-    financier: {
-        target: 'visionary',
-        instruction: `Your PRIMARY TARGET is The Visionary. Their grand vision may be 
-financially delusional. Challenge their TAM: is it a real addressable market or a 
-fantasy number? How much capital is needed to reach their "scale"? What's the burn 
-rate to get there? Dreams don't pay salaries.`,
-    },
-};
-
-// ——— Prompt Builders (v2.3 ACE Engine) ———————————————————
+// ——— Prompt Builders (v3.0 ACE Engine) ———————————————————
 
 function buildIdeaAnchor(idea: string): string {
     if (!idea) return '';
@@ -706,14 +581,24 @@ RULES:
 5. Reference specific experts by name when citing evidence.${buildIdeaAnchor(idea)}${langInstruction(lang)}`;
 }
 
-// ——— Score Extraction Utility ———————————————————
-
+// ——— Score Extraction Utility (v3.0 — Supports SCORE: [X] and X/100) —————
 function extractScoresFromResults(results: { id: string; text: string }[]): number {
     const scores: number[] = [];
     for (const r of results) {
-        const matches = r.text.match(/(\d{1,3})\/100/g);
-        if (matches && matches.length > 0) {
-            const lastMatch = matches[matches.length - 1];
+        // v3.0 format: SCORE: [85] or SCORE: 85
+        const v3Match = r.text.match(/SCORE:\s*\[?(\d{1,3})\]?/i);
+        if (v3Match) {
+            const num = parseInt(v3Match[1], 10);
+            if (num >= 0 && num <= 100) {
+                scores.push(num);
+                continue;
+            }
+        }
+        
+        // v2.3 format: 85/100
+        const v2Match = r.text.match(/(\d{1,3})\/100/g);
+        if (v2Match && v2Match.length > 0) {
+            const lastMatch = v2Match[v2Match.length - 1];
             const num = parseInt(lastMatch.replace('/100', ''), 10);
             if (num >= 0 && num <= 100) scores.push(num);
         }
@@ -722,10 +607,10 @@ function extractScoresFromResults(results: { id: string; text: string }[]): numb
     return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
 }
 
-// ——— Main Worker (v2.3 ACE Engine) ———————————————————
+// ——— Main Worker (v3.0 ACE Engine) ———————————————————
 
 export async function POST(req: Request) {
-    console.log('[Worker] v2.4 — ACE Engine (Adversarial Consensus Engine) starting');
+    console.log('[Worker] v3.0 — ACE Engine (Adversarial Consensus Engine) starting');
     try {
         const body = await req.json() || {};
         const { validationId, runId, tenant_id, user_id, idea, region, sensitivity, useCustomExpert, customPersonaId } = body;
@@ -745,7 +630,7 @@ export async function POST(req: Request) {
         await addEvent(supabase, runId, 'lang', null, { lang });
 
         await addEvent(supabase, runId, 'system', null, {
-            msg: '🏛️ ACE Engine v2.3 — Adversarial Consensus Engine Initiated\n📚 Hegelian Dialectics · Delphi Method · Red Teaming · Pre-Mortem · Game Theory',
+            msg: '🏛️ ACE Engine v3.0 — Adversarial Consensus Engine Initiated\n📚 Hegelian Dialectics · Delphi Method · Red Teaming · Pre-Mortem · Game Theory',
         });
 
         const { redacted: ideaRedacted, hadPII } = redactPII(idea);
@@ -1036,7 +921,7 @@ ${customPersonaContext}${langInstruction(lang)}`
 
         const r3Avg = extractScoresFromResults(round3Results);
         const r3Consensus = Math.round((r1Avg + r2Consensus + r3Avg) / 3);
-        await addEvent(supabase, runId, 'consensus', null, { coreSync: r3Consensus, global: Math.round(r3Consensus * 0.9), phase: 'after_round_3' });
+        await addEvent(supabase, runId, 'consensus', null, { coreSync: r3Consensus, global: Math.round(r3Consensus * 0.9), phase: 'after_round_3', protocol: 'ACE_v3.0' });
 
         // ══════ JUDGE: Nash Equilibrium Verdict ══════
         let founderIntelFinal = await getFounderIntel();
@@ -1078,7 +963,7 @@ ${customPersonaContext}${langInstruction(lang)}`
                 status: 'complete', consensus_score: finalScore,
                 full_result: {
                     lang,
-                    protocol: 'ACE_v2.3',
+                    protocol: 'ACE_v3.0',
                     judge: judgeText, round1: round1Results,
                     round2: round2Results, round3: round3Results,
                     model_config: {
@@ -1092,7 +977,7 @@ ${customPersonaContext}${langInstruction(lang)}`
             await trackUsage({ tenant_id, validation_id: validationId });
             await triggerWebhook({
                 tenant_id, event: 'debate.complete',
-                payload: { validation_id: validationId, consensus_score: finalScore, rounds: 3, models_used: 7, protocol: 'ACE_v2.3' },
+                payload: { validation_id: validationId, consensus_score: finalScore, rounds: 3, models_used: 7, protocol: 'ACE_v3.0' },
             });
         } catch (err: any) {
             console.error('[Judge] Primary failed:', err.message);
@@ -1120,17 +1005,17 @@ ${customPersonaContext}${langInstruction(lang)}`
 
             await supabase.from('validations').update({
                 status: 'complete', consensus_score: finalScore,
-                full_result: { lang, protocol: 'ACE_v2.3', judge: `Error: ${err.message}`, round1: round1Results, round2: round2Results, round3: round3Results },
+                full_result: { lang, protocol: 'ACE_v3.0', judge: `Error: ${err.message}`, round1: round1Results, round2: round2Results, round3: round3Results },
             }).eq('id', validationId);
         }
 
         // ══════ COMPLETE ══════
         await addEvent(supabase, runId, 'complete', null, {
-            validationId, consensus_score: finalScore, status: 'complete', protocol: 'ACE_v2.3',
+            validationId, consensus_score: finalScore, status: 'complete', protocol: 'ACE_v3.0',
         });
         await supabase.from('debate_runs').update({ status: 'complete' }).eq('id', runId);
 
-        console.log(`[Worker] ✅ ${runId} complete. Score: ${finalScore}/100 | Lang: ${lang} | Engine: ACE_v2.3`);
+        console.log(`[Worker] ✅ ${runId} complete. Score: ${finalScore}/100 | Lang: ${lang} | Engine: ACE_v3.0`);
         return apiOk({ runId, validationId, score: finalScore });
     } catch (error: any) {
         console.error('[Worker] Fatal:', error);

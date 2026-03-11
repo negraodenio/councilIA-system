@@ -34,7 +34,7 @@ export default function Home() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-cyan opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
                         </span>
-                        ACE ENGINE V2.4
+                        ACE ENGINE V3.0
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black leading-[1] mb-8 tracking-tighter font-display">
                         Validate your vision.<br />
@@ -43,7 +43,7 @@ export default function Home() {
                         </span>
                     </h1>
                     <p className="text-sm font-mono text-neon-cyan/50 uppercase tracking-[0.2em] mb-12 animate-pulse">
-                        Peer-Reviewed Decision Intelligence • ACE Engine 2.4
+                        Peer-Reviewed Decision Intelligence • ACE Engine 3.0
                     </p>
                     <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
                         Submit any strategic move. Up to seven AI experts with opposing scientific protocols debate it in 3 adversarial rounds. An autonomous Arbitrator synthesizes the debate into a reasoned verdict.

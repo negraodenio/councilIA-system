@@ -65,8 +65,8 @@ export default function MethodologyPage() {
                     <MethodologyCard 
                         id="03"
                         title="Rational Multi-Agent Systems"
-                        paper="MpFL (OpenReview ICLR 2025)"
-                        cite="https://openreview.net/forum?id=Vf6bY8V5lA"
+                        paper="MpFL (NeurIPS 2025)"
+                        cite="https://arxiv.org/abs/2501.08263"
                         icon="hub"
                         color="#10B981"
                         description="Multiplayer Federated Learning where clients are rational players with individual utility functions. Convergence to equilibrium is mathematically proven, mirroring our Collective Intelligence Engine."

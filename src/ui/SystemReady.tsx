@@ -29,8 +29,8 @@ export default function SystemReady() {
     const [ingestingContext, setIngestingContext] = useState(false);
 
     // Custom Persona variable
-    const [customPersona, setCustomPersona] = useState<any>(null);
-    const [useCustomExpert, setUseCustomExpert] = useState(true);
+    const [customPersonas, setCustomPersonas] = useState<any[]>([]);
+    const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
 
     useEffect(() => {
         const supabase = createClient();
@@ -49,16 +49,18 @@ export default function SystemReady() {
                 .single();
             if (profile) setTenantId(profile.tenant_id);
 
-            // Fetch active custom persona
+            // Fetch active custom personas
             const { data: personaData } = await supabase
                 .from('custom_personas')
                 .select('*')
                 .eq('user_id', user.id)
                 .eq('is_active', true)
-                .order('updated_at', { ascending: false })
-                .limit(1)
-                .single();
-            if (personaData) setCustomPersona(personaData);
+                .order('updated_at', { ascending: false });
+
+            if (personaData && personaData.length > 0) {
+                setCustomPersonas(personaData);
+                setSelectedPersonaId(personaData[0].id);
+            }
 
             setProfileLoading(false);
 
@@ -97,7 +99,8 @@ export default function SystemReady() {
                 sensitivity: 'business',
                 tenant_id: tenantId,
                 user_id: userId,
-                useCustomExpert: useCustomExpert && !!customPersona,
+                useCustomExpert: !!selectedPersonaId,
+                customPersonaId: selectedPersonaId,
             };
 
             const res = await fetch('/api/session/start', {
@@ -202,9 +205,11 @@ export default function SystemReady() {
                 <div className="p-4 mt-auto hidden md:block">
                     <div className="flex flex-col gap-2 p-3 rounded-xl bg-white/5 border border-white/10 group transition-colors">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-[#afff33]/30 flex-shrink-0 relative">
-                                <img alt="User Avatar" className="w-full h-full rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAiDCH1C_T1-srX_TVc918wGFKMxefnGfu78tEfqtbThgUqTAyHfD3yDXUBb7rPNYGh2PqVMb1fz5XW3I4uu7fitmkLmN_T_xJuKc5ikjeNxmMG6AduXx1QGsN7GWNjd5x5oCtDXrdSFABo8LE6qp457tNEsU9hSXLEXp1hc_yiFrPMpMmUEzx9Y8ES7G7ch4VgmyOpAc8RnyQbaDfIloDG9nJURg1L9EfibP7-llCDQBZvnUJYJzdNilNoXPELmceJSyFPBjod_79" />
-                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#afff33] border-2 border-[#161616] rounded-full animate-pulse"></div>
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border-2 border-[#afff33]/30 flex items-center justify-center relative shadow-inner">
+                                <span className="text-white font-display font-bold uppercase text-sm">
+                                    {usageInfo?.userName ? usageInfo.userName.charAt(0) : <span className="material-symbols-outlined text-sm text-slate-400">person</span>}
+                                </span>
+                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#afff33] border-2 border-[#161616] rounded-full shadow-[0_0_8px_#afff33]"></div>
                             </div>
                             <div className="hidden lg:block overflow-hidden flex-1">
                                 <p className="text-sm font-semibold truncate font-display text-white">
@@ -368,44 +373,64 @@ export default function SystemReady() {
                             </div>
                         </div>
 
-                        {/* Custom Expert Slot */}
-                        <div className="mt-3">
-                            {customPersona && customPersona.document_count > 0 ? (
-                                <div
-                                    className={`glass-panel p-3 rounded-lg border transition-all flex items-center gap-3 cursor-pointer ${useCustomExpert ? 'bg-white/5' : 'bg-black/20 opacity-50 grayscale'}`}
-                                    style={{ borderColor: useCustomExpert ? `${customPersona.color}40` : 'rgba(255,255,255,0.1)' }}
-                                    onClick={() => setUseCustomExpert(!useCustomExpert)}
-                                >
-                                    <div className="flex-1 flex justify-between items-center">
-                                        <div className="flex flex-col">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-lg">{customPersona.emoji || '🏢'}</span>
-                                                <h4 className="font-bold text-xs text-white">{customPersona.name}</h4>
+                        {/* Custom Expert Slots */}
+                        <div className="mt-3 flex flex-col gap-2 relative">
+                            {customPersonas.length > 0 && customPersonas.map((persona) => {
+                                const isSelected = selectedPersonaId === persona.id;
+                                return (
+                                    <div
+                                        key={persona.id}
+                                        className={`glass-panel p-3 rounded-lg border transition-all flex items-center gap-3 cursor-pointer ${isSelected ? 'bg-white/5' : 'bg-black/40'}`}
+                                        style={{ borderColor: isSelected ? `${persona.color}50` : 'rgba(255,255,255,0.05)' }}
+                                        onClick={() => setSelectedPersonaId(isSelected ? null : persona.id)}
+                                    >
+                                        <div className="flex-1 flex justify-between items-center">
+                                            <div className={`flex flex-col transition-all duration-300 ${!isSelected && 'grayscale opacity-50'}`}>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-lg">{persona.emoji || '🏢'}</span>
+                                                    <h4 className="font-bold text-xs text-white">{persona.name}</h4>
+                                                </div>
+                                                <p className="text-[9px] uppercase font-mono mt-1" style={{ color: persona.color || '#6366f1' }}>
+                                                    {persona.role || 'Custom Persona'}
+                                                </p>
                                             </div>
-                                            <p className="text-[9px] uppercase font-mono mt-1" style={{ color: useCustomExpert ? customPersona.color : '#666' }}>
-                                                {customPersona.role || 'Custom Persona'}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="text-[8px] font-bold text-[#00f2ff]/60 uppercase tracking-widest mr-1">
-                                                {useCustomExpert ? 'Active' : 'Disabled'}
+                                            <div className="flex items-center gap-3">
+                                                {/* Edit/Config Button */}
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        router.push('/dashboard/custom-persona');
+                                                    }}
+                                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 text-slate-400 hover:bg-white/10 hover:text-neon-cyan transition-all border border-white/5"
+                                                    title="Configure / Upload Files"
+                                                >
+                                                    <span className="material-symbols-outlined text-[18px]">settings</span>
+                                                </button>
+
+                                                <div className={`text-[9px] font-bold uppercase tracking-widest transition-colors duration-300 ${isSelected ? 'text-[#00f2ff]' : 'text-slate-500'}`}>
+                                                    {isSelected ? 'Enabled' : 'Disabled'}
+                                                </div>
+                                                {/* Native-style Visual Toggle */}
+                                                <div className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${isSelected ? 'bg-[#00f2ff]/30 shadow-[0_0_10px_rgba(0,242,255,0.2)]' : 'bg-slate-700/50'}`}>
+                                                    <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full transition-transform duration-300 ${isSelected ? 'bg-[#00f2ff] translate-x-5' : 'bg-slate-400 translate-x-0'}`}></div>
+                                                </div>
                                             </div>
-                                            <div className={`w-1.5 h-1.5 rounded-full ${useCustomExpert ? 'bg-[#afff33] shadow-[0_0_5px_#afff33]' : 'bg-slate-600'}`}></div>
                                         </div>
+                                    </div>
+                                );
+                            })}
+
+                            {/* Always show Add New Persona button */}
+                            <a href="/dashboard/custom-persona" className="glass-panel p-3 rounded-lg border border-dashed border-white/20 hover:border-neon-cyan/50 hover:bg-neon-cyan/5 transition-all flex justify-between items-center group">
+                                <div className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-slate-500 group-hover:text-neon-cyan transition-colors">add_circle</span>
+                                    <div>
+                                        <h4 className="font-bold text-xs text-slate-300 group-hover:text-white transition-colors">{t(lang, 'sys_train_persona') || 'Train Custom Expert'}</h4>
+                                        <p className="text-[9px] text-slate-500 uppercase font-mono mt-1">{t(lang, 'sys_train_persona_desc') || 'Add internal data perspective'}</p>
                                     </div>
                                 </div>
-                            ) : (
-                                <a href="/dashboard/custom-persona" className="glass-panel p-3 rounded-lg border border-dashed border-white/20 hover:border-neon-cyan/50 hover:bg-neon-cyan/5 transition-all flex justify-between items-center group">
-                                    <div className="flex items-center gap-3">
-                                        <span className="material-symbols-outlined text-slate-500 group-hover:text-neon-cyan transition-colors">add_circle</span>
-                                        <div>
-                                            <h4 className="font-bold text-xs text-slate-300 group-hover:text-white transition-colors">{t(lang, 'sys_train_persona') || 'Train Custom Expert'}</h4>
-                                            <p className="text-[9px] text-slate-500 uppercase font-mono mt-1">{t(lang, 'sys_train_persona_desc') || 'Add internal data perspective'}</p>
-                                        </div>
-                                    </div>
-                                    <span className="material-symbols-outlined text-slate-600 group-hover:text-neon-cyan transition-colors">arrow_forward</span>
-                                </a>
-                            )}
+                                <span className="material-symbols-outlined text-slate-600 group-hover:text-neon-cyan transition-colors">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
 
