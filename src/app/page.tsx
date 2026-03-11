@@ -34,16 +34,13 @@ export default function Home() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-cyan opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
                         </span>
-                        Adversarial Multi-Agent System
+                        ACE ENGINE V2.4
                     </div>
-                    <div className="mb-6 animate-fade-in">
-                        <span className="text-neon-cyan text-lg md:text-xl font-display font-black tracking-tighter uppercase italic drop-shadow-[0_0_10px_rgba(0,240,255,0.3)]">
-                            Validate your vision. Before you build.
+                    <h1 className="text-5xl md:text-8xl font-black leading-[1] mb-8 tracking-tighter font-display">
+                        Validate your vision.<br />
+                        <span className="bg-gradient-to-r from-neon-cyan via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+                            Before you build.
                         </span>
-                    </div>
-                    <h1 className="text-5xl md:text-7xl font-black leading-[1.1] mb-8 tracking-tight font-display">
-                        One AI agrees with you.<br />
-                        <span className="text-neon-cyan glow-text">Six won&apos;t.</span>
                     </h1>
                     <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
                         Submit any idea. Up to seven AI experts with opposing perspectives debate it in 3 adversarial rounds. An autonomous Arbitrator synthesizes the debate and delivers a reasoned verdict.
