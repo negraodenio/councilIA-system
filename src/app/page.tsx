@@ -42,8 +42,11 @@ export default function Home() {
                             Before you build.
                         </span>
                     </h1>
+                    <p className="text-sm font-mono text-neon-cyan/50 uppercase tracking-[0.2em] mb-12 animate-pulse">
+                        Peer-Reviewed Decision Intelligence • ACE Engine 2.4
+                    </p>
                     <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                        Submit any idea. Up to seven AI experts with opposing perspectives debate it in 3 adversarial rounds. An autonomous Arbitrator synthesizes the debate and delivers a reasoned verdict.
+                        Submit any strategic move. Up to seven AI experts with opposing scientific protocols debate it in 3 adversarial rounds. An autonomous Arbitrator synthesizes the debate into a reasoned verdict.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 font-display">
                         <a href="/login" role="button" aria-label="Start Free Session" className="w-full sm:w-auto px-8 py-4 bg-neon-cyan text-black rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-all text-center">
@@ -159,7 +162,7 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-black mb-4 uppercase tracking-tight font-display">The Protocol</h2>
-                        <p className="text-[#c4c4ff]">Three stages of intellectual purification.</p>
+                        <p className="text-[#c4c4ff] font-mono text-sm tracking-widest uppercase">Verified Adversarial Deliberation</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-space-black relative group">
@@ -167,24 +170,24 @@ export default function Home() {
                             <div className="size-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">upload_file</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display">You Submit</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed">Provide your business plan, hypothesis, or strategic move. Upload PDFs or plain text.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display">Delphi Submission</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Submit your hypothesis. The system isolates variables and prepares the Target Surface for expert dissection.</p>
                         </div>
                         <div className="p-8 rounded-2xl border border-neon-cyan/40 bg-space-black relative group glow-cyan">
                             <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/30 transition-colors font-display">02</span>
                             <div className="size-12 rounded-lg bg-neon-cyan/20 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">forum</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display">Six Experts Debate</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed">Our multi-agent system attacks and defends the idea through 3 adversarial rounds.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display">Kaesberg Deliberation</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Three rounds of adversarial alignment. Agents use peer-reviewed negotiation rules to stress-test every assumption.</p>
                         </div>
                         <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-space-black relative group">
                             <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/20 transition-colors font-display">03</span>
                             <div className="size-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">fact_check</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display">The Judge Decides</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed">The Arbitrator (GPT-4o) synthesizes all arguments into a final decision score.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display">Judicial Synthesis</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Final arbitration. The Oracle weighs surviving arguments, identifies the Value at Risk (VaR), and issues a verdict.</p>
                         </div>
                     </div>
                 </div>
@@ -211,7 +214,7 @@ export default function Home() {
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Growth First</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed italic">&quot;Calculated risk is the only hedge against irrelevance. I focus on scale and long-term dominance.&quot;</p>
+                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;First principles analysis applied to category creation. I audit for radical scale and Blue Ocean defensibility.&quot;</p>
                     </div>
                     {/* Technologist */}
                     <div className="p-6 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/40 hover:border-neon-cyan/50 transition-all group">
@@ -224,7 +227,7 @@ export default function Home() {
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Efficiency</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed italic">&quot;If it can&apos;t be automated or measured, it doesn&apos;t exist. I audit the stack and operational feasibility.&quot;</p>
+                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Systems architecture audit. I identify scaling walls, technical debt, and feasibility based on immutable laws.&quot;</p>
                     </div>
                     {/* Devil's Advocate */}
                     <div className="p-6 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/40 hover:border-neon-magenta/50 transition-all group">
@@ -237,7 +240,7 @@ export default function Home() {
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Destruction</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed italic">&quot;I exist to break your pride. My directive is to find the one variable that kills your entire project.&quot;</p>
+                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Pre-Mortem protocol (Klein, 2007). My directive is Forensic destruction of your ego and your logic.&quot;</p>
                     </div>
                     {/* Market Analyst */}
                     <div className="p-6 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/40 hover:border-neon-lime/50 transition-all group">
@@ -250,7 +253,7 @@ export default function Home() {
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Saturation</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed italic">&quot;Data doesn&apos;t lie, but people do. I analyze local density, trends, and consumer fatigue.&quot;</p>
+                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Market density and Saturation analysis. I audit for consumer fatigue and 'Crossing the Chasm' barriers.&quot;</p>
                     </div>
                     {/* Ethics & Risk */}
                     <div className="p-6 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/40 hover:border-purple-500/50 transition-all group">
@@ -263,7 +266,7 @@ export default function Home() {
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Sustainability</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed italic">&quot;Gentrification and regulatory compliance aren&apos;t hurdles—they&apos;re landmines. I navigate the social cost.&quot;</p>
+                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Regulatory theory and Social impact auditing. I map the moral landmines and long-term sustainability.&quot;</p>
                     </div>
                     {/* Financial Strategist */}
                     <div className="p-6 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/40 hover:border-yellow-500/50 transition-all group">
@@ -276,7 +279,7 @@ export default function Home() {
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Liquidity</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed italic">&quot;Burn rate is the primary metric of failure. I look for hidden costs and over-optimistic ROI windows.&quot;</p>
+                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Unit economics audit. I map the burn rate against reality to find the true Margin of Safety.&quot;</p>
                     </div>
                     {/* The Custom Expert */}
                     <div className="p-6 rounded-2xl border-2 border-indigo-500/40 bg-indigo-500/5 hover:border-indigo-500 transition-all group relative overflow-hidden shadow-[0_0_20px_rgba(99,102,241,0.1)]">
@@ -332,8 +335,8 @@ export default function Home() {
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Focus Lock</h4>
-                                        <p className="text-sm text-[#c4c4ff]">The Judge extracts key assumptions and variables from your proposal, creating a &quot;Target Surface&quot; for the council.</p>
+                                        <h4 className="font-bold mb-2 font-display">Target Surface Construction</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Applying G11 Guidelines to isolate key assumptions, creating a forensic map for council dissection.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -342,8 +345,8 @@ export default function Home() {
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Adversarial Challenge</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Agents spend 2 rounds identifying flaws, contradictions, and external risks that could jeopardize success.</p>
+                                        <h4 className="font-bold mb-2 font-display">Shaikh-Mode Deliberation</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Agents engage in adversarial alignment (PNAS 2020), identifying logic flaws with clinical precision.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -352,8 +355,8 @@ export default function Home() {
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Defense &amp; Concession</h4>
-                                        <p className="text-sm text-[#c4c4ff]">The &quot;Visionary&quot; and &quot;Technologist&quot; agents counter-argue. Weaker points are conceded and discarded.</p>
+                                        <h4 className="font-bold mb-2 font-display">Synthetical Filtering</h4>
+                                        <p className="text-sm text-[#c4c4ff]">3 rounds of noise-to-signal refinement. Weaker arguments are conceded until an equilibrium is reached.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -361,8 +364,8 @@ export default function Home() {
                                         <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs">4</div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Judicial Arbitration</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Final score calculation based on the weighted validity of surviving arguments.</p>
+                                        <h4 className="font-bold mb-2 font-display">Weighted Judicial Verdict</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Calculation of Strategic Margin and Value at Risk (VaR) based on Surviving Argument Density.</p>
                                     </div>
                                 </div>
                             </div>
