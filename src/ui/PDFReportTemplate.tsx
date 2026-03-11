@@ -257,7 +257,7 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                                         </div>
                                     </div>
                                     <div className="text-[10px] text-slate-400 leading-relaxed line-clamp-4 italic border-l-2 border-white/5 pl-4 ml-1">
-                                        <ReactMarkdown>{r.text.replace(/##.*/g, '').replace(/SCORE.*/s, '').trim().substring(0, 200) + '...'}</ReactMarkdown>
+                                        <ReactMarkdown>{r.text.replace(/##.*/g, '').replace(/SCORE[\s\S]*/i, '').trim().substring(0, 200) + '...'}</ReactMarkdown>
                                     </div>
                                 </div>
                             );
