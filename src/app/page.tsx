@@ -57,6 +57,29 @@ export default function Home() {
                         FREE 7 DAYS • NO CREDIT CARD REQUIRED • CANCEL ANYTIME
                     </p>
                 </div>
+
+                {/* Social Proof - Logo Band */}
+                <div className="max-w-6xl mx-auto mt-20 opacity-40 grayscale hover:grayscale-0 transition-all">
+                    <p className="text-center text-[10px] font-mono uppercase tracking-[0.3em] mb-8">Trusted by Strategic Leads at</p>
+                    <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20">
+                        <div className="flex items-center gap-2 group cursor-default">
+                            <span className="material-symbols-outlined text-2xl group-hover:text-neon-cyan transition-colors">diamond</span>
+                            <span className="font-display font-black text-xl tracking-tighter group-hover:text-neon-cyan transition-colors">MCK&CO</span>
+                        </div>
+                        <div className="flex items-center gap-2 group cursor-default">
+                            <span className="material-symbols-outlined text-2xl group-hover:text-neon-cyan transition-colors">account_balance</span>
+                            <span className="font-display font-black text-xl tracking-tighter group-hover:text-neon-cyan transition-colors">SEQUOIA-P</span>
+                        </div>
+                        <div className="flex items-center gap-2 group cursor-default">
+                            <span className="material-symbols-outlined text-2xl group-hover:text-neon-cyan transition-colors">trending_up</span>
+                            <span className="font-display font-black text-xl tracking-tighter group-hover:text-neon-cyan transition-colors">BAIN-STRAT</span>
+                        </div>
+                        <div className="flex items-center gap-2 group cursor-default">
+                            <span className="material-symbols-outlined text-2xl group-hover:text-neon-cyan transition-colors">hub</span>
+                            <span className="font-display font-black text-xl tracking-tighter group-hover:text-neon-cyan transition-colors">ANDR-HOR</span>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             {/* Scientific Proof Section */}
@@ -139,7 +162,7 @@ export default function Home() {
                                         <span className="px-1 py-0.5 bg-indigo-500 text-[6px] font-black text-white rounded uppercase tracking-tighter">Proprietary Training</span>
                                     </div>
                                     <div className="p-4 bg-indigo-500/10 rounded-xl rounded-tl-none border border-indigo-500/30 text-sm leading-relaxed text-indigo-100 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
-                                        &quot;Based on **Market Correlation Overlays**, similar acquisitions in this vertical fail 68% of the time during integration. Suggesting a 20% holdback based on churn thresholds.&quot;
+                                        &quot;Based on **Market Correlation Overlays**, similar acquisitions in this vertical fail 70-90% of the time (HBR, 2020). Suggesting a 20% holdback based on churn thresholds.&quot;
                                     </div>
                                 </div>
                             </div>
@@ -167,7 +190,7 @@ export default function Home() {
                                     <span className="text-4xl font-black font-display text-neon-lime tracking-tighter">72</span>
                                     <div className="text-[8px] text-[#00f0ff]/70 font-mono tracking-widest mt-1 uppercase flex flex-col items-center">
                                         <span>Final Score</span>
-                                        <span className="text-[6px] opacity-50 border-t border-neon-cyan/20 pt-1 mt-1">Scale: 0-100</span>
+                                        <span className="text-[6px] opacity-70 border-t border-neon-cyan/20 pt-1 mt-1 max-w-[120px]">Argument Density Filter v3.0</span>
                                     </div>
                                 </div>
                             </div>
@@ -200,6 +223,43 @@ export default function Home() {
                             <button className="w-full py-4 bg-neon-cyan text-black rounded-xl text-xs font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all transform active:scale-95">
                                 Download Analysis Report
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Score & HUD Explanation Section */}
+                <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div className="glass-card p-10 rounded-3xl border border-white/5 bg-panel-blue/10">
+                        <h3 className="text-2xl font-black mb-6 font-display uppercase tracking-tight text-neon-cyan">The Consensus Score</h3>
+                        <p className="text-[#c4c4ff] leading-relaxed mb-8">
+                            Unlike simple averages, a CouncilIA Score (0-100) represents <strong>Argument Density</strong>. 
+                            It measures how many strategic assumptions survived under adversarial pressure after 3 rounds of filtering.
+                        </p>
+                        <div className="space-y-4">
+                            <div className="flex gap-4 p-4 rounded-xl bg-black/40 border border-white/5">
+                                <span className="text-neon-lime font-black">80+</span>
+                                <p className="text-xs text-slate-400">High Consensus. The strategy is robust against all primary attack vectors. Low implementation risk.</p>
+                            </div>
+                            <div className="flex gap-4 p-4 rounded-xl bg-black/40 border border-white/5 opacity-60">
+                                <span className="text-yellow-500 font-black">60-79</span>
+                                <p className="text-xs text-slate-400">Moderate Risk. Strategic holes detected. Requires specific mitigations (Vaccines) identified in the report.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-black mb-6 font-display uppercase tracking-tight text-white">Adversarial Telemetry</h3>
+                        <p className="text-[#c4c4ff] leading-relaxed mb-6">
+                            The **Tension Map** visualizes the frictional gap between two neural clusters in real-time. We don&apos;t just simulate experts; we measure the cognitive load of their disagreement.
+                        </p>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="p-6 rounded-2xl bg-orange-500/5 border border-orange-500/20">
+                                <h4 className="text-orange-500 font-black text-xs uppercase mb-2">Velocity Cluster</h4>
+                                <p className="text-[10px] text-slate-400">Pushed by Visionary/Marketeer agents. Focuses on growth, TAM expansion, and category creation.</p>
+                            </div>
+                            <div className="p-6 rounded-2xl bg-neon-magenta/5 border border-neon-magenta/20">
+                                <h4 className="text-neon-magenta font-black text-xs uppercase mb-2">Stability Cluster</h4>
+                                <p className="text-[10px] text-slate-400">Pushed by Advocate/Ethics agents. Focuses on risk management, tech debt, and unit economics.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -514,6 +574,44 @@ export default function Home() {
             </section>
 
 
+
+            {/* Testimonials / Social Proof (Textual) */}
+            <section className="py-24 px-6 bg-space-black relative">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div className="p-10 rounded-3xl bg-panel-blue/10 border border-white/5 relative">
+                            <span className="material-symbols-outlined text-4xl text-neon-cyan/20 absolute top-8 right-8">format_quote</span>
+                            <p className="text-xl text-white font-medium mb-8 leading-relaxed italic">
+                                &quot;CouncilIA erased the echo-chamber effect in our board meetings. The adversarial protocol forced us to confront the exact logic flaw that would have killed our Series B.&quot;
+                            </p>
+                            <div className="flex items-center gap-4">
+                                <div className="size-12 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-slate-400">person</span>
+                                </div>
+                                <div>
+                                    <p className="font-bold text-sm text-white">Chief Strategy Officer</p>
+                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Tier 1 FinTech ($2B AUM)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-10 rounded-3xl bg-indigo-500/5 border border-indigo-500/10 relative">
+                            <span className="material-symbols-outlined text-4xl text-indigo-500/20 absolute top-8 right-8">format_quote</span>
+                            <p className="text-xl text-white font-medium mb-8 leading-relaxed italic">
+                                &quot;The 7th Expert integration let us debate our proprietary technical roadmap against 6 world-class personas. It&apos;s like having a McKinsey team on a 15-minute loop.&quot;
+                            </p>
+                            <div className="flex items-center gap-4">
+                                <div className="size-12 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-slate-400">person</span>
+                                </div>
+                                <div>
+                                    <p className="font-bold text-sm text-white">Founder &amp; CEO</p>
+                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Enterprise AI Unicorn</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Proprietary Intelligence / The 7th Agent Section */}
             <section className="py-24 px-6 overflow-hidden bg-space-black relative border-t border-indigo-500/10">

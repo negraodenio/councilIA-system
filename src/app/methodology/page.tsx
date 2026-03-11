@@ -138,6 +138,34 @@ export default function MethodologyPage() {
                             </p>
                         </div>
                     </div>
+
+                    {/* Round-by-Round Breakdown */}
+                    <div className="mt-20 border-t border-white/10 pt-20">
+                        <h2 className="text-3xl font-display font-black mb-12 text-center">The 3-Round Protocol</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                            <div className="space-y-4 p-6">
+                                <div className="text-indigo-400 font-mono text-2xl font-bold">R1</div>
+                                <h4 className="font-bold uppercase tracking-widest text-xs">Adversarial Opening</h4>
+                                <p className="text-xs text-slate-400 leading-relaxed">
+                                    Agents isolate variables. The Devil&apos;s Advocate is given primary authority to find &quot;Instant Failure&quot; points.
+                                </p>
+                            </div>
+                            <div className="space-y-4 p-6 border-x border-white/5">
+                                <div className="text-indigo-400 font-mono text-2xl font-bold">R2</div>
+                                <h4 className="font-bold uppercase tracking-widest text-xs">Cross-Examination</h4>
+                                <p className="text-xs text-slate-400 leading-relaxed">
+                                    Agents must address the specific dissent points raised in R1. Majority voting is disabled; logic must be defended.
+                                </p>
+                            </div>
+                            <div className="space-y-4 p-6">
+                                <div className="text-indigo-400 font-mono text-2xl font-bold">R3</div>
+                                <h4 className="font-bold uppercase tracking-widest text-xs">Recursive Synthesis</h4>
+                                <p className="text-xs text-slate-400 leading-relaxed">
+                                    The Arbitrator filters for argument density. Only the points that survived R1/R2 are included in the final verdict.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
