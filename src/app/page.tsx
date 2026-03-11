@@ -34,27 +34,52 @@ export default function Home() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-cyan opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
                         </span>
-                        ACE ENGINE V3.0
+                        DECISION INTELLIGENCE // OS 3.0
                     </div>
-                    <h1 className="text-5xl md:text-8xl font-black leading-[1] mb-8 tracking-tighter font-display">
-                        Validate your vision.<br />
+                    <h1 className="text-5xl md:text-8xl font-black leading-[1] mb-8 tracking-tighter font-display uppercase">
+                        6 AI Experts Debate Your Strategy.<br />
                         <span className="bg-gradient-to-r from-neon-cyan via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">
-                            Before you build.
+                            While You Watch.
                         </span>
                     </h1>
-                    <p className="text-sm font-mono text-neon-cyan/50 uppercase tracking-[0.2em] mb-12 animate-pulse">
-                        Peer-Reviewed Decision Intelligence • ACE Engine 3.0
-                    </p>
-                    <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                        Submit any strategic move. Up to seven AI experts with opposing scientific protocols debate it in 3 adversarial rounds. An autonomous Arbitrator synthesizes the debate into a reasoned verdict.
+                    <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed">
+                        Get a board-level decision in 15 minutes — not 3 weeks of meetings. Our Adversarial Consensus Engine (ACE) uses peer-reviewed science from Johns Hopkins & Stanford to eliminate bias and find the truth.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 font-display">
                         <a href="/login" role="button" aria-label="Start Free Session" className="w-full sm:w-auto px-8 py-4 bg-neon-cyan text-black rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-all text-center">
-                            Start Free Session
+                            Start Free Decision
                         </a>
                         <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 border border-[rgba(0,240,255,0.2)] bg-[#121235]/40 hover:bg-[#121235]/60 rounded-xl font-bold text-lg transition-all text-center text-neon-cyan">
-                            See how it works
+                            Watch 2-Min Demo
                         </a>
+                    </div>
+                    <p className="mt-8 text-xs font-mono text-slate-500 uppercase tracking-widest">
+                        FREE 7 DAYS • NO CREDIT CARD REQUIRED • CANCEL ANYTIME
+                    </p>
+                </div>
+            </section>
+
+            {/* Scientific Proof Section */}
+            <section className="py-12 px-6 border-y border-[rgba(0,240,255,0.1)] bg-panel-blue/5">
+                <div className="max-w-7xl mx-auto">
+                    <p className="text-center text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-10">Validated by 4 Peer-Reviewed Studies</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        <div className="text-center space-y-2">
+                            <h3 className="text-xl font-black text-white font-display">97% Precision</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">PLOS Digital Health 2025</p>
+                        </div>
+                        <div className="text-center space-y-2">
+                            <h3 className="text-xl font-black text-white font-display">Bias Erased</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">PNAS (Adversarial Alignment)</p>
+                        </div>
+                        <div className="text-center space-y-2">
+                            <h3 className="text-xl font-black text-white font-display">Consensus Opt.</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">ACL Findings 2025 (Kaesberg)</p>
+                        </div>
+                        <div className="text-center space-y-2">
+                            <h3 className="text-xl font-black text-white font-display">Surgical Accuracy</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">COLING 2025 (Shaikh et al.)</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -170,24 +195,24 @@ export default function Home() {
                             <div className="size-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">upload_file</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display">Delphi Submission</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Submit your hypothesis. The system isolates variables and prepares the Target Surface for expert dissection.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Submit Your Move</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Input your strategy, M&A hypothesis, or launch plan. The Council prepares for surgical dissection.</p>
                         </div>
                         <div className="p-8 rounded-2xl border border-neon-cyan/40 bg-space-black relative group glow-cyan">
                             <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/30 transition-colors font-display">02</span>
                             <div className="size-12 rounded-lg bg-neon-cyan/20 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">forum</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display">Kaesberg Deliberation</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Three rounds of adversarial alignment. Agents use peer-reviewed negotiation rules to stress-test every assumption.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Watch 6 Experts Debate</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Witness real-time adversarial deliberation. Intervene anytime to pivot the discussion and challenge the AI&apos;s logic.</p>
                         </div>
                         <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-space-black relative group">
                             <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/20 transition-colors font-display">03</span>
                             <div className="size-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">fact_check</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display">Judicial Synthesis</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Final arbitration. The Oracle weighs surviving arguments, identifies the Value at Risk (VaR), and issues a verdict.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Actionable Verdict</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Not just a score. Get a detailed board-level report with specific next steps and risk mitigation strategies.</p>
                         </div>
                     </div>
                 </div>
@@ -290,14 +315,14 @@ export default function Home() {
                             </div>
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <h4 className="font-bold text-sm font-display">The 7th Expert</h4>
-                                    <span className="px-1.5 py-0.5 bg-indigo-500 text-[8px] font-black text-white rounded uppercase tracking-tighter">Premium</span>
+                                    <h4 className="font-bold text-sm font-display uppercase tracking-tight text-indigo-100">Your Specialist</h4>
+                                    <span className="px-1.5 py-0.5 bg-indigo-500 text-[8px] font-black text-white rounded uppercase tracking-tighter">Enterprise</span>
                                 </div>
                                 <p className="text-[10px] text-indigo-400 uppercase tracking-widest font-black">Proprietary Training</p>
                             </div>
                         </div>
                         <p className="text-xs text-slate-200 leading-relaxed font-medium mb-6 relative z-10">
-                            &quot;Train a 7th agent on your company&apos;s internal data. Your strategy docs, your customer insights, your past decisions — all debating alongside the council.&quot;
+                            Train a 7th agent on your company&apos;s internal data. Upload strategy docs, research, and financial data. Your dedicated expert defends YOUR priorities alongside the council.
                         </p>
                         <a href="/login" className="inline-flex items-center gap-2 text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest transition-colors relative z-10">
                             Create Your 7th Agent <span className="material-symbols-outlined text-[12px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -540,91 +565,103 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Pricing Section */}
+            {/* Simple Pricing Component Section */}
             <section className="py-24 px-6 max-w-7xl mx-auto" id="pricing">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl font-black mb-4 uppercase tracking-tight font-display">Secure Your Advantage</h2>
-                    <p className="text-[#c4c4ff]">Choose the depth of scrutiny your ideas deserve.</p>
+                    <h2 className="text-4xl font-black mb-4 uppercase tracking-tight font-display">Straightforward Pricing</h2>
+                    <p className="text-[#c4c4ff] max-w-xl mx-auto">Choose the tier that matches your decision-making velocity.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Free */}
-                    <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/30 flex flex-col">
-                        <h3 className="font-bold text-lg mb-2 font-display">Explorer</h3>
+                    {/* Starter */}
+                    <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 flex flex-col">
+                        <h3 className="font-bold text-lg mb-2 font-display">Starter</h3>
                         <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-black font-display">$0</span>
+                            <span className="text-4xl font-black font-display text-white">$49</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
                         <ul className="space-y-4 mb-8 flex-grow">
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                1 session / month
+                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
+                                5 decisions / month
                             </li>
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                3-Agent Council
+                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
+                                All 6 Expert Personas
                             </li>
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                Standard Arbitration
+                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
+                                Full Debate Transcript
                             </li>
                         </ul>
-                        <button role="button" aria-label="Start Free Session" className="w-full py-3 border border-[rgba(0,240,255,0.2)] rounded-xl font-bold hover:bg-panel-blue transition-all text-neon-cyan font-display text-sm">Start Free Session</button>
+                        <a href="/login" className="w-full py-3 border border-[rgba(0,240,255,0.2)] rounded-xl font-bold hover:bg-panel-blue transition-all text-center text-neon-cyan font-display text-sm">Get Started</a>
                     </div>
-                    {/* Pro */}
-                    <div className="p-8 rounded-2xl border-2 border-neon-cyan bg-space-black flex flex-col relative glow-cyan scale-105 z-10">
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-neon-cyan text-black text-[10px] font-black uppercase rounded-full tracking-widest">Most Popular</div>
-                        <h3 className="font-bold text-lg mb-2 text-neon-cyan font-display">Strategist</h3>
+                    {/* Professional */}
+                    <div className="p-8 rounded-2xl border-2 border-neon-cyan/50 bg-panel-blue/20 flex flex-col relative shadow-[0_0_30px_rgba(0,240,255,0.1)]">
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-neon-cyan text-black text-[10px] font-black uppercase rounded-full tracking-widest">Enterprise Ready</div>
+                        <h3 className="font-bold text-lg mb-2 text-neon-cyan font-display">Professional</h3>
                         <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-black font-display text-white">$29</span>
+                            <span className="text-4xl font-black font-display text-white">$197</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
                         <ul className="space-y-4 mb-8 flex-grow">
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                10 sessions / month
+                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
+                                <strong>Unlimited</strong> Decisions
                             </li>
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                Full 7-Agent Council
+                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
+                                <strong>The 7th Expert</strong> (Your Data)
                             </li>
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                ACE Engine™ Analysis
+                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
+                                Real-time Intervention
                             </li>
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
+                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
                                 Exportable PDF Reports
                             </li>
                         </ul>
-                        <button role="button" aria-label="Start Pro Session" className="w-full py-3 bg-neon-cyan text-black rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)] font-display text-sm hover:scale-105 active:scale-95">Start Pro Session</button>
+                        <a href="/login" className="w-full py-3 bg-neon-cyan text-black rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)] font-display text-sm hover:scale-105 active:scale-95 text-center">Start Professional</a>
                     </div>
-                    {/* Team */}
-                    <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/30 flex flex-col">
-                        <h3 className="font-bold text-lg mb-2 font-display">Corporate</h3>
+                    {/* Enterprise */}
+                    <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-purple-500/5 flex flex-col">
+                        <h3 className="font-bold text-lg mb-2 font-display uppercase tracking-tight text-purple-300">Enterprise</h3>
                         <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-black font-display">$99</span>
+                            <span className="text-4xl font-black font-display text-white">$997</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
                         <ul className="space-y-4 mb-8 flex-grow">
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                Unlimited sessions
+                                <span className="material-symbols-outlined text-purple-400 text-lg">verified</span>
+                                <strong>Surgical Mode™</strong> Accuracy
                             </li>
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                Custom Council Persona Training
+                                <span className="material-symbols-outlined text-purple-400 text-lg">verified</span>
+                                Custom Model Onboarding
                             </li>
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                Priority Judicial Processing
+                                <span className="material-symbols-outlined text-purple-400 text-lg">verified</span>
+                                Full API & SSO Access
                             </li>
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg shrink-0 select-none">check_circle</span>
-                                Team Collaboration Tools
+                                <span className="material-symbols-outlined text-purple-400 text-lg">verified</span>
+                                Dedicated Strategy Manager
                             </li>
                         </ul>
-                        <button className="w-full py-3 border border-[rgba(0,240,255,0.2)] rounded-xl font-bold hover:bg-panel-blue transition-all text-neon-cyan font-display text-sm">Contact Sales</button>
+                        <a href="/login" className="w-full py-3 border border-purple-500/30 bg-purple-500/10 rounded-xl font-bold hover:bg-purple-500/20 transition-all text-purple-300 font-display text-sm text-center">Contact Sales</a>
                     </div>
+                </div>
+            </section>
+
+            {/* Final CTA Section */}
+            <section className="py-24 px-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-neon-cyan/5 blur-[120px] rounded-full -translate-y-1/2"></div>
+                <div className="max-w-4xl mx-auto text-center relative z-10">
+                    <h2 className="text-4xl md:text-6xl font-black mb-8 font-display uppercase">Ready to validate your next big move?</h2>
+                    <p className="text-xl text-slate-400 mb-12">Start your 7-day free trial. No credit card required.</p>
+                    <a href="/login" className="inline-block px-12 py-5 bg-gradient-to-r from-neon-cyan to-blue-500 text-black rounded-2xl font-black text-xl hover:shadow-[0_0_40px_rgba(0,240,255,0.4)] transition-all transform hover:-translate-y-1 active:scale-95">
+                        Start Free Session Now →
+                    </a>
                 </div>
             </section>
 
