@@ -37,9 +37,9 @@ export default function Home() {
                         DECISION INTELLIGENCE // OS 3.0
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black leading-[1] mb-8 tracking-tighter font-display uppercase">
-                        6 AI Experts Debate Your Strategy.<br />
+                        Make the Right Strategic<br />
                         <span className="bg-gradient-to-r from-neon-cyan via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">
-                            While You Watch.
+                            Move in 15 Minutes.
                         </span>
                     </h1>
                     <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed">
@@ -92,7 +92,7 @@ export default function Home() {
                             <div className="px-3 py-1 bg-neon-magenta/10 text-neon-magenta text-[10px] font-black uppercase rounded tracking-tighter flex items-center gap-1.5">
                                 <span className="size-1.5 bg-neon-magenta rounded-full"></span> LIVE
                             </div>
-                            <h2 className="text-sm font-mono text-[#c4c4ff]/70 tracking-widest uppercase">SESSION #0214: Cold Email Tool for Solo Founders ($99/mo)</h2>
+                            <h2 className="text-sm font-mono text-[#c4c4ff]/70 tracking-widest uppercase">SESSION #0214: SaaS M&A Strategy - Project Horizon ($12M Acquisition)</h2>
                         </div>
                         <div className="flex gap-1.5">
                             <div className="size-3 rounded-full bg-red-500/40"></div>
@@ -111,7 +111,7 @@ export default function Home() {
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold text-orange-500 tracking-widest uppercase">VISIONARY</p>
                                     <div className="p-4 bg-panel-blue/40 rounded-xl rounded-tl-none border border-[rgba(0,240,255,0.1)] text-sm leading-relaxed text-[#c4c4ff]">
-                                        Solo founders are drowning in low-quality tools. A premium $99/mo solution that actually guarantees deliverability is a blue ocean. High friction means high retention.
+                                        The NRR on Project Horizon is 112%. Acquiring this competitor now removes the only threat to our Enterprise dominance. It&apos;s a defensive land-grab with 5x ROI.
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +123,7 @@ export default function Home() {
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold text-neon-magenta tracking-widest uppercase">DEVIL&apos;S ADVOCATE</p>
                                     <div className="p-4 bg-panel-blue/40 rounded-xl rounded-tl-none border border-[rgba(0,240,255,0.1)] text-sm leading-relaxed text-[#c4c4ff]">
-                                        Delusional. Solo founders have a $0 budget for &quot;premium&quot; email. Instantly and Lemlist own the $30-$50 tier. You&apos;re pricing yourself into a graveyard.
+                                        Unit economics don&apos;t clear. Their CAC is skyrocketing and the tech stack is legacy. You aren&apos;t buying growth; you&apos;re buying a technical debt anchor.
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +139,7 @@ export default function Home() {
                                         <span className="px-1 py-0.5 bg-indigo-500 text-[6px] font-black text-white rounded uppercase tracking-tighter">Proprietary Training</span>
                                     </div>
                                     <div className="p-4 bg-indigo-500/10 rounded-xl rounded-tl-none border border-indigo-500/30 text-sm leading-relaxed text-indigo-100 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
-                                        &quot;Based on **Market Correlation Overlays**, solo founders exhibit 3.2x higher LTV at the $99 price point when setup latency is reduced by 80%. This confirms a 'Super-Consumer' segment that Lemlist currently ignores.&quot;
+                                        &quot;Based on **Market Correlation Overlays**, similar acquisitions in this vertical fail 68% of the time during integration. Suggesting a 20% holdback based on churn thresholds.&quot;
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@ export default function Home() {
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold text-neon-cyan tracking-widest uppercase">TECH LEAD</p>
                                     <div className="p-4 bg-panel-blue/40 rounded-xl rounded-tl-none border border-[rgba(0,240,255,0.1)] text-sm leading-relaxed text-[#c4c4ff]">
-                                        Warm-up 2.0 verified. If the deliverability delta is &gt;15%, the $99 price point is technically justifiable. Moving to deployment validation.
+                                        Code audit suggests modular overlap. We can sunset their legacy engine in 4 months, migrating users to our core infrastructure. Feasibility is green.
                                     </div>
                                 </div>
                             </div>
@@ -173,11 +173,30 @@ export default function Home() {
                             </div>
                             <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Veredict: <span className="text-neon-lime">Strategic Approval</span></h3>
                             <p className="text-[10px] font-mono text-slate-500 uppercase mb-4 tracking-tighter">Arbitrator Protocol: 3-Layer Synthesis</p>
-                            <ul className="text-sm text-[#c4c4ff] leading-relaxed mb-8 text-left space-y-2 list-disc list-inside bg-space-black/40 p-4 rounded-xl border border-[rgba(0,240,255,0.1)] shadow-inner">
-                                <li><strong>Advantage:</strong> Proprietary Warm-up logic is defensible.</li>
-                                <li><strong>Mitigation:</strong> High-ticket solo founder niche exists.</li>
-                                <li><strong>Action Item:</strong> Focus MVP on setup speed (Cold-to-Live).</li>
+                            <ul className="text-sm text-[#c4c4ff] leading-relaxed mb-6 text-left space-y-2 list-disc list-inside bg-space-black/40 p-4 rounded-xl border border-[rgba(0,240,255,0.1)] shadow-inner">
+                                <li><strong>Advantage:</strong> Defensive moat against vertical competitors.</li>
+                                <li><strong>Mitigation:</strong> 20% holdback for churn protection.</li>
+                                <li><strong>Action Item:</strong> Finalize technical due diligence on stack.</li>
                             </ul>
+                            
+                            {/* Tension Map Visualization (MINI) */}
+                            <div className="w-full mb-8 space-y-3">
+                                <div className="flex justify-between items-center px-1">
+                                    <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Tension Map</span>
+                                    <span className="text-[8px] font-bold text-neon-cyan animate-pulse">LIVE</span>
+                                </div>
+                                <div className="h-16 bg-space-black/60 rounded-lg border border-white/5 flex items-end justify-around p-2 gap-1 overflow-hidden relative group">
+                                    <div className="absolute top-0 left-0 w-full h-px bg-white/5"></div>
+                                    <div className="h-[60%] w-3 bg-orange-500/40 border-t border-orange-500 rounded-t-sm animate-[pulse_2s_infinite]"></div>
+                                    <div className="h-[85%] w-3 bg-neon-magenta/40 border-t border-neon-magenta rounded-t-sm animate-[pulse_3s_infinite]"></div>
+                                    <div className="h-[40%] w-3 bg-indigo-500/40 border-t border-indigo-500 rounded-t-sm animate-[pulse_2.5s_infinite]"></div>
+                                    <div className="h-[70%] w-3 bg-neon-cyan/40 border-t border-neon-cyan rounded-t-sm animate-[pulse_1.5s_infinite]"></div>
+                                    <div className="h-[55%] w-3 bg-neon-lime/40 border-t border-neon-lime rounded-t-sm animate-[pulse_4s_infinite]"></div>
+                                    {/* Scanline overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/5 to-transparent h-4 animate-[scan_2s_linear_infinite] pointer-events-none"></div>
+                                </div>
+                            </div>
+
                             <button className="w-full py-4 bg-neon-cyan text-black rounded-xl text-xs font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all transform active:scale-95">
                                 Download Analysis Report
                             </button>
