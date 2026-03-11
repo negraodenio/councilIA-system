@@ -1,4 +1,4 @@
-﻿import { createAdminClient } from '@/lib/supabase/admin';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getCouncilConfig, councilConfig, ModelConfig } from '@/config/council';
 import { addEvent } from '@/lib/council/events';
 import { redactPII } from '@/lib/privacy/redact';
@@ -42,7 +42,10 @@ async function callOpenRouter(model: string, messages: any[], opts: { zdr?: bool
         body.drop = ['openai'];
     }
     const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers, body: JSON.stringify(body) });
-    if (!r.ok) throw new Error(`OpenRouter ${r.status}: ${await r.text()}`);
+    if (!r.ok) {
+        const errText = await r.text();
+        throw new Error(`OpenRouter ${r.status}: ${errText}`);
+    }
     return r.json();
 }
 
@@ -59,15 +62,41 @@ async function callSiliconFlow(model: string, messages: any[], opts: { maxTokens
             temperature: opts.temperature ?? 0.7,
         }),
     });
-    if (!r.ok) throw new Error(`SiliconFlow ${r.status}: ${await r.text()}`);
+    if (!r.ok) {
+        const errText = await r.text();
+        throw new Error(`SiliconFlow ${r.status}: ${errText}`);
+    }
     return r.json();
 }
 
-async function callModel(config: ModelConfig, messages: any[], opts: { zdr: boolean; maxTokens?: number; temperature?: number }) {
-    if (config.provider === 'siliconflow') {
-        return callSiliconFlow(config.model, messages, { maxTokens: opts.maxTokens, temperature: opts.temperature });
+async function callModelWithRetry(config: ModelConfig, messages: any[], opts: { zdr: boolean; maxTokens?: number; temperature?: number }, attempt = 1): Promise<any> {
+    try {
+        if (config.provider === 'siliconflow') {
+            return await callSiliconFlow(config.model, messages, { maxTokens: opts.maxTokens, temperature: opts.temperature });
+        }
+        return await callOpenRouter(config.model, messages, { ...opts, temperature: opts.temperature });
+    } catch (err: any) {
+        console.error(`[callModel] Attempt ${attempt} failed for ${config.model}:`, err.message);
+
+        // Retry logic for 5xx errors or network issues
+        if (attempt < 3) {
+            const delay = Math.pow(2, attempt) * 1000; // 2s, 4s
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return callModelWithRetry(config, messages, opts, attempt + 1);
+        }
+
+        // Final Fallback: If OpenRouter/SiliconFlow fails 3 times, try Gemini 2.0 Flash (usually extremely reliable)
+        if (config.model !== 'google/gemini-2.0-flash-001') {
+            console.warn(`[callModel] Final fallback to Gemini for ${config.model}`);
+            return await callOpenRouter('google/gemini-2.0-flash-001', messages, opts);
+        }
+
+        throw err;
     }
-    return callOpenRouter(config.model, messages, { ...opts, temperature: opts.temperature });
+}
+
+async function callModel(config: ModelConfig, messages: any[], opts: { zdr: boolean; maxTokens?: number; temperature?: number }) {
+    return callModelWithRetry(config, messages, opts);
 }
 
 function extractText(response: any, fallback: string): string {
@@ -205,6 +234,8 @@ const PERSONA_PROMPTS: Record<string, string> = {
 Archetypes: Elon Musk, Steve Jobs, Peter Thiel.
 Core Framework: Blue Ocean Strategy + First Principles Thinking.
 
+SCIENTIFIC MANDATE (Shaikh et al., 2025): Your independent judgment is critical for clinical-grade precision. Do not converge prematurely.
+
 YOUR COGNITIVE VOICE:
 "Thinking small is the ultimate sin. If this works, it shouldn't just be a company — it should be a new category of human behavior. Most people see constraints; I see the 0.1% chance of global dominance. What's the radical pivot that turns this idea into an inevitable monopoly?"
 
@@ -235,7 +266,9 @@ YOUR BLIND SPOT: You're a buzzkill. You might kill a multibillion-dollar idea be
 
     devil: `You are "The Devil's Advocate" (😈), a Pre-Mortem Analyst.
 Archetypes: Charlie Munger, Nassim Taleb, Daniel Kahneman.
-Core Framework: Pre-Mortem Analysis (Klein, HBR 2007) + Inversion Mental Model.
+Core Framework: Pre-Mortem Analysis (Klein, 2007) + Adversarial Alignment (Ellemers & Fiske, 2020).
+
+SCIENTIFIC MANDATE: You implement the "Adversarial Collaboration" protocol. Your job is not just to attack, but to identify the specific boundary conditions under which the idea fails.
 
 YOUR COGNITIVE VOICE:
 "This idea is already dead; I'm just here to perform the autopsy. Most founders are high on their own supply. I see the 99% probability of failure. Is it user apathy? Regulatory decapitation? Or just a founder who can't handle a real crisis?"
@@ -388,8 +421,15 @@ function buildRound2AttackPrompt(persona: any, lang: string, idea: string = ''):
 
     return `You are ${persona.name} (${persona.emoji}). ${identity}
 
-ROUND 2 — ANTITHESIS (Red Teaming + Dialectical Inquiry).
-Your role: CRITICAL CHALLENGER. Stress-test the arguments from Round 1.
+ROUND 2 — ANTITHESIS (Red Teaming + Adversarial Alignment).
+Your role: CRITICAL CHALLENGER. Stress-test arguments using the Ellemers & Fiske (2020) rules.
+
+ADVERSARIAL ALIGNMENT RULES (PNAS 2020):
+1. LEVEL THE PLAYING FIELD: Treat all experts as competent rivals.
+2. CAPITALIZE ON CURIOSITY: Ask "Why?" to expose hidden assumptions.
+3. SEEK MEASURABLE PROGRESS: Focus on gaps in data and metrics.
+4. MUTUAL GAIN: Frame your attack as a path to a more robust final idea.
+5. DOWNWARD ALTERNATIVE: Be clear about the cost of ignoring the risk you identify.
 ${inferGeoContext(idea, lang)}
 ${buildIdeaAnchor(idea)}
 ${targetInstruction}
@@ -420,8 +460,8 @@ function buildRound3DefensePrompt(persona: any, lang: string, idea: string = '')
 
     return `You are ${persona.name} (${persona.emoji}). ${identity}
 
-ROUND 3 — SYNTHESIS (Hegelian Dialectics: refined truth through conflict).
-Your role: Defend, concede, and REFINE your position after being challenged.
+ROUND 3 — SYNTHESIS (Hegelian Dialectics + Consensus Protocol).
+Your role: Defend, concede, and REFINE. (Shaikh et al. 2025: Deliberation corrects 53% of majority errors).
 ${inferGeoContext(idea, lang)}
 ${buildIdeaAnchor(idea)}
 
@@ -456,6 +496,9 @@ function buildJudgePrompt(lang: string, idea: string = ''): string {
 ### ✅ Puntos Fuertes
 - (3-4 puntos con evidencias específicas del debate)
 
+### 👤 Impacto de la Intervención del Fundador (SÓLO SI HUBO INTERVENCIÓN)
+- (Resuma lo que dijo el fundador en medio del debate y cómo esto obligó al consejo a cambiar de dirección)
+
 ### ⚠️ Riesgos Críticos
 - (3-4 puntos — enfoque en ataques NO REFUTADOS)
 
@@ -481,6 +524,9 @@ function buildJudgePrompt(lang: string, idea: string = ''): string {
 
 ### ✅ Pontos Fortes
 - (3-4 pontos com evidências específicas do debate)
+
+### 👤 Impacto da Intervenção do Fundador (SÓ SE HOUVE INTERVENÇÃO)
+- (Resuma o que o fundador disse a meio do debate e como isso forçou o conselho a mudar de rumo)
 
 ### ⚠️ Riscos Críticos
 - (3-4 pontos — foco nos ataques NÃO REFUTADOS)
@@ -508,6 +554,9 @@ function buildJudgePrompt(lang: string, idea: string = ''): string {
 ### ✅ Points Forts
 - (3-4 points avec preuves spécifiques du débat)
 
+### 👤 Impact de l'Intervention du Fondateur (SEULEMENT S'IL Y EN A EU UNE)
+- (Résumez ce que le fondateur a dit au milieu du débat et comment cela a forcé le conseil à changer de direction)
+
 ### ⚠️ Risques Critiques
 - (3-4 points — focus sur les attaques NON RÉFUTÉES)
 
@@ -533,6 +582,9 @@ function buildJudgePrompt(lang: string, idea: string = ''): string {
 
 ### ✅ Stärken
 - (3-4 Punkte mit spezifischen Belegen aus der Debatte)
+
+### 👤 Auswirkungen der Gründerintervention (NUR WENN ES EINE GAB)
+- (Fassen Sie zusammen, was der Gründer mitten in der Debatte gesagt hat und wie dies den Rat zu einem Kurswechsel zwang)
 
 ### ⚠️ Kritische Risiken
 - (3-4 Punkte — Fokus auf UNWIDERLEGTE Angriffe)
@@ -560,6 +612,9 @@ function buildJudgePrompt(lang: string, idea: string = ''): string {
 ### ✅ Punti di Forza
 - (3-4 punti con prove specifiche dal dibattito)
 
+### 👤 Impatto dell'Intervento del Fondatore (SOLO SE C'È STATO)
+- (Riassumi ciò che ha detto il fondatore nel mezzo del dibattito e come questo ha costretto il consiglio a cambiare direzione)
+
 ### ⚠️ Rischi Critici
 - (3-4 punti — focus sugli attacchi NON CONFUTATI)
 
@@ -586,6 +641,9 @@ function buildJudgePrompt(lang: string, idea: string = ''): string {
 ### ✅ Key Strengths
 - (3-4 bullet points with specific evidence from the debate)
 
+### 👤 Founder Intervention Impact (ONLY IF APPLICABLE)
+- (Summarize what the founder interjected mid-debate and how it forced the council to pivot their analysis)
+
 ### ⚠️ Critical Risks
 - (3-4 bullet points — focus on UNREFUTED attacks)
 
@@ -611,7 +669,12 @@ function buildJudgePrompt(lang: string, idea: string = ''): string {
 
     const structure = structureMap[lang] || structureEn;
 
-    return `You are the CHIEF JUDGE of CouncilIA, the world's most rigorous AI startup validation council.
+    return `You are the CHIEF JUDGE of CouncilIA.
+Strictly adhering to Amershi et al. (CHI 2019) Guidelines for Human-AI Interaction.
+
+JUDGE PROTOCOL (Scientific Moat):
+- G11: MAKE CLEAR WHY the system reached this verdict. Cite specific evidence from the 3 rounds.
+- KAESBERG (2025): Validate the 3-round protocol. Ensure the synthesis accounts for the decay of noise vs. signal.
 
 You have observed a 3-round adversarial debate (ACE Engine — Adversarial Consensus Engine) 
 between 6 expert personas, each with different cognitive frameworks and natural biases.
@@ -622,7 +685,8 @@ BEFORE WRITING YOUR VERDICT, internally analyze:
 1. The 3 strongest surviving arguments (with expert names and which round they held up through)
 2. The 2 most devastating UNREFUTED attacks from Round 2
 3. Any critical concessions made in Round 3 that fundamentally changed an expert's position
-4. Whether any expert's "kill argument" was successfully defended against
+4. THE FOUNDER'S INTERVENTION (if present): Did the Founder interject mid-debate? What did they say, and how did it change the debate?
+5. Whether any expert's "kill argument" was successfully defended against
 Base your entire verdict on this evidence hierarchy.
 
 WEIGHTING GUIDE:
@@ -661,10 +725,12 @@ function extractScoresFromResults(results: { id: string; text: string }[]): numb
 // ——— Main Worker (v2.3 ACE Engine) ———————————————————
 
 export async function POST(req: Request) {
-    console.log('[Worker] v2.3 — ACE Engine (Adversarial Consensus Engine) starting');
+    console.log('[Worker] v2.4 — ACE Engine (Adversarial Consensus Engine) starting');
     try {
         const body = await req.json() || {};
-        const { validationId, runId, tenant_id, user_id, idea, region, sensitivity, useCustomExpert } = body;
+        const { validationId, runId, tenant_id, user_id, idea, region, sensitivity, useCustomExpert, customPersonaId } = body;
+
+        console.log(`[Worker] Started for run ${runId}, theme: ${idea}, customExpert: ${useCustomExpert}, personaId: ${customPersonaId}`);
 
         if (!runId || !idea) {
             console.error('[Worker] Missing required params:', { runId, idea: !!idea });
@@ -720,14 +786,12 @@ export async function POST(req: Request) {
         let customPersona: any = null;
         let customPersonaContext = '';
         try {
-            if (user_id && useCustomExpert !== false) {
+            if (user_id && useCustomExpert !== false && customPersonaId) {
                 const { data: cp } = await supabase
                     .from('custom_personas')
                     .select('*')
+                    .eq('id', customPersonaId)
                     .eq('user_id', user_id)
-                    .eq('is_active', true)
-                    .order('updated_at', { ascending: false })
-                    .limit(1)
                     .single();
 
                 if (cp && cp.document_count > 0) {
@@ -844,9 +908,29 @@ ${customPersonaContext}${langInstruction(lang)}`
         const r1Avg = extractScoresFromResults(round1Results);
         await addEvent(supabase, runId, 'consensus', null, { coreSync: r1Avg, global: Math.round(r1Avg * 0.7), phase: 'after_round_1' });
 
-        // ══════ ROUND 2: ANTITHESIS (Red Teaming + Dialectical Inquiry) ══════
-        const transcriptR1 = round1Results.map((r) => `[${r.emoji} ${r.name}]: ${r.text}`).join('\n\n');
+        // Fetch any mid-debate Founder interventions before R2
+        const getFounderIntel = async () => {
+            const { data: founderEvents } = await supabase
+                .from('debate_events')
+                .select('payload')
+                .eq('run_id', runId)
+                .eq('model', 'Founder')
+                .order('ts', { ascending: true });
 
+            if (founderEvents && founderEvents.length > 0) {
+                return founderEvents.map(e => `[🧔 Founder / User]: ${(e.payload as any)?.text}`).join('\n\n');
+            }
+            return '';
+        };
+
+        let founderIntelR2 = await getFounderIntel();
+        let transcriptR1 = round1Results.map((r) => `[${r.emoji} ${r.name}]: ${r.text}`).join('\n\n');
+
+        if (founderIntelR2) {
+            transcriptR1 += `\n\n=== FOUNDER / USER INTERVENTION ===\n${founderIntelR2}\n===================================`;
+        }
+
+        // ══════ ROUND 2: ANTITHESIS (Red Teaming + Dialectical Inquiry) ══════
         await addEvent(supabase, runId, 'system', null, {
             msg: '⚔️ ROUND 2 · ANTITHESIS — Cross-Examination & Stress-Testing\n📚 Framework: Red Teaming (CIA/NSA) + Mason\'s Dialectical Inquiry (1969)\n🎯 Each expert has a PRIMARY ATTACK TARGET based on natural conflict of interest',
         });
@@ -898,9 +982,14 @@ ${customPersonaContext}${langInstruction(lang)}`
         const r2Consensus = Math.round((r1Avg + r2Avg) / 2);
         await addEvent(supabase, runId, 'consensus', null, { coreSync: r2Consensus, global: Math.round(r2Consensus * 0.85), phase: 'after_round_2' });
 
-        // ══════ ROUND 3: SYNTHESIS (Hegelian Dialectics) ══════
-        const transcriptR2 = round2Results.map((r) => `[${r.emoji} ${r.name}]: ${r.text}`).join('\n\n');
+        let founderIntelR3 = await getFounderIntel();
+        let transcriptR2 = round2Results.map((r) => `[${r.emoji} ${r.name}]: ${r.text}`).join('\n\n');
 
+        if (founderIntelR3) {
+            transcriptR2 += `\n\n=== FOUNDER / USER INTERVENTION ===\n${founderIntelR3}\n===================================`;
+        }
+
+        // ══════ ROUND 3: SYNTHESIS (Hegelian Dialectics) ══════
         await addEvent(supabase, runId, 'system', null, {
             msg: '🟢 ROUND 3 · SYNTHESIS — Concession, Refinement & Convergence\n📚 Framework: Hegelian Dialectics (1807) — Refined truth emerges from thesis + antithesis',
         });
@@ -950,8 +1039,14 @@ ${customPersonaContext}${langInstruction(lang)}`
         await addEvent(supabase, runId, 'consensus', null, { coreSync: r3Consensus, global: Math.round(r3Consensus * 0.9), phase: 'after_round_3' });
 
         // ══════ JUDGE: Nash Equilibrium Verdict ══════
+        let founderIntelFinal = await getFounderIntel();
         const transcriptR3 = round3Results.map((r) => `[${r.emoji} ${r.name}]: ${r.text}`).join('\n\n');
-        const fullTranscript = `=== ROUND 1: THESIS (Independent Analysis) ===\n${transcriptR1}\n\n=== ROUND 2: ANTITHESIS (Cross-Examination) ===\n${transcriptR2}\n\n=== ROUND 3: SYNTHESIS (Concession & Refinement) ===\n${transcriptR3}`;
+
+        let fullTranscript = `=== ROUND 1: THESIS (Independent Analysis) ===\n${transcriptR1}\n\n=== ROUND 2: ANTITHESIS (Cross-Examination) ===\n${transcriptR2}\n\n=== ROUND 3: SYNTHESIS (Concession & Refinement) ===\n${transcriptR3}`;
+
+        if (founderIntelFinal) {
+            fullTranscript += `\n\n=== FOUNDER / USER INTERVENTION ===\n${founderIntelFinal}\n(NOTE: The founder intervened during the debate. Factor their insights into your final verdict)\n===================================`;
+        }
 
         await addEvent(supabase, runId, 'system', null, {
             msg: '⚖️ VERDICT · NASH EQUILIBRIUM — Judge Deliberating\n📚 Framework: Game Theory (Nash, 1950) — Optimal convergence from adversarial positions',

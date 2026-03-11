@@ -1,4 +1,4 @@
-﻿export default function Home() {
+export default function Home() {
     return (
         <main className="bg-space-black text-slate-100 font-body selection:bg-neon-lime selection:text-black pt-20 pb-0">
             {/* Header */}
@@ -35,6 +35,11 @@
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
                         </span>
                         Adversarial Multi-Agent System
+                    </div>
+                    <div className="mb-6 animate-fade-in">
+                        <span className="text-neon-cyan text-lg md:text-xl font-display font-black tracking-tighter uppercase italic drop-shadow-[0_0_10px_rgba(0,240,255,0.3)]">
+                            Validate your vision. Before you build.
+                        </span>
                     </div>
                     <h1 className="text-5xl md:text-7xl font-black leading-[1.1] mb-8 tracking-tight font-display">
                         One AI agrees with you.<br />
