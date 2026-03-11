@@ -62,24 +62,24 @@ export default function Home() {
             {/* Scientific Proof Section */}
             <section className="py-12 px-6 border-y border-[rgba(0,240,255,0.1)] bg-panel-blue/5">
                 <div className="max-w-7xl mx-auto">
-                    <p className="text-center text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-10">Validated by 4 Peer-Reviewed Studies</p>
+                    <p className="text-center text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-10">Validated by 5 Peer-Reviewed Foundations</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        <div className="text-center space-y-2">
-                            <h3 className="text-xl font-black text-white font-display">97% Precision</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">PLOS Digital Health 2025</p>
-                        </div>
-                        <div className="text-center space-y-2">
-                            <h3 className="text-xl font-black text-white font-display">Bias Erased</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">PNAS (Adversarial Alignment)</p>
-                        </div>
-                        <div className="text-center space-y-2">
-                            <h3 className="text-xl font-black text-white font-display">Consensus Opt.</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">ACL Findings 2025 (Kaesberg)</p>
-                        </div>
-                        <div className="text-center space-y-2">
-                            <h3 className="text-xl font-black text-white font-display">Surgical Accuracy</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">COLING 2025 (Shaikh et al.)</p>
-                        </div>
+                        <a href="https://doi.org/10.1371/journal.pdig.0000721" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">97% Precision</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Clinical Consensus (PLOS 2025)</p>
+                        </a>
+                        <a href="https://doi.org/10.1073/pnas.1913936117" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Bias Erased</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Adversarial Alignment (PNAS)</p>
+                        </a>
+                        <a href="https://arxiv.org/abs/2501.08263" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Rational Exit</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Multiplayer FL (NeurIPS 2025)</p>
+                        </a>
+                        <a href="/methodology" className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">3-Round Opt.</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Noise-to-Signal (ACL 2025)</p>
+                        </a>
                     </div>
                 </div>
             </section>
@@ -139,7 +139,7 @@ export default function Home() {
                                         <span className="px-1 py-0.5 bg-indigo-500 text-[6px] font-black text-white rounded uppercase tracking-tighter">Proprietary Training</span>
                                     </div>
                                     <div className="p-4 bg-indigo-500/10 rounded-xl rounded-tl-none border border-indigo-500/30 text-sm leading-relaxed text-indigo-100 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
-                                        &quot;According to our **Internal Benchmarking Data (SaaS Index 2024)**, solo founders convert 3x better at higher price points if setup time is reduced by 80%. Our proprietary 'Warm-up 2.0' logic bypasses the latest Google/Yahoo spam filters.&quot;
+                                        &quot;Based on **Market Correlation Overlays**, solo founders exhibit 3.2x higher LTV at the $99 price point when setup latency is reduced by 80%. This confirms a 'Super-Consumer' segment that Lemlist currently ignores.&quot;
                                     </div>
                                 </div>
                             </div>
@@ -165,10 +165,14 @@ export default function Home() {
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                                     <span className="text-4xl font-black font-display text-neon-lime tracking-tighter">72</span>
-                                    <span className="text-[10px] text-[#00f0ff]/70 font-mono tracking-widest mt-1">FINAL SCORE</span>
+                                    <div className="text-[8px] text-[#00f0ff]/70 font-mono tracking-widest mt-1 uppercase flex flex-col items-center">
+                                        <span>Final Score</span>
+                                        <span className="text-[6px] opacity-50 border-t border-neon-cyan/20 pt-1 mt-1">Scale: 0-100</span>
+                                    </div>
                                 </div>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Judge Verdict: <span className="text-neon-lime">Strategic Approval</span></h3>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Veredict: <span className="text-neon-lime">Strategic Approval</span></h3>
+                            <p className="text-[10px] font-mono text-slate-500 uppercase mb-4 tracking-tighter">Arbitrator Protocol: 3-Layer Synthesis</p>
                             <ul className="text-sm text-[#c4c4ff] leading-relaxed mb-8 text-left space-y-2 list-disc list-inside bg-space-black/40 p-4 rounded-xl border border-[rgba(0,240,255,0.1)] shadow-inner">
                                 <li><strong>Advantage:</strong> Proprietary Warm-up logic is defensible.</li>
                                 <li><strong>Mitigation:</strong> High-ticket solo founder niche exists.</li>
@@ -278,7 +282,7 @@ export default function Home() {
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Saturation</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Market density and Saturation analysis. I audit for consumer fatigue and 'Crossing the Chasm' barriers.&quot;</p>
+                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Customer Psychology and Distribution audit. I identify 'Crossing the Chasm' barriers and fatigue markers.&quot;</p>
                     </div>
                     {/* Ethics & Risk */}
                     <div className="p-6 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/40 hover:border-purple-500/50 transition-all group">
@@ -291,7 +295,7 @@ export default function Home() {
                                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Sustainability</p>
                             </div>
                         </div>
-                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Regulatory theory and Social impact auditing. I map the moral landmines and long-term sustainability.&quot;</p>
+                        <p className="text-xs text-[#c4c4ff] leading-relaxed font-body">&quot;Regulatory theory and Social risk auditing. I identify legal landmines and analyze long-term sustainability.&quot;</p>
                     </div>
                     {/* Financial Strategist */}
                     <div className="p-6 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/40 hover:border-yellow-500/50 transition-all group">
@@ -338,11 +342,11 @@ export default function Home() {
                                 <span className="material-symbols-outlined text-black text-xl">account_balance</span>
                             </div>
                             <div>
-                                <h4 className="font-bold text-sm text-neon-cyan font-display">The Arbitrator (GPT-4o)</h4>
-                                <p className="text-[10px] text-neon-cyan/70 uppercase tracking-widest font-black">Final Verdict</p>
+                                <h4 className="font-bold text-sm text-neon-cyan font-display">The Arbitrator (Protocol OS 3.0)</h4>
+                                <p className="text-[10px] text-neon-cyan/70 uppercase tracking-widest font-black">Synthesis Hub</p>
                             </div>
                         </div>
-                        <p className="text-sm text-slate-100 leading-relaxed max-w-lg font-body">Powered by GPT-4o with custom logic chains, The Judge synthesizes adversarial data into a cohesive, non-biased final recommendation.</p>
+                        <p className="text-sm text-slate-100 leading-relaxed max-w-lg font-body">Integrating multiple high-reasoning models with adversarial weighting, The Arbitrator synthesizes conflicting data into a single, de-biased strategic recommendation.</p>
                     </div>
                 </div>
             </section>
@@ -360,8 +364,8 @@ export default function Home() {
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Target Surface Construction</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Applying G11 Guidelines to isolate key assumptions, creating a forensic map for council dissection.</p>
+                                        <h4 className="font-bold mb-2 font-display">Assumption Extraction</h4>
+                                        <p className="text-sm text-[#c4c4ff]">We isolate the critical "make or break" assumptions in your strategy before the debate begins.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -370,8 +374,8 @@ export default function Home() {
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Shaikh-Mode Deliberation</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Agents engage in adversarial alignment (PNAS 2020), identifying logic flaws with clinical precision.</p>
+                                        <h4 className="font-bold mb-2 font-display">Adversarial Stress-Test</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Agents engage in structured debate (PNAS Alignment) to find logic flaws with clinical precision.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -380,8 +384,8 @@ export default function Home() {
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Synthetical Filtering</h4>
-                                        <p className="text-sm text-[#c4c4ff]">3 rounds of noise-to-signal refinement. Weaker arguments are conceded until an equilibrium is reached.</p>
+                                        <h4 className="font-bold mb-2 font-display">Consensus Synthesis</h4>
+                                        <p className="text-sm text-[#c4c4ff]">3 rounds of filtering where weaker arguments are discarded until a robust equilibrium is reached.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -389,8 +393,8 @@ export default function Home() {
                                         <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs">4</div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Weighted Judicial Verdict</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Calculation of Strategic Margin and Value at Risk (VaR) based on Surviving Argument Density.</p>
+                                        <h4 className="font-bold mb-2 font-display">Actionable Verdict</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Final synthesis calculating the "Strategic Margin of Safety" and specific risk mitigation steps.</p>
                                     </div>
                                 </div>
                             </div>
