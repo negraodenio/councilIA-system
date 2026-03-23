@@ -611,8 +611,9 @@ function extractScoresFromResults(results: { id: string; text: string }[]): numb
 
 export async function POST(req: Request) {
     console.log('[Worker] v3.0 — ACE Engine (Adversarial Consensus Engine) starting');
+    let body: any = {};
     try {
-        const body = await req.json() || {};
+        body = await req.json() || {};
         const { validationId, runId, tenant_id, user_id, idea, region, sensitivity, useCustomExpert, customPersonaId } = body;
 
         console.log(`[Worker] Started for run ${runId}, theme: ${idea}, customExpert: ${useCustomExpert}, personaId: ${customPersonaId}`);
@@ -1019,6 +1020,18 @@ ${customPersonaContext}${langInstruction(lang)}`
         return apiOk({ runId, validationId, score: finalScore });
     } catch (error: any) {
         console.error('[Worker] Fatal:', error);
+        
+        // Ensure the database reflects the failure so it doesn't stay "Pending" indefinitely
+        try {
+            if (body?.validationId || body?.runId) {
+                const supabase = createAdminClient();
+                if (body.validationId) await supabase.from('validations').update({ status: 'error' }).eq('id', body.validationId);
+                if (body.runId) await supabase.from('debate_runs').update({ status: 'error' }).eq('id', body.runId);
+            }
+        } catch (dbErr) {
+            console.error('[Worker] Emergency status update failed:', dbErr);
+        }
+
         return apiError(error.message, 500);
     }
 }

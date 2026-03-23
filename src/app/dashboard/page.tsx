@@ -136,14 +136,22 @@ export default async function DashboardPage() {
                                     <Link key={v.id} href={`/report/${v.id}`} className="block border border-[rgba(0,240,255,0.1)] bg-panel-blue/20 p-5 rounded-xl hover:bg-panel-blue/40 hover:border-[#00f2ff]/30 transition-all group relative overflow-hidden">
 
                                         {/* Status Glow Strip */}
-                                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${v.status === 'complete' ? 'bg-[#ff00e5] shadow-[0_0_10px_#ff00e5]' : 'bg-amber-400 shadow-[0_0_10px_#fbbf24]'}`}></div>
+                                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${
+                                            v.status === 'complete' ? 'bg-[#ff00e5] shadow-[0_0_10px_#ff00e5]' : 
+                                            v.status === 'error' ? 'bg-red-500 shadow-[0_0_10px_#ef4444]' :
+                                            'bg-amber-400 shadow-[0_0_10px_#fbbf24]'
+                                        }`}></div>
 
                                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pl-3">
                                             <div className="flex-1 min-w-0">
                                                 <div className="text-sm font-medium text-slate-200 truncate group-hover:text-[#00f2ff] transition-colors">{v.idea}</div>
                                                 <div className="flex items-center gap-4 mt-2">
-                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest border ${v.status === 'complete' ? 'border-[#ff00e5]/30 text-[#ff00e5] bg-[#ff00e5]/10' : 'border-amber-400/30 text-amber-400 bg-amber-400/10'}`}>
-                                                        {v.status === 'complete' ? 'Analyzed' : 'Pending'}
+                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest border ${
+                                                        v.status === 'complete' ? 'border-[#ff00e5]/30 text-[#ff00e5] bg-[#ff00e5]/10' : 
+                                                        v.status === 'error' ? 'border-red-500/30 text-red-500 bg-red-500/10' :
+                                                        'border-amber-400/30 text-amber-400 bg-amber-400/10'
+                                                    }`}>
+                                                        {v.status === 'complete' ? 'Analyzed' : v.status === 'error' ? 'Failed' : 'Pending'}
                                                     </span>
                                                     <span className="text-[10px] font-mono text-slate-500">{new Date(v.created_at).toLocaleDateString()}</span>
                                                 </div>
@@ -156,6 +164,11 @@ export default async function DashboardPage() {
                                                     <span className={`text-xl font-black font-display ${v.consensus_score >= 70 ? 'text-green-400' : v.consensus_score >= 40 ? 'text-amber-400' : 'text-red-400'}`}>
                                                         {Math.round(v.consensus_score)}
                                                     </span>
+                                                </div>
+                                            ) : v.status === 'error' ? (
+                                                <div className="flex items-center gap-3 bg-red-500/5 px-4 py-2 rounded-lg border border-red-500/20">
+                                                    <span className="text-[10px] uppercase font-mono tracking-widest text-red-500/70">Error</span>
+                                                    <span className="material-symbols-outlined text-red-500 text-xl">error</span>
                                                 </div>
                                             ) : (
                                                 <div className="flex items-center gap-3 bg-[rgba(0,0,0,0.3)] px-4 py-2 rounded-lg border border-slate-700/50 opacity-50">
