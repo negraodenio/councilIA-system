@@ -613,7 +613,7 @@ export default function ConsensusReport({ validation, patches }: {
                                                             return (
                                                                 <>
                                                                     {devilData && (
-                                                                        <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+                                                                        <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)] group">
                                                                             <div className="flex items-center justify-between mb-4">
                                                                                 <div className="flex items-center gap-2 text-red-400">
                                                                                     <span className="material-symbols-outlined text-xl">vaccines</span>
@@ -621,16 +621,19 @@ export default function ConsensusReport({ validation, patches }: {
                                                                                 </div>
                                                                                 <span className="text-[9px] font-mono text-red-500/50 uppercase">Strategic Patch</span>
                                                                             </div>
-                                                                            <p className="text-xs text-red-100 font-medium italic mb-3">"{devilData.vaccine || 'N/A'}"</p>
+                                                                            <p className="text-[10px] text-slate-500 font-mono mb-2 uppercase tracking-tighter leading-none">{t(lang, 'cr_vaccine_desc')}</p>
+                                                                            <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/10 mb-3 group-hover:bg-red-500/10 transition-colors">
+                                                                                <p className="text-sm text-red-50 font-medium italic">"{devilData.vaccine || 'Analysis pending...'}"</p>
+                                                                            </div>
                                                                             <div className="flex items-center gap-2 p-2 bg-black/40 rounded border border-red-500/20">
                                                                                 <span className="material-symbols-outlined text-xs text-red-400">warning</span>
-                                                                                <span className="text-[9px] font-mono text-red-200">CIRCUIT BREAKER: {devilData.circuitBreaker || 'Abort if ROI < 1x'}</span>
+                                                                                <span className="text-[9px] font-mono text-red-200 uppercase tracking-tighter">CIRCUIT BREAKER: <span className="text-red-400 font-bold">{devilData.circuitBreaker || 'Abort if ROI < 1x'}</span></span>
                                                                             </div>
                                                                         </div>
                                                                     )}
 
                                                                     {marketeerData && (
-                                                                        <div className="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
+                                                                        <div className="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.1)] group">
                                                                             <div className="flex items-center justify-between mb-4">
                                                                                 <div className="flex items-center gap-2 text-indigo-400">
                                                                                     <span className="material-symbols-outlined text-xl">person_pin_circle</span>
@@ -638,14 +641,17 @@ export default function ConsensusReport({ validation, patches }: {
                                                                                 </div>
                                                                                 <span className="text-[9px] font-mono text-indigo-500/50 uppercase">{marketeerData.procurementLane || 'Standard'} Lane</span>
                                                                             </div>
-                                                                            <p className="text-xs text-indigo-100 font-bold mb-2">{marketeerData.championProfile || 'C-Level Executive'}</p>
+                                                                            <p className="text-[10px] text-slate-500 font-mono mb-2 uppercase tracking-tighter leading-none">{t(lang, 'cr_champion_desc')}</p>
+                                                                            <div className="bg-indigo-500/5 p-4 rounded-xl border border-indigo-500/10 mb-3 group-hover:bg-indigo-500/10 transition-colors">
+                                                                                <p className="text-sm text-indigo-50 font-black uppercase tracking-wider">{marketeerData.championProfile || 'Analysis pending...'}</p>
+                                                                            </div>
                                                                             <div className="grid grid-cols-2 gap-2 text-[10px]">
                                                                                 <div className="p-2 bg-black/40 rounded border border-indigo-500/20">
                                                                                     <p className="text-slate-500 uppercase tracking-tighter mb-1">Target Team</p>
                                                                                     <p className="text-indigo-300 font-bold">{marketeerData.landTeam || 'N/A'}</p>
                                                                                 </div>
                                                                                 <div className="p-2 bg-black/40 rounded border border-indigo-500/20">
-                                                                                    <p className="text-slate-500 uppercase tracking-tighter mb-1">Key Performance KPI</p>
+                                                                                    <p className="text-slate-500 uppercase tracking-tighter mb-1">Success Metric</p>
                                                                                     <p className="text-indigo-300 font-bold">{marketeerData.metricOwned || 'LTV/CAC'}</p>
                                                                                 </div>
                                                                             </div>

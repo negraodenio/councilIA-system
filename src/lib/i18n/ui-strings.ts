@@ -81,6 +81,8 @@ const strings: Record<UILang, Record<string, string>> = {
         cr_view_pr: 'View PR on GitHub →',
         cr_show_less: 'Show less',
         cr_read_full: 'Read full analysis',
+        cr_vaccine_desc: 'Strategic injection to turn a fatal flaw into a resilience moat.',
+        cr_champion_desc: 'Target persona with the highest urgency to resolve this specific pain.',
 
         // Methodology
         pill_precision: 'Pillar 01: Precision',
@@ -168,6 +170,8 @@ const strings: Record<UILang, Record<string, string>> = {
         cr_view_pr: 'Ver PR no GitHub →',
         cr_show_less: 'Mostrar menos',
         cr_read_full: 'Ler análise completa',
+        cr_vaccine_desc: 'Injeção estratégica para transformar uma falha fatal numa barreira de resiliência.',
+        cr_champion_desc: 'Persona-alvo com maior urgência para resolver este problema específico.',
 
         // Methodology (PT)
         pill_precision: 'Pilar 01: Precisão',

@@ -351,9 +351,14 @@ PROTOCOL:
 3. FINAL SCORE: X/100 with one-sentence justification.
    This score may differ from Round 1 — that's expected and honest.
 
+MANDATORY OUTPUT FORMAT (END OF MESSAGE):
+SCORE: [X]
+CONFIDENCE: [X]%
+ALLIANCE: [Velocity|Stability|Neutral]
+${persona.id === 'devil' ? 'VACCINE: (A specific strategic move to turn a risk into a moat)\nCIRCUIT_BREAKER: (A specific condition where the founder should ABORT/PIVOT)' : ''}${persona.id === 'marketeer' ? 'CHAMPION_PROFILE: (Who is the specific individual buyer?)\nPROCUREMENT_LANE: [Standard|Fast|Complex]\nLAND_TEAM: (Which specific department to target first?)\nMETRIC_OWNED: (Which KPI does the buyer care about most?)' : ''}
+
 RULES:
 - Maximum 250 words.
-- Format: "Concession: ... | Refinement: ... | Final Score: X/100"
 - Do NOT fabricate evidence in your defense. Mark uncertain data as [estimated].
 - If no valid attacks were made against you, acknowledge the strongest challenge 
   anyway and explain why your position holds.${langInstruction(lang)}`;
