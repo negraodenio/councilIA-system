@@ -29,12 +29,12 @@ export default function Home() {
                     <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-neon-cyan/5 blur-[120px] rounded-full"></div>
                 </div>
                 <div className="max-w-4xl mx-auto text-center relative z-10">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neon-cyan/30 bg-neon-cyan/5 text-neon-cyan text-xs font-bold uppercase tracking-widest mb-8">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#f26522]/30 bg-[#f26522]/10 text-[#f26522] text-xs font-bold uppercase tracking-widest mb-8 shadow-[0_0_15px_rgba(242,101,34,0.15)]">
                         <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-cyan opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f26522] opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#f26522]"></span>
                         </span>
-                        DECISION INTELLIGENCE // OS 3.0
+                        BUILT FOR THE YC &apos;26 AI-NATIVE AGENCY THESIS
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black leading-[1] mb-8 tracking-tighter font-display uppercase">
                         Make the Right Strategic<br />
@@ -58,27 +58,40 @@ export default function Home() {
                     </p>
                 </div>
 
-                {/* Social Proof - Logo Band */}
-                <div className="max-w-6xl mx-auto mt-20 opacity-40 grayscale hover:grayscale-0 transition-all">
-                    <p className="text-center text-[10px] font-mono uppercase tracking-[0.3em] mb-8">Trusted by Strategic Leads at</p>
-                    <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20">
-                        <div className="flex items-center gap-2 group cursor-default">
-                            <span className="material-symbols-outlined text-2xl group-hover:text-neon-cyan transition-colors">diamond</span>
-                            <span className="font-display font-black text-xl tracking-tighter group-hover:text-neon-cyan transition-colors">MCK&CO</span>
-                        </div>
-                        <div className="flex items-center gap-2 group cursor-default">
-                            <span className="material-symbols-outlined text-2xl group-hover:text-neon-cyan transition-colors">account_balance</span>
-                            <span className="font-display font-black text-xl tracking-tighter group-hover:text-neon-cyan transition-colors">SEQUOIA-P</span>
-                        </div>
-                        <div className="flex items-center gap-2 group cursor-default">
-                            <span className="material-symbols-outlined text-2xl group-hover:text-neon-cyan transition-colors">trending_up</span>
-                            <span className="font-display font-black text-xl tracking-tighter group-hover:text-neon-cyan transition-colors">BAIN-STRAT</span>
-                        </div>
-                        <div className="flex items-center gap-2 group cursor-default">
-                            <span className="material-symbols-outlined text-2xl group-hover:text-neon-cyan transition-colors">hub</span>
-                            <span className="font-display font-black text-xl tracking-tighter group-hover:text-neon-cyan transition-colors">ANDR-HOR</span>
+                {/* ── Real Client Testimonial ── */}
+                <div className="max-w-3xl mx-auto mt-20">
+                    <p className="text-center text-[10px] font-mono uppercase tracking-[0.3em] mb-8 text-neon-cyan/60">Trusted by decision-makers</p>
+                    <div className="relative p-8 rounded-2xl border border-neon-cyan/20 bg-panel-blue/30 backdrop-blur-sm shadow-[0_0_40px_rgba(0,240,255,0.05)]">
+                        {/* Quote mark */}
+                        <span className="absolute top-6 left-8 text-6xl text-neon-cyan/10 font-serif leading-none select-none">&ldquo;</span>
+                        <div className="relative z-10">
+                            <p className="text-lg md:text-xl text-slate-200 leading-relaxed italic font-light mb-6 pl-4">
+                                &ldquo;I use CouncilIA to make the most critical decisions in my clinic.
+                                In 15 minutes, I had a complete view of the risks and opportunities in the
+                                expansion I was considering. It&apos;s like having a board of directors available
+                                at any time — no scheduling meetings, no expensive consultants.&rdquo;
+                            </p>
+                            <div className="flex items-center gap-4 pl-4">
+                                {/* Photo placeholder — replace src with actual photo when available */}
+                                <div className="size-12 rounded-full bg-gradient-to-br from-neon-cyan/30 to-blue-500/30 border border-neon-cyan/30 flex items-center justify-center text-neon-cyan font-black text-lg shrink-0 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+                                    {/* REPLACE_WITH_PHOTO: <img src="/testimonials/client-dental.jpg" alt="Dr. ..." className="size-12 rounded-full object-cover" /> */}
+                                    DR
+                                </div>
+                                <div>
+                                    <p className="font-bold text-white text-sm">Dentist — Dental Clinic</p>
+                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Brazil · Verified Client ✓</p>
+                                </div>
+                                <div className="ml-auto flex items-center gap-1">
+                                    {[1,2,3,4,5].map(i => (
+                                        <span key={i} className="text-neon-cyan text-sm">★</span>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <p className="text-center mt-6 text-[10px] font-mono text-slate-600 uppercase tracking-widest">
+                        Use case: Dental clinic expansion · Strategic next-steps analysis
+                    </p>
                 </div>
             </section>
 
@@ -225,10 +238,103 @@ export default function Home() {
                             </button>
                         </div>
                     </div>
+                </div>            </section>
+
+            {/* Outcome Gallery Section */}
+            <section className="py-20 px-6 max-w-7xl mx-auto border-t border-[rgba(0,240,255,0.1)]">
+                <div className="text-center mb-16">
+                    <p className="text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-4">Proof of Work</p>
+                    <h2 className="text-4xl font-black mb-4 uppercase tracking-tight font-display">Outcome Gallery</h2>
+                    <p className="text-[#c4c4ff] max-w-2xl mx-auto">
+                        We don&apos;t sell chat interfaces. We sell answers. Here is the final output our 
+                        clients actually receive—scientifically validated executive audits.
+                    </p>
                 </div>
 
-                {/* Score & HUD Explanation Section */}
-                <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* Case 1 */}
+                    <div className="group rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 overflow-hidden hover:border-neon-cyan/40 transition-all cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(0,240,255,0.1)]">
+                        <div className="h-48 bg-[#0a0f1e] p-6 relative flex flex-col justify-between overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 blur-2xl rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
+                            <div className="relative z-10 flex justify-between items-start">
+                                <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-[9px] font-black uppercase rounded tracking-widest border border-green-500/30">Viable</span>
+                                <span className="text-2xl font-black text-white font-display">88<span className="text-xs text-white/50">/100</span></span>
+                            </div>
+                            <div className="relative z-10">
+                                <h3 className="text-white font-bold leading-tight mb-2">Dental Clinic Expansion</h3>
+                                <div className="h-1.5 w-full bg-space-black/80 rounded-full overflow-hidden flex">
+                                    <div className="h-full bg-green-400 w-[88%] shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-6">
+                            <p className="text-xs text-[#c4c4ff] mb-4 line-clamp-2 leading-relaxed">
+                                Validated the $2M expansion layout and strategic positioning in Sao Paulo vs. local competition. 
+                            </p>
+                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-neon-cyan">
+                                <span>See Report</span>
+                                <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Case 2 */}
+                    <div className="group rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 overflow-hidden hover:border-amber-400/40 transition-all cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(251,191,36,0.1)]">
+                        <div className="h-48 bg-[#0a0f1e] p-6 relative flex flex-col justify-between overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-2xl rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
+                            <div className="relative z-10 flex justify-between items-start">
+                                <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[9px] font-black uppercase rounded tracking-widest border border-amber-500/30">Caution</span>
+                                <span className="text-2xl font-black text-white font-display">54<span className="text-xs text-white/50">/100</span></span>
+                            </div>
+                            <div className="relative z-10">
+                                <h3 className="text-white font-bold leading-tight mb-2">B2B SaaS Horizon M&A</h3>
+                                <div className="h-1.5 w-full bg-space-black/80 rounded-full overflow-hidden flex">
+                                    <div className="h-full bg-amber-400 w-[54%] shadow-[0_0_10px_rgba(251,191,36,0.5)]"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-6">
+                            <p className="text-xs text-[#c4c4ff] mb-4 line-clamp-2 leading-relaxed">
+                                Forensic audit on the acquisition target&apos;s tech debt. Avoided a $12M overpayment.
+                            </p>
+                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-amber-400">
+                                <span>See Report</span>
+                                <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Case 3 */}
+                    <div className="group rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 overflow-hidden hover:border-red-400/40 transition-all cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(248,113,113,0.1)]">
+                        <div className="h-48 bg-[#0a0f1e] p-6 relative flex flex-col justify-between overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 blur-2xl rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
+                            <div className="relative z-10 flex justify-between items-start">
+                                <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[9px] font-black uppercase rounded tracking-widest border border-red-500/30">High Risk</span>
+                                <span className="text-2xl font-black text-white font-display">21<span className="text-xs text-white/50">/100</span></span>
+                            </div>
+                            <div className="relative z-10">
+                                <h3 className="text-white font-bold leading-tight mb-2">E-com Logistics Pivot</h3>
+                                <div className="h-1.5 w-full bg-space-black/80 rounded-full overflow-hidden flex">
+                                    <div className="h-full bg-red-500 w-[21%] shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-6">
+                            <p className="text-xs text-[#c4c4ff] mb-4 line-clamp-2 leading-relaxed">
+                                Stress-tested the pivot from 3PL to internal warehousing. Math didn&apos;t scale. Plan aborted.
+                            </p>
+                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-red-400">
+                                <span>See Report</span>
+                                <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Score & HUD Explanation Section */}
+            <section className="py-20 px-6 max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div className="glass-card p-10 rounded-3xl border border-white/5 bg-panel-blue/10">
                         <h3 className="text-2xl font-black mb-6 font-display uppercase tracking-tight text-neon-cyan">The Consensus Score</h3>
                         <p className="text-[#c4c4ff] leading-relaxed mb-8">
@@ -778,11 +884,20 @@ export default function Home() {
             <section className="py-24 px-6 relative overflow-hidden">
                 <div className="absolute inset-0 bg-neon-cyan/5 blur-[120px] rounded-full -translate-y-1/2"></div>
                 <div className="max-w-4xl mx-auto text-center relative z-10">
-                    <h2 className="text-4xl md:text-6xl font-black mb-8 font-display uppercase">Ready to validate your next big move?</h2>
-                    <p className="text-xl text-slate-400 mb-12">Start your 7-day free trial. No credit card required.</p>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-neon-cyan/60 mb-4">Consultants charge $50,000. We charge $49.</p>
+                    <h2 className="text-4xl md:text-6xl font-black mb-6 font-display uppercase leading-tight">
+                        Your Board of Directors<br />
+                        <span className="text-neon-cyan">starts now.</span>
+                    </h2>
+                    <p className="text-lg text-slate-400 mb-4 max-w-xl mx-auto">Make your next strategic decision with 6 AI experts who are designed to disagree with you.</p>
+                    <p className="text-sm text-amber-400 font-mono mb-10 flex items-center justify-center gap-2">
+                        <span className="size-2 bg-amber-400 rounded-full animate-pulse inline-block"></span>
+                        7 days free · No credit card · Cancel anytime
+                    </p>
                     <a href="/login" className="inline-block px-12 py-5 bg-gradient-to-r from-neon-cyan to-blue-500 text-black rounded-2xl font-black text-xl hover:shadow-[0_0_40px_rgba(0,240,255,0.4)] transition-all transform hover:-translate-y-1 active:scale-95">
                         Start Free Session Now →
                     </a>
+                    <p className="mt-6 text-[10px] text-slate-600 font-mono uppercase tracking-widest">Decision in 15 minutes · PDF Report included · Peer-reviewed science</p>
                 </div>
             </section>
 

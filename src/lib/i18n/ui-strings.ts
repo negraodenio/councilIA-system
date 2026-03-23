@@ -562,23 +562,8 @@ const strings: Record<UILang, Record<string, string>> = {
 
 /** Map browser locale or detectLanguage() output to a UILang */
 export function resolveUILang(input?: string | null): UILang {
-    if (!input) return 'English';
-    const lower = input.toLowerCase().trim();
-
-    // 1. Match direto (ex: "portuguese")
-    const directMap: Record<string, UILang> = {
-        english: 'English', portuguese: 'Portuguese', spanish: 'Spanish',
-        french: 'French', german: 'German', italian: 'Italian', dutch: 'Dutch',
-    };
-    if (directMap[lower]) return directMap[lower];
-
-    // 2. Match BCP-47 (ex: "pt-BR" → "pt", "de-DE" → "de")
-    const prefix = lower.split('-')[0];
-    const localeMap: Record<string, UILang> = {
-        en: 'English', pt: 'Portuguese', es: 'Spanish',
-        fr: 'French', de: 'German', it: 'Italian', nl: 'Dutch',
-    };
-    return localeMap[prefix] || 'English';  // Fallback seguro
+    // Force English UI for US/EU Market as requested by the user
+    return 'English';
 }
 
 /** Get a translated string. Falls back to English if key missing. */

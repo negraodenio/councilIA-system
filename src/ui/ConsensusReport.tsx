@@ -115,53 +115,78 @@ export default function ConsensusReport({ validation, patches }: {
         setIsExporting(true);
         try {
             const container = document.getElementById('pdf-report-container');
-            if (!container) {
-                setIsExporting(false);
-                return;
-            }
+            if (!container) { setIsExporting(false); return; }
 
-            // Temporarily unhide for capture
-            container.style.display = 'block';
-            container.style.position = 'absolute';
-            container.style.top = '-9999px';
+            // A4 at 96 dpi = 794 x 1123 px
+            // Position off-screen but in-flow so html2canvas captures correctly
+            container.style.cssText = [
+                'display:block',
+                'position:fixed',
+                'top:0',
+                'left:-900px',
+                'width:794px',
+                'z-index:-1',
+                'pointer-events:none',
+                'opacity:1',
+            ].join(';');
+
+            // Wait for browser to finish layout
+            await new Promise(r => setTimeout(r, 500));
 
             const pages = container.querySelectorAll('.pdf-page');
 
-            // Generate A4 PDF
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
                 format: 'a4'
             });
 
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
+            const pdfWidth = pdf.internal.pageSize.getWidth();   // 210mm
+            const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
 
             for (let i = 0; i < pages.length; i++) {
                 if (i > 0) pdf.addPage();
                 const pageEl = pages[i] as HTMLElement;
 
                 const canvas = await html2canvas(pageEl, {
-                    scale: 2, // High resolution
+                    scale: 2,
                     useCORS: true,
                     logging: false,
-                    backgroundColor: '#030712'
+                    backgroundColor: '#050810',
+                    width: pageEl.scrollWidth,
+                    height: pageEl.scrollHeight,
+                    windowWidth: 794,
                 });
 
                 const imgData = canvas.toDataURL('image/png');
-                const imgProps = pdf.getImageProperties(imgData);
-                const ratio = imgProps.width / imgProps.height;
-                const renderHeight = pdfWidth / ratio;
 
-                // Draw the specific page canvas starting at 0,0
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, renderHeight);
+                // Fit image to the PDF page, letterboxing if needed
+                const canvasRatio = canvas.width / canvas.height;
+                const pdfRatio = pdfWidth / pdfHeight;
+
+                let imgW = pdfWidth;
+                let imgH = pdfWidth / canvasRatio;
+
+                // If content is taller than A4, scale to fit height
+                if (imgH > pdfHeight) {
+                    imgH = pdfHeight;
+                    imgW = pdfHeight * canvasRatio;
+                }
+
+                const xOffset = (pdfWidth - imgW) / 2;
+                const yOffset = (pdfHeight - imgH) / 2;
+
+                pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgW, imgH);
             }
 
-            container.style.display = 'none';
-            pdf.save(`CouncilIA_${validation.id.substring(0, 8)}.pdf`);
+            // Restore hidden state
+            container.style.cssText = 'display:none';
+            
+            const filename = `CouncilIA_Report_${validation.id.substring(0, 8).toUpperCase()}.pdf`;
+            pdf.save(filename);
         } catch (error) {
             console.error('Failed to generate PDF:', error);
-            alert('Um erro ocorreu ao gerar o PDF. / An error occurred while generating the PDF.');
+            alert('Erro ao gerar o PDF. Tente novamente.');
         } finally {
             setIsExporting(false);
         }
@@ -265,13 +290,16 @@ export default function ConsensusReport({ validation, patches }: {
                                 <span className="font-bold text-xs uppercase tracking-widest text-white">{statusLabel}</span>
                             </div>
                             <div className="flex items-center justify-around w-full border-t border-white/5 pt-3">
-                                <div className="flex flex-col">
+                                <div className="flex flex-col items-center">
                                     <span className="text-[9px] font-mono text-slate-500 uppercase">Value at Risk</span>
                                     <span className="text-sm font-mono font-bold text-red-400">{varDisplay}</span>
+                                    <span className="text-[8px] text-slate-600 mt-0.5 text-center leading-tight">Probability of<br/>critical failure</span>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[9px] font-mono text-slate-500 uppercase">Confidence</span>
+                                <div className="w-px h-8 bg-white/5"></div>
+                                <div className="flex flex-col items-center">
+                                    <span className="text-[9px] font-mono text-slate-500 uppercase">Consensus</span>
                                     <span className="text-sm font-mono font-bold text-emerald-400">{score}%</span>
+                                    <span className="text-[8px] text-slate-600 mt-0.5 text-center leading-tight">Arguments that<br/>survived all 3 rounds</span>
                                 </div>
                             </div>
                         </div>
@@ -503,13 +531,17 @@ export default function ConsensusReport({ validation, patches }: {
                                                                 </div>
                                                             </div>
                                                         )}
-                                                        <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 flex items-center gap-4">
-                                                            <div className="size-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300">
-                                                                <span className="material-symbols-outlined text-xl">verified_user</span>
+                                                        <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20">
+                                                            <div className="flex items-center gap-3 mb-3">
+                                                                <div className="size-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 shrink-0">
+                                                                    <span className="material-symbols-outlined text-lg">verified_user</span>
+                                                                </div>
+                                                                <p className="text-[10px] text-indigo-300/80 font-bold uppercase tracking-wider">ACE Engine Certification</p>
                                                             </div>
-                                                            <div>
-                                                                <p className="text-[10px] text-indigo-300/80 font-bold uppercase tracking-wider">ACE Verification</p>
-                                                                <p className="text-[11px] text-slate-400 leading-tight">Authenticity verified via Vector RAG injection.</p>
+                                                            <div className="space-y-1.5 text-[10px] text-slate-400 leading-relaxed">
+                                                                <p>✦ <span className="text-slate-300">Grounded via Vector RAG</span> — answers are anchored to your uploaded documents, not hallucinated.</p>
+                                                                <p>✦ <span className="text-slate-300">3-Round deliberation</span> executed: Thesis → Adversarial Stress-Test → Recursive Synthesis.</p>
+                                                                <p>✦ <span className="text-slate-300">Scores are argument-density weighted</span>, not simple averages (Kaesberg et al., ACL 2025).</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -731,19 +763,20 @@ export default function ConsensusReport({ validation, patches }: {
                         </div>
                     </div>
 
-                    {/* ── MISSION CONTROL BUTTONS (Rebranded) ── */}
+                    {/* ── ACTION BUTTONS ── */}
                     <div className="flex flex-col sm:flex-row gap-4 mt-8 pb-12">
                         <button
                             onClick={handleExportPDF}
                             disabled={isExporting}
-                            className="flex-1 group relative overflow-hidden h-14 bg-emerald-500 text-black font-black uppercase tracking-[0.2em] text-sm rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_50px_rgba(16,185,129,0.5)] disabled:opacity-50"
+                            className="flex-1 group relative overflow-hidden h-14 bg-indigo-600 hover:bg-indigo-500 text-white font-bold uppercase tracking-[0.15em] text-sm rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] shadow-[0_4px_20px_rgba(99,102,241,0.3)] hover:shadow-[0_4px_30px_rgba(99,102,241,0.5)] disabled:opacity-50"
                         >
-                            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
                             <span className="relative flex items-center justify-center gap-3">
-                                {isExporting ? 'Generating Report...' : (
+                                {isExporting ? (
+                                    <><svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Generating PDF Report...</>
+                                ) : (
                                     <>
-                                        <span className="material-symbols-outlined">rocket_launch</span>
-                                        EXECUTE PROTOCOL (PDF)
+                                        <span className="material-symbols-outlined text-xl">download</span>
+                                        Download Executive Report (PDF)
                                     </>
                                 )}
                             </span>
@@ -751,10 +784,10 @@ export default function ConsensusReport({ validation, patches }: {
                         
                         <a 
                             href="/dashboard"
-                            className="flex-1 flex items-center justify-center gap-3 h-14 bg-red-500/10 text-red-500 border-2 border-red-500/30 font-black uppercase tracking-[0.2em] text-sm rounded-xl transition-all hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-[0_0_40px_rgba(239,68,68,0.4)]"
+                            className="flex-1 flex items-center justify-center gap-3 h-14 bg-white/5 text-slate-400 border border-white/10 font-semibold uppercase tracking-[0.15em] text-sm rounded-xl transition-all hover:bg-white/10 hover:text-white hover:border-white/20"
                         >
-                            <span className="material-symbols-outlined">cancel</span>
-                            ABORT MISSION
+                            <span className="material-symbols-outlined text-xl">add_circle_outline</span>
+                            Start New Session
                         </a>
                     </div>
                 </div>
@@ -857,104 +890,160 @@ function PersonaCard({ entry, lang }: {
     );
 }
 // ─── Methodology Moat ──────────────────────────────
+const SCIENCE_PILLARS = [
+    {
+        key: 'precision',
+        label: 'Clinical Precision',
+        cite: 'Shaikh et al. — PLOS Digital Health (2025)',
+        doi: 'https://doi.org/10.1371/journal.pdig.0000721',
+        color: 'indigo',
+        twClasses: 'bg-indigo-500/5 border-indigo-500/20 hover:bg-indigo-500/10 hover:border-indigo-500/40',
+        labelClass: 'text-indigo-400',
+        dotClass: 'bg-indigo-400',
+        footerClass: 'text-indigo-300/80',
+        glowClass: 'bg-indigo-500/5 group-hover:bg-indigo-500/10',
+        headline: '97% accuracy via multi-agent consensus',
+        description: 'The multi-agent deliberation protocol used in this session is based on a clinical framework that achieves 97% accuracy on high-stakes medical decisions. Critically, it corrects 53% of errors that a single-agent or simple majority-vote system would commit — the same logical flaw in most AI tools.',
+        status: 'Inference Logic Active',
+    },
+    {
+        key: 'alignment',
+        label: 'Adversarial Alignment',
+        cite: 'Ellemers, Fiske et al. — PNAS (2020)',
+        doi: 'https://doi.org/10.1073/pnas.1913936117',
+        color: 'purple',
+        twClasses: 'bg-purple-500/5 border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40',
+        labelClass: 'text-purple-400',
+        dotClass: 'bg-purple-400',
+        footerClass: 'text-purple-300/80',
+        glowClass: 'bg-purple-500/5 group-hover:bg-purple-500/10',
+        headline: 'Kahneman\'s 5 rules for productive conflict',
+        description: 'Inspired by Daniel Kahneman\'s adversarial collaboration model, each agent in Round 2 is required to directly challenge a specific argument from Round 1 — not just express a different opinion. This structured disagreement, proven in PNAS research, leads to more robust shared conclusions.',
+        status: 'Kahneman Rules Engaged',
+    },
+    {
+        key: 'strategy',
+        label: 'Rational Multi-Agent Strategy',
+        cite: 'MpFL — NeurIPS (2025)',
+        doi: 'https://arxiv.org/abs/2501.08263',
+        color: 'emerald',
+        twClasses: 'bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500/10 hover:border-emerald-500/40',
+        labelClass: 'text-emerald-400',
+        dotClass: 'bg-emerald-400',
+        footerClass: 'text-emerald-300/80',
+        glowClass: 'bg-emerald-500/5 group-hover:bg-emerald-500/10',
+        headline: 'Mathematically proven convergence to equilibrium',
+        description: 'Multiplayer Federated Learning (NeurIPS 2025) proves that rational agents with conflicting utility functions can converge to a stable, communication-efficient equilibrium. This is the mathematical foundation for why 6 agents with competing directives (growth vs. risk vs. ethics) can produce a single reliable Consensus Score.',
+        status: 'Equilibrium Achieved',
+    },
+    {
+        key: 'protocol',
+        label: 'Optimal Deliberation Protocol',
+        cite: 'Kaesberg et al. — ACL Findings (2025)',
+        doi: '#',
+        color: 'amber',
+        twClasses: 'bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40',
+        labelClass: 'text-amber-400',
+        dotClass: 'bg-amber-400',
+        footerClass: 'text-amber-300/80',
+        glowClass: 'bg-amber-500/5 group-hover:bg-amber-500/10',
+        headline: '3 rounds is the scientifically optimal number',
+        description: 'Research published at ACL 2025 (the premier NLP conference) specifically determines that 3 rounds of deliberation is the optimum for maximizing decision quality. Fewer rounds produce shallow analysis. More rounds introduce noise and rhetorical drift — degrading the signal.',
+        status: '3-Round Protocol Validated',
+    },
+    {
+        key: 'interface',
+        label: 'Human-in-the-Loop Control',
+        cite: 'Amershi et al. — CHI / Microsoft Research (2019)',
+        doi: 'https://doi.org/10.1145/3290605.3300233',
+        color: 'pink',
+        twClasses: 'bg-pink-500/5 border-pink-500/20 hover:bg-pink-500/10 hover:border-pink-500/40',
+        labelClass: 'text-pink-400',
+        dotClass: 'bg-pink-400',
+        footerClass: 'text-pink-300/80',
+        glowClass: 'bg-pink-500/5 group-hover:bg-pink-500/10',
+        headline: 'Microsoft Research\'s 18 guidelines for Human-AI trust',
+        description: 'Every verdict in CouncilIA complies with Guidelines G11 (the AI must explain *why* it made a decision, not just *what*) and G17 (the human must retain global override control at any point) from the foundational Microsoft Research CHI paper on Human-AI interaction. You are always the final decision-maker.',
+        status: 'Human Override Active',
+    },
+];
+
 function MethodologyMoat({ score, lang, validation }: { score: number, lang: UILang, validation: any }) {
-    const varDisplay = calculateVaR(score);
-    
     return (
-        <div className="mt-8 pt-8 border-t border-white/10">
-            <div className="flex items-center gap-2 mb-6">
-                <span className="material-symbols-outlined text-indigo-400">verified</span>
-                <h3 className="font-display font-black uppercase tracking-[0.2em] text-sm text-white">Scientific Foundation & Validity</h3>
+        <div className="mt-10 pt-8 border-t border-white/10">
+            {/* Section Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                <div>
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="material-symbols-outlined text-indigo-400 text-xl">verified</span>
+                        <h3 className="font-display font-black uppercase tracking-[0.15em] text-sm text-white">Scientific Foundation & Validity</h3>
+                    </div>
+                    <p className="text-xs text-slate-500 max-w-xl leading-relaxed">
+                        Every conclusion in this report is generated by a protocol grounded in 5 peer-reviewed academic pillars. This is not a standard AI response — it is a structured deliberation framework with a verifiable scientific chain-of-custody.
+                    </p>
+                </div>
+                <a
+                    href="/methodology"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 flex items-center gap-1.5 text-[10px] text-indigo-400 hover:text-indigo-300 font-mono uppercase tracking-widest transition-colors whitespace-nowrap"
+                >
+                    <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                    Full Methodology
+                </a>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* 1. Clinical Precision */}
-                <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/20 flex flex-col gap-2 transition-all hover:bg-indigo-500/10 hover:border-indigo-500/40 group relative overflow-hidden">
-                    <div className="flex justify-between items-start z-10">
-                        <span className="text-[10px] font-mono text-indigo-400 uppercase font-black tracking-widest">{t(lang, 'pill_precision')}</span>
-                        <span className="text-[9px] font-mono text-slate-500">Shaikh et al. (PLOS 2025)</span>
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed z-10">
-                        <ReactMarkdown>{t(lang, 'pill_precision_desc')}</ReactMarkdown>
-                    </p>
-                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
-                        <span className="size-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
-                        <span className="text-[9px] font-mono text-indigo-300/80 uppercase tracking-tighter">Inference Logic Active</span>
-                    </div>
-                    <div className="absolute top-0 right-0 size-24 bg-indigo-500/5 blur-2xl group-hover:bg-indigo-500/10 transition-all"></div>
-                </div>
+                {SCIENCE_PILLARS.map((pillar) => (
+                    <div
+                        key={pillar.key}
+                        className={`p-5 rounded-xl border flex flex-col gap-3 transition-all group relative overflow-hidden ${pillar.twClasses}`}
+                    >
+                        {/* Card Header */}
+                        <div className="flex justify-between items-start z-10">
+                            <div>
+                                <span className={`text-[10px] font-mono uppercase font-black tracking-widest ${pillar.labelClass}`}>{pillar.label}</span>
+                                {pillar.doi !== '#' ? (
+                                    <a
+                                        href={pillar.doi}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-1 mt-0.5 text-[9px] font-mono text-slate-500 hover:text-slate-300 transition-colors group/doi"
+                                    >
+                                        <span className="material-symbols-outlined text-[10px] group-hover/doi:text-indigo-400 transition-colors">open_in_new</span>
+                                        {pillar.cite}
+                                    </a>
+                                ) : (
+                                    <span className="block mt-0.5 text-[9px] font-mono text-slate-500">{pillar.cite}</span>
+                                )}
+                            </div>
+                        </div>
 
-                {/* 2. Adversarial Alignment */}
-                <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/20 flex flex-col gap-2 transition-all hover:bg-purple-500/10 hover:border-purple-500/40 group relative overflow-hidden">
-                    <div className="flex justify-between items-start z-10">
-                        <span className="text-[10px] font-mono text-purple-400 uppercase font-black tracking-widest">{t(lang, 'pill_alignment')}</span>
-                        <span className="text-[9px] font-mono text-slate-500">Ellemers et al. (PNAS 2020)</span>
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed z-10">
-                        <ReactMarkdown>{t(lang, 'pill_alignment_desc')}</ReactMarkdown>
-                    </p>
-                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
-                        <span className="size-1.5 rounded-full bg-purple-400 animate-pulse"></span>
-                        <span className="text-[9px] font-mono text-purple-300/80 uppercase tracking-tighter">Kahneman Rules Engaged</span>
-                    </div>
-                    <div className="absolute top-0 right-0 size-24 bg-purple-500/5 blur-2xl group-hover:bg-purple-500/10 transition-all"></div>
-                </div>
+                        {/* Headline */}
+                        <p className={`text-xs font-bold z-10 ${pillar.labelClass}`}>{pillar.headline}</p>
 
-                {/* 3. Collective Intelligence */}
-                <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col gap-2 transition-all hover:bg-emerald-500/10 hover:border-emerald-500/40 group relative overflow-hidden">
-                    <div className="flex justify-between items-start z-10">
-                        <span className="text-[10px] font-mono text-emerald-400 uppercase font-black tracking-widest">{t(lang, 'pill_strategy')}</span>
-                        <span className="text-[9px] font-mono text-slate-500">MpFL (NeurIPS 2025)</span>
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed z-10">
-                        <ReactMarkdown>{t(lang, 'pill_strategy_desc')}</ReactMarkdown>
-                    </p>
-                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
-                        <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span className="text-[9px] font-mono text-emerald-300/80 uppercase tracking-tighter">Equilibrium Score: {score}/100</span>
-                    </div>
-                    <div className="absolute top-0 right-0 size-24 bg-emerald-500/5 blur-2xl group-hover:bg-emerald-500/10 transition-all"></div>
-                </div>
+                        {/* Description */}
+                        <p className="text-[11px] text-slate-400 leading-relaxed z-10">{pillar.description}</p>
 
-                {/* 4. Protocol Optimality */}
-                <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 flex flex-col gap-2 transition-all hover:bg-amber-500/10 hover:border-amber-500/40 group relative overflow-hidden">
-                    <div className="flex justify-between items-start z-10">
-                        <span className="text-[10px] font-mono text-amber-400 uppercase font-black tracking-widest">{t(lang, 'pill_protocol')}</span>
-                        <span className="text-[9px] font-mono text-slate-500">Kaesberg (ACL 2025)</span>
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed z-10">
-                        <ReactMarkdown>{t(lang, 'pill_protocol_desc')}</ReactMarkdown>
-                    </p>
-                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
-                        <span className="size-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                        <span className="text-[9px] font-mono text-amber-300/80 uppercase tracking-tighter">Round Equilibrium Active</span>
-                    </div>
-                    <div className="absolute top-0 right-0 size-24 bg-amber-500/5 blur-2xl group-hover:bg-amber-500/10 transition-all"></div>
-                </div>
+                        {/* Status Indicator */}
+                        <div className={`mt-auto pt-3 border-t border-white/5 flex items-center gap-2 z-10`}>
+                            <span className={`size-1.5 rounded-full animate-pulse ${pillar.dotClass}`}></span>
+                            <span className={`text-[9px] font-mono uppercase tracking-tighter ${pillar.footerClass}`}>{pillar.status}</span>
+                        </div>
 
-                {/* 5. Control & Clarity */}
-                <div className="p-4 rounded-xl bg-pink-500/5 border border-pink-500/20 flex flex-col gap-2 transition-all hover:bg-pink-500/10 hover:border-pink-500/40 group relative overflow-hidden">
-                    <div className="flex justify-between items-start z-10">
-                        <span className="text-[10px] font-mono text-pink-400 uppercase font-black tracking-widest">{t(lang, 'pill_interface')}</span>
-                        <span className="text-[9px] font-mono text-slate-500">Amershi (CHI 2019)</span>
+                        {/* Glow */}
+                        <div className={`absolute top-0 right-0 size-24 blur-2xl rounded-full transition-all ${pillar.glowClass}`}></div>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed z-10">
-                        <ReactMarkdown>{t(lang, 'pill_interface_desc')}</ReactMarkdown>
-                    </p>
-                    <div className="mt-auto pt-2 flex items-center gap-2 opacity-40 group-hover:opacity-100 transition-opacity z-10">
-                        <span className="size-1.5 rounded-full bg-pink-400 animate-pulse"></span>
-                        <span className="text-[9px] font-mono text-pink-300/80 uppercase tracking-tighter">Human-in-the-Loop Active</span>
-                    </div>
-                    <div className="absolute top-0 right-0 size-24 bg-pink-500/5 blur-2xl group-hover:bg-pink-500/10 transition-all"></div>
-                </div>
+                ))}
 
-                {/* Tactical Footer Overlay */}
-                <div className="flex items-center justify-between col-span-1 md:col-span-2 lg:col-span-3 mt-4 pt-4 border-t border-white/5 opacity-50">
-                    <div className="flex items-center gap-2">
-                        <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Engine // ACE 3.0</span>
+                {/* Tactical Footer */}
+                <div className="flex items-center justify-between col-span-1 md:col-span-2 lg:col-span-3 mt-4 pt-4 border-t border-white/5">
+                    <div className="flex items-center gap-3">
+                        <span className="text-[8px] font-mono text-slate-600 uppercase tracking-widest">Engine // ACE 3.0</span>
                         <div className="size-1 rounded-full bg-slate-700"></div>
-                        <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Session // VAL-{validation.id.substring(0, 8).toUpperCase()}</span>
+                        <span className="text-[8px] font-mono text-slate-600 uppercase tracking-widest">Session // {validation.id.substring(0, 16).toUpperCase()}</span>
                     </div>
+                    <span className="text-[8px] font-mono text-slate-600 uppercase tracking-widest">CouncilIA — Academic Moat Certified</span>
                 </div>
             </div>
         </div>

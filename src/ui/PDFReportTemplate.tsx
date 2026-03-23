@@ -80,8 +80,9 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
         <div id="pdf-report-container" className="bg-[#050810] text-white font-sans w-[210mm] relative overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
             <style dangerouslySetInnerHTML={{
                 __html: `
-                .pdf-page { width: 210mm; min-height: 297mm; padding: 60px; position: relative; background-color: #050810; border-bottom: 2px solid #111827; }
-                .pdf-page:last-child { border-bottom: none; }
+                #pdf-report-container { width: 794px; }
+                .pdf-page { width: 794px; min-height: 1123px; padding: 60px; position: relative; background-color: #050810; box-sizing: border-box; overflow: visible; page-break-after: always; }
+                .pdf-page:last-child { page-break-after: auto; border-bottom: none; }
                 .mono { font-family: monospace; }
                 h1, h2, h3, h4 { letter-spacing: -0.025em; font-weight: 800; }
                 .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; }

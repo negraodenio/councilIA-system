@@ -13,9 +13,7 @@ export default function SystemReady() {
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState('');
     const [tenantId, setTenantId] = useState('');
-    const [lang] = useState<UILang>(() =>
-        resolveUILang(typeof navigator !== 'undefined' ? navigator.language : 'en')
-    );
+    const [lang] = useState<UILang>('English');
 
     const [profileLoading, setProfileLoading] = useState(true);
     const [showUpgrade, setShowUpgrade] = useState(false);
@@ -236,9 +234,9 @@ export default function SystemReady() {
 
                                 <button
                                     onClick={handleBilling}
-                                    className="w-full mt-3 py-1.5 rounded-lg bg-[#00f2ff]/10 border border-[#00f2ff]/20 text-[#00f2ff] text-[10px] font-bold uppercase tracking-widest hover:bg-[#00f2ff]/20 transition-all flex items-center justify-center gap-2"
+                                    className="w-full mt-3 py-2 border border-slate-700 rounded bg-slate-800/50 hover:bg-slate-700 hover:text-white transition-colors text-[10px] font-mono font-bold uppercase tracking-widest text-slate-300 flex items-center justify-center gap-2"
                                 >
-                                    <span className="material-symbols-outlined text-[12px]">payments</span>
+                                    <span className="material-symbols-outlined text-[14px]">credit_card</span>
                                     Manage Billing
                                 </button>
                             </div>
