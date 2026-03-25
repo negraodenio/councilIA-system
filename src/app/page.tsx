@@ -98,23 +98,27 @@ export default function Home() {
             {/* Scientific Proof Section */}
             <section className="py-12 px-6 border-y border-[rgba(0,240,255,0.1)] bg-panel-blue/5">
                 <div className="max-w-7xl mx-auto">
-                    <p className="text-center text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-10">Validated by 5 Peer-Reviewed Foundations</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <p className="text-center text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-10">Validated by 5 Scientific Foundations</p>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
                         <a href="https://doi.org/10.1371/journal.pdig.0000721" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">97% Precision</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Clinical Consensus (PLOS 2025)</p>
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">97% Accuracy</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">PLOS Digital Health (2025)</p>
                         </a>
                         <a href="https://doi.org/10.1073/pnas.1913936117" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
                             <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Bias Erased</h3>
                             <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Adversarial Alignment (PNAS)</p>
                         </a>
-                        <a href="https://arxiv.org/abs/2501.08263" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Rational Exit</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Multiplayer FL (NeurIPS 2025)</p>
-                        </a>
-                        <a href="/methodology" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">3-Round Opt.</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Noise-to-Signal (ACL 2025)</p>
+                        <div className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display">Rational Equilibrium</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">MpFL Neural Engine (NeurIPS)</p>
+                        </div>
+                        <div className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display">3-Round Protocol</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight font-bold text-neon-cyan">ACL Findings (2025)</p>
+                        </div>
+                        <a href="https://doi.org/10.1145/3290605.3300233" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Human Control</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">MS Guidelines G11 & G17</p>
                         </a>
                     </div>
                 </div>
@@ -202,8 +206,8 @@ export default function Home() {
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                                     <span className="text-4xl font-black font-display text-neon-lime tracking-tighter">72</span>
                                     <div className="text-[8px] text-[#00f0ff]/70 font-mono tracking-widest mt-1 uppercase flex flex-col items-center">
-                                        <span>Final Score</span>
-                                        <span className="text-[6px] opacity-70 border-t border-neon-cyan/20 pt-1 mt-1 max-w-[120px]">Argument Density Filter v3.0</span>
+                                        <span>Consensus Score</span>
+                                        <span className="text-[6px] opacity-70 border-t border-neon-cyan/20 pt-1 mt-1 max-w-[120px]">Science-Grade Synthesis v5.0</span>
                                     </div>
                                 </div>
                             </div>
@@ -380,28 +384,28 @@ export default function Home() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-space-black relative group">
-                            <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/20 transition-colors font-display">01</span>
+                            <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/20 transition-colors font-display">R1</span>
                             <div className="size-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6">
-                                <span className="material-symbols-outlined text-neon-cyan">upload_file</span>
+                                <span className="material-symbols-outlined text-neon-cyan">gavel</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Submit Your Move</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Input your strategy, M&A hypothesis, or launch plan. The Council prepares for surgical dissection.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Adversarial Opening</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Agents isolate the "instant failure" assumptions in your business model or strategy document before the turn begins.</p>
                         </div>
                         <div className="p-8 rounded-2xl border border-neon-cyan/40 bg-space-black relative group glow-cyan">
-                            <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/30 transition-colors font-display">02</span>
+                            <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/30 transition-colors font-display">R2</span>
                             <div className="size-12 rounded-lg bg-neon-cyan/20 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">forum</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Watch 6 Experts Debate</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Witness real-time adversarial deliberation. Intervene anytime to pivot the discussion and challenge the AI&apos;s logic.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Cross-Examination</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Witness real-time adversarial deliberation. Agents must address dissent points raised in R1. Majority voting is disabled.</p>
                         </div>
                         <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-space-black relative group">
-                            <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/20 transition-colors font-display">03</span>
+                            <span className="text-6xl font-black text-neon-cyan/5 absolute top-4 right-8 group-hover:text-neon-cyan/20 transition-colors font-display">R3</span>
                             <div className="size-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">fact_check</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Actionable Verdict</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Not just a score. Get a detailed board-level report with specific next steps and risk mitigation strategies.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Recursive Synthesis</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Only arguments that survived R1/R2 are synthesized by the Arbitrator into the final executive verdict and score.</p>
                         </div>
                     </div>
                 </div>
@@ -541,45 +545,35 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row gap-16 items-center">
                         <div className="md:w-1/2">
-                            <h2 className="text-4xl font-black mb-8 uppercase tracking-tight font-display text-neon-cyan">Our Validation Framework</h2>
+                            <h2 className="text-4xl font-black mb-8 uppercase tracking-tight font-display text-neon-cyan">Scientific Validation Protocol</h2>
                             <div className="space-y-8">
                                 <div className="flex gap-6">
                                     <div className="shrink-0 flex flex-col items-center">
-                                        <div className="size-8 rounded-full bg-neon-cyan text-black flex items-center justify-center font-bold text-xs">1</div>
+                                        <div className="size-8 rounded-full bg-neon-cyan text-black flex items-center justify-center font-bold text-xs uppercase">R1</div>
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Assumption Extraction</h4>
-                                        <p className="text-sm text-[#c4c4ff]">We isolate the critical "make or break" assumptions in your strategy before the debate begins.</p>
+                                        <h4 className="font-bold mb-2 font-display">Adversarial Opening</h4>
+                                        <p className="text-sm text-[#c4c4ff]">We isolate the critical "instant failure" assumptions in your strategy using clinical consensus frameworks (PLOS 2025).</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
                                     <div className="shrink-0 flex flex-col items-center">
-                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs">2</div>
+                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs uppercase">R2</div>
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Adversarial Stress-Test</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Agents engage in structured debate (PNAS Alignment) to find logic flaws with clinical precision.</p>
+                                        <h4 className="font-bold mb-2 font-display">Cross-Examination</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Agents must address specific dissent points using Adversarial Alignment (PNAS), removing cognitive bias from the decision space.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
                                     <div className="shrink-0 flex flex-col items-center">
-                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs">3</div>
-                                        <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
+                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs uppercase">R3</div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Consensus Synthesis</h4>
-                                        <p className="text-sm text-[#c4c4ff]">3 rounds of filtering where weaker arguments are discarded until a robust equilibrium is reached.</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-6">
-                                    <div className="shrink-0 flex flex-col items-center">
-                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs">4</div>
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold mb-2 font-display">Actionable Verdict</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Final synthesis calculating the "Strategic Margin of Safety" and specific risk mitigation steps.</p>
+                                        <h4 className="font-bold mb-2 font-display">Recursive Synthesis</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Arguments are mathematically filtered until a rational equilibrium (NeurIPS 2025) is reached, providing a bulletproof executive verdict.</p>
                                     </div>
                                 </div>
                             </div>

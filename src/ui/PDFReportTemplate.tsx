@@ -76,7 +76,7 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
     const risks = sections.find(s => s.id === 'risks');
     const recommendations = sections.find(s => s.id === 'recommendations');
 
-    const isEmbrapa = r.isEmbrapa || false;
+    const isEmbrapa = !!(r.is_embrapa || r.is_embrapa_poc || r.isEmbrapa || r.isEmbrapaPOC || validation.full_result?.is_embrapa);
 
     return (
         <div id="pdf-report-container" className="bg-[#050810] text-white font-sans w-[210mm] relative overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>

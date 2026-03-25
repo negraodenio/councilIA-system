@@ -61,7 +61,7 @@ export default function MethodologyPage() {
                         impact="Kahneman-Based Alignment"
                     />
 
-                    {/* Pillar 3: Collective Intelligence */}
+                    {/* Pillar 3: Rational Multi-Agent Systems */}
                     <MethodologyCard 
                         id="03"
                         title="Rational Multi-Agent Systems"
@@ -73,7 +73,7 @@ export default function MethodologyPage() {
                         impact="Proven Rational Equilibrium"
                     />
 
-                    {/* Pillar 4: Consensus Logic */}
+                    {/* Pillar 4: Consensus vs. Majority Voting */}
                     <MethodologyCard 
                         id="04"
                         title="Consensus vs. Majority Voting"

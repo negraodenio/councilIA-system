@@ -51,7 +51,7 @@ export default function ConsensusReport({ validation, patches }: {
     const result = validation.full_result || {};
     const lang: UILang = resolveUILang(result.lang);
 
-    const isEmbrapa = result.is_embrapa || result.is_embrapa_poc || (validation.full_result?.is_embrapa);
+    const isEmbrapa = !!(result.is_embrapa || result.is_embrapa_poc || result.isEmbrapa || result.isEmbrapaPOC || validation.full_result?.is_embrapa);
 
     const score = Math.round(validation.consensus_score || 0);
     const align = score;
@@ -724,8 +724,72 @@ export default function ConsensusReport({ validation, patches }: {
                                                 </div>
 
                                                 <div className="mt-6">
-                                                    <MethodologyMoat score={score} lang={lang} validation={validation} />
+                                                    <MethodologyMoat score={score} lang={lang} validation={validation} isEmbrapa={isEmbrapa} />
                                                 </div>
+
+                                                {/* 5. EBRAMPA ELITE: FULL TRANSCRIPT & HINTS */}
+                                                {isEmbrapa && (
+                                                    <div className="mt-12 flex flex-col gap-8 border-t border-white/10 pt-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                                        
+                                                        {/* Glossary & Tech Hints */}
+                                                        <div className="p-8 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 relative overflow-hidden">
+                                                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-400/5 blur-[80px] rounded-full pointer-events-none"></div>
+                                                            <h3 className="text-sm font-black uppercase tracking-[0.3em] text-indigo-400 mb-6 flex items-center gap-3">
+                                                                <span className="material-symbols-outlined text-lg">info</span>
+                                                                GLOSSÁRIO TÉCNICO & HINTS (EMBRAPA v5.0)
+                                                            </h3>
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs text-slate-400 leading-relaxed">
+                                                                <div><strong className="text-indigo-300 block mb-1">RDC 166/2017:</strong> Resolução da ANVISA sobre a validação de métodos analíticos. Non-negotiable em Level 1.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">ISO/IEC 17025:</strong> Requisito global para competência de laboratórios de ensaio e calibração.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">HIERARCHY OF TRUTH:</strong> Protocolo v5.0 de priorização: Normas {'>'} Standards {'>'} Literatura {'>'} Empírico.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">COST BRASIL:</strong> Auditoria obrigatória de gargalos logísticos e tributários específicos do agronegócio.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">HORWITZ PROTOCOL:</strong> Parâmetro estatístico para aceitação de precisão inter-laboratorial.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">NASH EQUILIBRIUM:</strong> Ponto de convergência onde nenhum agente tem incentivo para mudar seu veredito.</div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Full Transcript Section */}
+                                                        <div className="flex flex-col gap-4">
+                                                            <div className="flex items-center justify-between mb-2">
+                                                                <div className="flex items-center gap-3">
+                                                                    <span className="material-symbols-outlined text-neon-cyan">history_edu</span>
+                                                                    <h3 className="font-display font-black uppercase tracking-widest text-base">Elite Protocol Transcript</h3>
+                                                                </div>
+                                                                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">6 Rounds Deliberation</span>
+                                                            </div>
+                                                            
+                                                            <div className="space-y-4 max-h-[800px] overflow-y-auto custom-scrollbar pr-4 p-6 bg-black/40 border border-white/5 rounded-2xl">
+                                                                {[round1, round2, round3, round4, round5, round6].map((round, idx) => {
+                                                                    if (round.length === 0) return null;
+                                                                    const roundTitle = idx === 0 ? 'Tese Inicial' : idx === 1 ? 'Contraditório' : idx === 2 ? 'Síntese' : idx === 3 ? 'Alinhamento' : idx === 4 ? 'Stress Test' : 'Roadmap';
+                                                                    return (
+                                                                        <div key={idx} className="mb-10 last:mb-0">
+                                                                            <div className="flex items-center gap-4 mb-4">
+                                                                                <div className="size-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-display font-black text-xs text-neon-cyan">0{idx + 1}</div>
+                                                                                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{roundTitle}</h4>
+                                                                                <div className="h-px flex-1 bg-white/5"></div>
+                                                                            </div>
+                                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                                {round.map((r: any) => (
+                                                                                    <div key={r.id} className="p-5 glass-card rounded-xl border border-white/5 hover:border-white/10 transition-all">
+                                                                                        <div className="flex items-center gap-2 mb-3">
+                                                                                            <span className="text-sm">{r.emoji || '🤖'}</span>
+                                                                                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-200">{r.name}</span>
+                                                                                        </div>
+                                                                                        <div className="prose prose-invert text-[11px] line-clamp-6 opacity-60 hover:opacity-100 transition-opacity">
+                                                                                            <ReactMarkdown>{r.text}</ReactMarkdown>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                            <p className="text-[10px] text-center text-slate-500 uppercase tracking-widest mt-2">{t(lang, 'cr_read_full')}</p>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         );
                                     })()}
@@ -1085,33 +1149,68 @@ const SCIENCE_PILLARS = [
     },
 ];
 
-function MethodologyMoat({ score, lang, validation }: { score: number, lang: UILang, validation: any }) {
+function MethodologyMoat({ score, lang, validation, isEmbrapa }: { score: number, lang: UILang, validation: any, isEmbrapa: boolean }) {
+    const pillars = isEmbrapa ? [
+        {
+            key: 'regulatory',
+            label: 'Regulatory Compliance',
+            cite: 'ANVISA RDC 166/2017 & MAPA',
+            doi: '#',
+            color: 'indigo',
+            twClasses: 'bg-indigo-500/5 border-indigo-500/20 hover:bg-indigo-500/10 hover:border-indigo-500/40',
+            labelClass: 'text-indigo-400',
+            dotClass: 'bg-indigo-400',
+            footerClass: 'text-indigo-300/80',
+            glowClass: 'bg-indigo-500/5 group-hover:bg-indigo-500/10',
+            headline: 'Strict Alignment with ANVISA/MAPA Standards',
+            description: 'Every technical claim undergoes high-precision mapping against RDC 166 (Metrological Validation) and relevant Normative Instructions from MAPA. Arguments that contradict regulatory Level 1 are automatically flagged as critical failures.',
+            status: 'Regulatory Engine v5.0 Active',
+        },
+        {
+            key: 'adversarial',
+            label: 'Scientific Conflict Matrix',
+            cite: 'Kahneman Collaboration Model (PNAS)',
+            doi: 'https://doi.org/10.1073/pnas.1913936117',
+            color: 'purple',
+            twClasses: 'bg-purple-500/5 border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40',
+            labelClass: 'text-purple-400',
+            dotClass: 'bg-purple-400',
+            footerClass: 'text-purple-300/80',
+            glowClass: 'bg-purple-500/5 group-hover:bg-purple-500/10',
+            headline: '6-Round Adversarial Scrutiny',
+            description: 'This session executed a full 6-round deliberation loop (Thesis, Cross-Ex, Synthesis, Consensus, Stress, Roadmap). This ensures that innovation is not just "good on paper" but survives adversarial challenge from 6 specialized technical domains.',
+            status: '6-Round Swarm Engaged',
+        },
+        ...SCIENCE_PILLARS.slice(2, 5) // Use strategy, protocol, and interface from standard
+    ] : SCIENCE_PILLARS;
+
     return (
         <div className="mt-10 pt-8 border-t border-white/10">
             {/* Section Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <span className="material-symbols-outlined text-indigo-400 text-xl">verified</span>
-                        <h3 className="font-display font-black uppercase tracking-[0.15em] text-sm text-white">Scientific Foundation & Validity</h3>
+                        <span className="material-symbols-outlined text-indigo-400 text-xl">{isEmbrapa ? 'verified_user' : 'verified'}</span>
+                        <h3 className="font-display font-black uppercase tracking-[0.15em] text-sm text-white">{isEmbrapa ? 'Embrapa Elite Protocol: Auditor Certificate' : 'Scientific Foundation & Validity'}</h3>
                     </div>
                     <p className="text-xs text-slate-500 max-w-xl leading-relaxed">
-                        Every conclusion in this report is generated by a protocol grounded in 5 peer-reviewed academic pillars. This is not a standard AI response — it is a structured deliberation framework with a verifiable scientific chain-of-custody.
+                        {isEmbrapa 
+                            ? 'Este relatório foi gerado através do Protocolo Científico v5.0 Elite da Embrapa, integrando RAG regulatório e 6 rondas de escrutínio adversarial para máxima segurança de decisão.'
+                            : 'Every conclusion in this report is generated by a protocol grounded in 5 peer-reviewed academic pillars. This is not a standard AI response — it is a structured deliberation framework with a verifiable scientific chain-of-custody.'
+                        }
                     </p>
                 </div>
-                <a
-                    href="/methodology"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <button
+                    onClick={() => window.open('/methodology', '_blank')}
                     className="shrink-0 flex items-center gap-1.5 text-[10px] text-indigo-400 hover:text-indigo-300 font-mono uppercase tracking-widest transition-colors whitespace-nowrap"
                 >
                     <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                    Full Methodology
-                </a>
+                    {isEmbrapa ? 'Ver Protocolo v5.0' : 'Full Methodology'}
+                </button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {SCIENCE_PILLARS.map((pillar) => (
+                {pillars.map((pillar) => (
                     <div
                         key={pillar.key}
                         className={`p-5 rounded-xl border flex flex-col gap-3 transition-all group relative overflow-hidden ${pillar.twClasses}`}
