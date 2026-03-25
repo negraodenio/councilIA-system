@@ -42,7 +42,17 @@ const PERSONAS: Record<string, { lbl: string; pt: string; em: string; c: string 
 };
 
 function gp(name: string, lang: UILang) {
-    const key = Object.keys(PERSONAS).find(k => name.toLowerCase().includes(k));
+    const n = name.toLowerCase();
+    // Embrapa Specialized Mappings
+    if (n.includes('inovação') || n.includes('visionary')) return { ...PERSONAS.visionary, dn: name };
+    if (n.includes('cientista') || n.includes('technologist')) return { ...PERSONAS.technologist, dn: name };
+    if (n.includes('auditor') || n.includes('devil')) return { ...PERSONAS.devil, dn: name };
+    if (n.includes('transferência') || n.includes('market')) return { ...PERSONAS.marketeer, dn: name };
+    if (n.includes('regulatório') || n.includes('ethics')) return { ...PERSONAS.ethicist, dn: name };
+    if (n.includes('fomento') || n.includes('financial')) return { ...PERSONAS.financier, dn: name };
+    if (n.includes('especializado') || n.includes('judge')) return { ...PERSONAS.judge, dn: name };
+
+    const key = Object.keys(PERSONAS).find(k => n.includes(k));
     const p = key ? PERSONAS[key] : { lbl: name, pt: name, em: '\u{1F916}', c: '#6366F1' };
     return { ...p, dn: lang === 'pt' ? p.pt : p.lbl };
 }

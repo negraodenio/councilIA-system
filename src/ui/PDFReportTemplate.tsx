@@ -80,8 +80,8 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
         <div id="pdf-report-container" className="bg-[#050810] text-white font-sans w-[210mm] relative overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
             <style dangerouslySetInnerHTML={{
                 __html: `
-                #pdf-report-container { width: 794px; }
-                .pdf-page { width: 794px; min-height: 1123px; padding: 60px; position: relative; background-color: #050810; box-sizing: border-box; overflow: visible; page-break-after: always; }
+                #pdf-report-container { width: 794px; overflow: visible !important; }
+                .pdf-page { width: 794px; min-height: 1123px; padding: 60px; position: relative; background-color: #050810; box-sizing: border-box; overflow: visible !important; page-break-after: always; border-bottom: 1px solid rgba(255,255,255,0.02); }
                 .pdf-page:last-child { page-break-after: auto; border-bottom: none; }
                 .mono { font-family: monospace; }
                 h1, h2, h3, h4 { letter-spacing: -0.025em; font-weight: 800; }
@@ -242,29 +242,6 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                     )}
                 </div>
 
-                <div className="mt-auto relative z-10">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-8 px-1">Council Node Verification</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        {personaData.slice(0, 6).map((r) => {
-                            const p = gp(r.name, lang);
-                            const badge = getScientificBadge(r.id, 100);
-                            return (
-                                <div key={r.id} className="p-5 border border-white/10 rounded-2xl bg-white/[0.01] hover:bg-white/[0.03] transition-all">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-xl shadow-inner shadow-white/5">{p.em}</div>
-                                        <div>
-                                            <p className="text-[10px] font-black uppercase text-white tracking-widest">{p.dn}</p>
-                                            {badge && <p className="text-[8px] font-mono text-cyan-400/80 uppercase tracking-tighter">{badge.label}</p>}
-                                        </div>
-                                    </div>
-                                    <div className="text-[10px] text-slate-400 leading-relaxed line-clamp-4 italic border-l-2 border-white/5 pl-4 ml-1">
-                                        <ReactMarkdown>{r.text.replace(/##.*/g, '').replace(/SCORE[\s\S]*/i, '').trim().substring(0, 200) + '...'}</ReactMarkdown>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
 
                 <div className="absolute bottom-10 left-[60px] right-[60px] flex justify-between pt-6 border-t border-white/5 opacity-50 relative z-10">
                     <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Verified Adversarial Alignment Mechanism</p>

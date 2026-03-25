@@ -5,6 +5,7 @@ import { redactPII } from '@/lib/privacy/redact';
 import { apiOk, apiError } from '@/lib/api/error';
 import OpenAI from "openai";
 import { PERSONA_PROMPTS_V3_0, CONFLICT_MATRIX_V3_0 } from './prompts_v3_0';
+import { PERSONA_PROMPTS_EMBRAPA, EMBRAPA_CONFLICT_MATRIX, PERSONA_NAMES_EMBRAPA } from './prompts_embrapa';
 
 const mistralClient = new OpenAI({
     apiKey: process.env.MISTRAL_API_KEY,
@@ -229,8 +230,8 @@ function inferGeoContext(idea: string, lang: string): string {
 }
 
 // ——— v3.0 ACE Engine — Persona Cognitive Archetypes & Conflict Matrix ———
-const PERSONA_PROMPTS = PERSONA_PROMPTS_V3_0;
-const CONFLICT_MATRIX = CONFLICT_MATRIX_V3_0;
+let PERSONA_PROMPTS = PERSONA_PROMPTS_V3_0;
+let CONFLICT_MATRIX = CONFLICT_MATRIX_V3_0;
 
 // ——— Prompt Builders (v3.0 ACE Engine) ———————————————————
 
@@ -644,6 +645,22 @@ export async function POST(req: Request) {
             await addEvent(supabase, runId, 'system', null, { msg: '🔒 PII detected and redacted.' });
         }
 
+        // --- Embrapa POC Mode Detection ---
+        let isEmbrapa = false;
+        try {
+            const { data: { user: userData } } = await supabase.auth.admin.getUserById(user_id);
+            if (userData?.email === 'embrapa@embrapa.com') {
+                isEmbrapa = true;
+                PERSONA_PROMPTS = PERSONA_PROMPTS_EMBRAPA;
+                CONFLICT_MATRIX = EMBRAPA_CONFLICT_MATRIX;
+                await addEvent(supabase, runId, 'system', null, { 
+                    msg: '🌿 Embrapa POC Mode Active: Loading specialized agricultural research and analytical validation personas.' 
+                });
+            }
+        } catch (err) {
+            console.error('[Worker] User lookup error:', err);
+        }
+
         // --- RAG: Vector Search for Context Injection ---
         let contextSnippets = "";
         try {
@@ -745,9 +762,46 @@ export async function POST(req: Request) {
             msg: '📋 ROUND 1 · THESIS — Independent Expert Analysis\n📚 Framework: Delphi Method (RAND Corp, 1963) — Isolated evaluation before cross-examination',
         });
 
+        // 🌿 Embrapa Knowledge Base RAG mapping
+        const EMBRAPA_HUBS: Record<string, string> = {
+            visionary:    '00000000-0000-0000-0000-0b61e2024003',
+            technologist: '00000000-0000-0000-0000-0b61e2024001',
+            devil:        '00000000-0000-0000-0000-0b61e2024002',
+            ethicist:     '00000000-0000-0000-0000-0b61e2024004',
+            marketeer:    '00000000-0000-0000-0000-0b61e2024004',
+            financier:    '00000000-0000-0000-0000-0b61e2024002',
+        };
+
         const round1Results = await Promise.all(
             personas.map(async (p) => {
                 const t0 = Date.now();
+                
+                // --- Technical Persona-Specific RAG for Embrapa ---
+                let personaEmbrapaContext = "";
+                if (isEmbrapa && EMBRAPA_HUBS[p.id]) {
+                    try {
+                        const embRes = await mistralClient.embeddings.create({
+                            model: 'mistral-embed',
+                            input: ideaRedacted,
+                        });
+                        const qEmb = embRes.data[0].embedding;
+
+                        const { data: kChunks } = await supabase.rpc('match_persona_chunks', {
+                            query_embedding: qEmb,
+                            p_persona_id: EMBRAPA_HUBS[p.id],
+                            match_count: 5,
+                        });
+
+                        if (kChunks && kChunks.length > 0) {
+                            personaEmbrapaContext = "\n\n=== PROTOCOLOS TÉCNICOS ESPECÍFICOS (EVIDÊNCIA RAG) ===\n" +
+                                kChunks.map((c: any) => c.chunk_content).join('\n---\n') +
+                                "\n=== FIM DA EVIDÊNCIA ===";
+                        }
+                    } catch (err) {
+                        console.error('[Worker] Persona-specific RAG error:', err);
+                    }
+                }
+
                 try {
                     const assigned = config.assign[p.id as keyof typeof config.assign];
                     const messages = [
@@ -771,14 +825,15 @@ Provide your analysis in this format:
 ${customPersonaContext}${langInstruction(lang)}`
                                 : buildRound1Prompt(p, lang, ideaRedacted)
                         },
-                        { role: 'user', content: `Analyze this objective from your expert perspective:\n\n"${ideaRedacted}"${contextSnippets}` },
+                        { role: 'user', content: `Analyze this objective from your expert perspective:\n\n"${ideaRedacted}"${contextSnippets}${personaEmbrapaContext}` },
                     ];
 
                     const out = await callModel(assigned, messages, { zdr: config.judge.zdr, maxTokens: 1024, temperature: 0.7 });
                     const text = extractText(out, `Analysis complete by ${p.name}.`);
 
+                    const expertName = isEmbrapa && PERSONA_NAMES_EMBRAPA[p.id] ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
                     await addEvent(supabase, runId, 'model_msg', p.id, {
-                        text, phase: 'round1_analysis', round: 1, persona: p.name, emoji: p.emoji,
+                        text, phase: 'round1_analysis', round: 1, persona: expertName, emoji: p.emoji,
                     });
 
                     await logAICall({
@@ -851,8 +906,9 @@ ${customPersonaContext}${langInstruction(lang)}`
                     const out = await callModel(assigned, messages, { zdr: config.judge.zdr, maxTokens: 900, temperature: 0.5 });
                     const text = extractText(out, `Challenge complete by ${p.name}.`);
 
+                    const expertName = isEmbrapa && PERSONA_NAMES_EMBRAPA[p.id] ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
                     await addEvent(supabase, runId, 'model_msg', p.id, {
-                        text, phase: 'round2_attack', round: 2, persona: p.name, emoji: p.emoji,
+                        text, phase: 'round2_attack', round: 2, persona: expertName, emoji: p.emoji,
                     });
 
                     await logAICall({
@@ -907,8 +963,9 @@ ${customPersonaContext}${langInstruction(lang)}`
                     const out = await callModel(assigned, messages, { zdr: config.judge.zdr, maxTokens: 800, temperature: 0.3 });
                     const text = extractText(out, `Defense complete by ${p.name}.`);
 
+                    const expertName = isEmbrapa && PERSONA_NAMES_EMBRAPA[p.id] ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
                     await addEvent(supabase, runId, 'model_msg', p.id, {
-                        text, phase: 'round3_defense', round: 3, persona: p.name, emoji: p.emoji,
+                        text, phase: 'round3_defense', round: 3, persona: expertName, emoji: p.emoji,
                     });
 
                     await logAICall({
@@ -958,7 +1015,7 @@ ${customPersonaContext}${langInstruction(lang)}`
             const scoreMatch = judgeText.match(/(\d{1,3})\/100/);
             finalScore = scoreMatch ? Math.min(parseInt(scoreMatch[1]), 100) : 50;
 
-            await addEvent(supabase, runId, 'judge_note', 'judge', {
+            await addEvent(supabase, runId, 'judge_note', isEmbrapa ? 'Specialized Agent Judge' : 'judge', {
                 text: judgeText, type: 'final_verdict', consensusDelta: finalScore,
             });
             await addEvent(supabase, runId, 'consensus', null, {
@@ -999,12 +1056,12 @@ ${customPersonaContext}${langInstruction(lang)}`
                 const sm = fbText.match(/(\d{1,3})\/100/);
                 finalScore = sm ? Math.min(parseInt(sm[1]), 100) : 50;
 
-                await addEvent(supabase, runId, 'judge_note', 'judge', {
+                await addEvent(supabase, runId, 'judge_note', isEmbrapa ? 'Specialized Agent Judge' : 'judge', {
                     text: fbText, type: 'final_verdict_fallback', consensusDelta: finalScore,
                 });
             } catch (fbErr: any) {
                 console.error('[Judge] Fallback also failed:', fbErr.message);
-                await addEvent(supabase, runId, 'error', 'judge', {
+                await addEvent(supabase, runId, 'error', isEmbrapa ? 'Specialized Agent Judge' : 'judge', {
                     msg: `Both judges failed: ${err.message} | ${fbErr.message}`,
                 });
             }

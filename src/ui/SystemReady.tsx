@@ -18,7 +18,7 @@ export default function SystemReady() {
     const [profileLoading, setProfileLoading] = useState(true);
     const [showUpgrade, setShowUpgrade] = useState(false);
     const [debugInfo, setDebugInfo] = useState<any>(null);
-    const [usageInfo, setUsageInfo] = useState<{ usage: number, limit: number, plan: string, userName: string } | null>(null);
+    const [usageInfo, setUsageInfo] = useState<{ usage: number, limit: number, plan: string, userName: string, isEmbrapa?: boolean } | null>(null);
 
     // Context / RAG variables
     const [showContextModal, setShowContextModal] = useState(false);
@@ -316,58 +316,58 @@ export default function SystemReady() {
                         </h3>
 
                         <div className="grid grid-cols-2 gap-3">
-                            <div className="glass-panel p-3 rounded-lg border border-[#00f2ff]/30 hover:bg-[#00f2ff]/10 cursor-default transition-all">
+                            <div className="glass-panel p-3 rounded-lg border border-[#00f2ff]/30 hover:bg-[#00f2ff]/10 cursor-help transition-all" title={usageInfo?.isEmbrapa ? "Estrategista focado em alinhamento de projetos e visão de futuro da Embrapa." : "Visionary and strategy expert."}>
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="material-symbols-outlined text-[#00f2ff] text-xl">visibility</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-[#afff33] shadow-[0_0_5px_#afff33]"></div>
                                 </div>
-                                <h4 className="font-bold text-xs text-white">Visionary</h4>
-                                <p className="text-[9px] text-[#00f2ff]/60 uppercase font-mono mt-1">Strategic Lead</p>
+                                <h4 className="font-bold text-xs text-white">{usageInfo?.isEmbrapa ? 'Inovação P&D' : 'Visionary'}</h4>
+                                <p className="text-[9px] text-[#00f2ff]/60 uppercase font-mono mt-1">{usageInfo?.isEmbrapa ? 'Estrategista Agro' : 'Strategic Lead'}</p>
                             </div>
 
-                            <div className="glass-panel p-3 rounded-lg border border-white/10 hover:bg-white/5 cursor-default transition-all">
+                            <div className="glass-panel p-3 rounded-lg border border-white/10 hover:bg-white/5 cursor-help transition-all" title={usageInfo?.isEmbrapa ? "Especialista em rigor científico, validação técnica e consistência de dados." : "Technical architect and logic expert."}>
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="material-symbols-outlined text-white/50 text-xl">terminal</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-[#afff33] shadow-[0_0_5px_#afff33]"></div>
                                 </div>
-                                <h4 className="font-bold text-xs text-white">Technologist</h4>
-                                <p className="text-[9px] text-slate-500 uppercase font-mono mt-1">System Architect</p>
+                                <h4 className="font-bold text-xs text-white">{usageInfo?.isEmbrapa ? 'Cientista Analítico' : 'Technologist'}</h4>
+                                <p className="text-[9px] text-slate-500 uppercase font-mono mt-1">{usageInfo?.isEmbrapa ? 'Validação Técnica' : 'System Architect'}</p>
                             </div>
 
-                            <div className="glass-panel p-3 rounded-lg border border-[#ff00e5]/30 hover:bg-[#ff00e5]/10 cursor-default transition-all">
+                            <div className="glass-panel p-3 rounded-lg border border-[#ff00e5]/30 hover:bg-[#ff00e5]/10 cursor-help transition-all" title={usageInfo?.isEmbrapa ? "Focado em identificar falhas, riscos operacionais e conformidade normativa." : "Red-teaming and risk identification expert."}>
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="material-symbols-outlined text-[#ff00e5] text-xl">skull</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-[#afff33] shadow-[0_0_5px_#afff33]"></div>
                                 </div>
-                                <h4 className="font-bold text-xs text-white">Advocate</h4>
-                                <p className="text-[9px] text-[#ff00e5]/60 uppercase font-mono mt-1">Devil's Advocate</p>
+                                <h4 className="font-bold text-xs text-white">{usageInfo?.isEmbrapa ? 'Auditor de Riscos' : 'Advocate'}</h4>
+                                <p className="text-[9px] text-[#ff00e5]/60 uppercase font-mono mt-1">{usageInfo?.isEmbrapa ? 'Qualidade e Metrologia' : 'Devil\'s Advocate'}</p>
                             </div>
 
-                            <div className="glass-panel p-3 rounded-lg border border-[#afff33]/30 hover:bg-[#afff33]/10 cursor-default transition-all">
+                            <div className="glass-panel p-3 rounded-lg border border-[#afff33]/30 hover:bg-[#afff33]/10 cursor-help transition-all" title={usageInfo?.isEmbrapa ? "Analista focado na adoção de tecnologias pelo produtor e mercado." : "Market trends and user adoption expert."}>
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="material-symbols-outlined text-[#afff33] text-xl">trending_up</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-[#afff33] shadow-[0_0_5px_#afff33]"></div>
                                 </div>
-                                <h4 className="font-bold text-xs text-white">Market</h4>
-                                <p className="text-[9px] text-[#afff33]/60 uppercase font-mono mt-1">Trend Analysis</p>
+                                <h4 className="font-bold text-xs text-white">{usageInfo?.isEmbrapa ? 'Transferência Tech' : 'Market'}</h4>
+                                <p className="text-[9px] text-[#afff33]/60 uppercase font-mono mt-1">{usageInfo?.isEmbrapa ? 'Adoção no Campo' : 'Trend Analysis'}</p>
                             </div>
 
-                            <div className="glass-panel p-3 rounded-lg border border-amber-500/30 hover:bg-amber-500/10 cursor-default transition-all">
+                            <div className="glass-panel p-3 rounded-lg border border-amber-500/30 hover:bg-amber-500/10 cursor-help transition-all" title={usageInfo?.isEmbrapa ? "Especialista em legislação ambiental, conformidade e ética rural." : "Regulatory compliance and ethics expert."}>
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="material-symbols-outlined text-amber-500 text-xl">gavel</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-[#afff33] shadow-[0_0_5px_#afff33]"></div>
                                 </div>
-                                <h4 className="font-bold text-xs text-white">Ethics</h4>
-                                <p className="text-[9px] text-amber-500/60 uppercase font-mono mt-1">Compliance Check</p>
+                                <h4 className="font-bold text-xs text-white">{usageInfo?.isEmbrapa ? 'Regulatório' : 'Ethics'}</h4>
+                                <p className="text-[9px] text-amber-500/60 uppercase font-mono mt-1">{usageInfo?.isEmbrapa ? 'Compliance Ambiental' : 'Compliance Check'}</p>
                             </div>
 
-                            <div className="glass-panel p-3 rounded-lg border border-blue-500/30 hover:bg-blue-500/10 cursor-default transition-all">
+                            <div className="glass-panel p-3 rounded-lg border border-blue-500/30 hover:bg-blue-500/10 cursor-help transition-all" title={usageInfo?.isEmbrapa ? "Focado em ROI, viabilidade financeira e captação de recursos." : "Financial modeling and ROI expert."}>
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="material-symbols-outlined text-blue-500 text-xl">account_balance</span>
                                     <div className="w-1.5 h-1.5 rounded-full bg-[#afff33]"></div>
                                 </div>
-                                <h4 className="font-bold text-xs text-white">Finance</h4>
-                                <p className="text-[9px] text-blue-500/60 uppercase font-mono mt-1">Cost Projection</p>
+                                <h4 className="font-bold text-xs text-white">{usageInfo?.isEmbrapa ? 'Analista Fomento' : 'Finance'}</h4>
+                                <p className="text-[9px] text-blue-500/60 uppercase font-mono mt-1">{usageInfo?.isEmbrapa ? 'ROI e Economia Rural' : 'Cost Projection'}</p>
                             </div>
                         </div>
 
@@ -385,7 +385,7 @@ export default function SystemReady() {
                                         <div className="flex-1 flex justify-between items-center">
                                             <div className={`flex flex-col transition-all duration-300 ${!isSelected && 'grayscale opacity-50'}`}>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-lg">{persona.emoji || '🏢'}</span>
+                                                    <span className="text-lg">{persona.emoji || '🔬'}</span>
                                                     <h4 className="font-bold text-xs text-white">{persona.name}</h4>
                                                 </div>
                                                 <p className="text-[9px] uppercase font-mono mt-1" style={{ color: persona.color || '#6366f1' }}>
@@ -440,7 +440,7 @@ export default function SystemReady() {
                             </div>
                             <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-slate-400">
                                 <span>Council Judges</span>
-                                <span className="text-white">GPT-4o / Claude 3.5</span>
+                                <span className="text-white">{usageInfo?.isEmbrapa ? 'Specialized Agent Judge' : 'GPT-4o / Claude 3.5'}</span>
                             </div>
                         </div>
 

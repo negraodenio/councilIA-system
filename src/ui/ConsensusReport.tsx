@@ -145,7 +145,6 @@ export default function ConsensusReport({ validation, patches }: {
             const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
 
             for (let i = 0; i < pages.length; i++) {
-                if (i > 0) pdf.addPage();
                 const pageEl = pages[i] as HTMLElement;
 
                 const canvas = await html2canvas(pageEl, {
@@ -153,30 +152,32 @@ export default function ConsensusReport({ validation, patches }: {
                     useCORS: true,
                     logging: false,
                     backgroundColor: '#050810',
-                    width: pageEl.scrollWidth,
+                    width: 794,
                     height: pageEl.scrollHeight,
                     windowWidth: 794,
                 });
 
                 const imgData = canvas.toDataURL('image/png');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidthInMm = pdf.internal.pageSize.getWidth();
+                const pdfHeightInMm = pdf.internal.pageSize.getHeight();
+                const imgHeightInMm = (imgProps.height * pdfWidthInMm) / imgProps.width;
+                
+                let heightLeft = imgHeightInMm;
+                let position = 0;
 
-                // Fit image to the PDF page, letterboxing if needed
-                const canvasRatio = canvas.width / canvas.height;
-                const pdfRatio = pdfWidth / pdfHeight;
+                // First page of each section
+                if (i > 0) pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidthInMm, imgHeightInMm);
+                heightLeft -= pdfHeightInMm;
 
-                let imgW = pdfWidth;
-                let imgH = pdfWidth / canvasRatio;
-
-                // If content is taller than A4, scale to fit height
-                if (imgH > pdfHeight) {
-                    imgH = pdfHeight;
-                    imgW = pdfHeight * canvasRatio;
+                // Add additional pages if content overflows the A4 height
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeightInMm; // Negative offset to show the next part
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidthInMm, imgHeightInMm);
+                    heightLeft -= pdfHeightInMm;
                 }
-
-                const xOffset = (pdfWidth - imgW) / 2;
-                const yOffset = (pdfHeight - imgH) / 2;
-
-                pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgW, imgH);
             }
 
             // Restore hidden state
@@ -252,7 +253,7 @@ export default function ConsensusReport({ validation, patches }: {
                     {/* Panel 1: Main Metric */}
                     <div className="lg:col-span-4 data-grid-item flex flex-col justify-center items-center rounded-xl">
                         <div className="flex items-center gap-2 mb-4 w-full justify-between">
-                            <span className="metric-label">{t(lang, 'cr_final_verdict') || "System Consensus"}</span>
+                            <span className="metric-label cursor-help" title="Média ponderada da confiança técnica entre os especialistas.">{t(lang, 'cr_final_verdict') || "System Consensus"}</span>
                             <span className={`px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider rounded border ${statusBg}`}>
                                 {validation.status?.toUpperCase() || "SYNTHESIS"}
                             </span>
@@ -291,7 +292,7 @@ export default function ConsensusReport({ validation, patches }: {
                             </div>
                             <div className="flex items-center justify-around w-full border-t border-white/5 pt-3">
                                 <div className="flex flex-col items-center">
-                                    <span className="text-[9px] font-mono text-slate-500 uppercase">Value at Risk</span>
+                                    <span className="text-[9px] font-mono text-slate-500 uppercase cursor-help" title="Probabilidade teórica de falha crítica baseada nas vulnerabilidades detectadas.">Value at Risk</span>
                                     <span className="text-sm font-mono font-bold text-red-400">{varDisplay}</span>
                                     <span className="text-[8px] text-slate-600 mt-0.5 text-center leading-tight">Probability of<br/>critical failure</span>
                                 </div>
@@ -308,7 +309,7 @@ export default function ConsensusReport({ validation, patches }: {
                     {/* Panel 2: Diagnostics & Dissent */}
                     <div className="lg:col-span-4 data-grid-item flex flex-col gap-6 rounded-xl relative overflow-hidden">
                         <div className="flex justify-between items-center mb-2 z-10">
-                            <span className="metric-label">Neural Alignment</span>
+                            <span className="metric-label cursor-help" title="Grau de convergência e concordância entre os diferentes domínios de pesquisa.">Neural Alignment</span>
                             <span className="material-symbols-outlined text-neon-cyan/50 text-base">analytics</span>
                         </div>
 
@@ -344,14 +345,26 @@ export default function ConsensusReport({ validation, patches }: {
                             <span className="text-[10px] font-mono text-neon-lime px-2 py-0.5 bg-neon-lime/10 border border-neon-lime/20 rounded">{result.model_config?.personas?.length || 6} Nodes</span>
                         </div>
                         <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-2">
-                            {['visionary', 'technologist', 'devil', 'marketeer', 'ethicist', 'financier'].map((id, index) => {
+                            {['visionary', 'technologist', 'devil', 'marketeer', 'ethicist', 'financier'].map((id) => {
                                 const meta = getMeta(id);
                                 const statBar = personaScores[id] ?? score;
+                                
+                                // Embrapa Name Mapping for the Summary Grid
+                                const embrapaNames: Record<string, string> = {
+                                    visionary: 'Inovação P&D',
+                                    technologist: 'Cientista Analítico',
+                                    devil: 'Auditor de Riscos',
+                                    marketeer: 'Transferência Tech',
+                                    ethicist: 'Regulatório',
+                                    financier: 'Analista Fomento'
+                                };
+                                const displayName = (validation.full_result?.isEmbrapa || result.isEmbrapa) ? (embrapaNames[id] || id) : id;
+
                                 return (
-                                    <div key={id} className="group flex items-center justify-between text-xs p-2.5 bg-black/20 border border-white/5 rounded-lg hover:bg-black/40 hover:border-white/10 transition-colors">
+                                    <div key={id} className="group flex items-center justify-between text-xs p-2.5 bg-black/20 border border-white/5 rounded-lg hover:bg-black/40 hover:border-white/10 transition-colors cursor-help" title={`Expert: ${displayName}`}>
                                         <div className="flex items-center gap-3">
                                             <span className="text-base grayscale group-hover:grayscale-0 transition-transform group-hover:scale-110">{meta.emoji}</span>
-                                            <span className="font-display font-medium text-slate-300 group-hover:text-white capitalize tracking-wide">{id}</span>
+                                            <span className="font-display font-medium text-slate-300 group-hover:text-white capitalize tracking-wide">{displayName}</span>
                                         </div>
                                         <div className="flex items-center gap-3 w-28">
                                             <div className="h-1.5 flex-1 bg-black/60 rounded-full overflow-hidden shadow-inner">
