@@ -83,6 +83,11 @@ const strings: Record<UILang, Record<string, string>> = {
         cr_read_full: 'Read full analysis',
         cr_vaccine_desc: 'Strategic injection to turn a fatal flaw into a resilience moat.',
         cr_champion_desc: 'Target persona with the highest urgency to resolve this specific pain.',
+        cr_executive_opinion: 'Executive Technical Opinion',
+        cr_executive_summary: 'Strategic Decision Summary',
+        cr_status_go: 'SINAL VERDE: Viable for Implementation',
+        cr_status_caution: 'SINAL AMARELO: Strategic Adjustment Required',
+        cr_status_stop: 'SINAL VERMELHO: Critical Risks Identified',
 
         // Methodology
         pill_precision: 'Pillar 01: Precision',
@@ -172,6 +177,11 @@ const strings: Record<UILang, Record<string, string>> = {
         cr_read_full: 'Ler análise completa',
         cr_vaccine_desc: 'Injeção estratégica para transformar uma falha fatal numa barreira de resiliência.',
         cr_champion_desc: 'Persona-alvo com maior urgência para resolver este problema específico.',
+        cr_executive_opinion: 'Parecer Técnico Executivo',
+        cr_executive_summary: 'Resumo para Tomada de Decisão',
+        cr_status_go: 'SINAL VERDE: Viável para Implementação',
+        cr_status_caution: 'SINAL AMARELO: Requer Ajustes Estratégicos',
+        cr_status_stop: 'SINAL VERMELHO: Riscos Críticos Identificados',
 
         // Methodology (PT)
         pill_precision: 'Pilar 01: Precisão',

@@ -76,6 +76,8 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
     const risks = sections.find(s => s.id === 'risks');
     const recommendations = sections.find(s => s.id === 'recommendations');
 
+    const isEmbrapa = r.isEmbrapa || false;
+
     return (
         <div id="pdf-report-container" className="bg-[#050810] text-white font-sans w-[210mm] relative overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
             <style dangerouslySetInnerHTML={{
@@ -99,13 +101,13 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                         <span className="font-bold text-2xl tracking-tight">CouncilIA <span className="text-cyan-400 opacity-60 text-xs align-top">V3.0</span></span>
                     </div>
                     <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Strategic Analysis Report</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{isEmbrapa ? t(lang, 'cr_executive_opinion') : 'Strategic Analysis Report'}</p>
                         <p className="text-[10px] mono text-cyan-500/70">ID // VAL-{validation.id.substring(0, 12).toUpperCase()}</p>
                     </div>
                 </div>
 
                 <div className="mb-12 relative z-10">
-                    <h1 className="text-4xl mb-6 leading-tight max-w-[90%]">Executive Briefing Consensus</h1>
+                    <h1 className="text-4xl mb-6 leading-tight max-w-[90%]">{isEmbrapa ? t(lang, 'cr_executive_summary') : 'Executive Briefing Consensus'}</h1>
                     <div className="p-6 glass italic text-slate-400 text-sm leading-relaxed border-l-2 border-cyan-500/50">
                         &quot;{validation.idea.substring(0, 300)}{validation.idea.length > 300 ? '...' : ''}&quot;
                     </div>
@@ -186,10 +188,39 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
 
                 <div className="space-y-6 relative z-10">
                     {decision && (
-                        <div className="p-8 bg-blue-600/10 border border-blue-500/20 rounded-[24px] relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl tracking-tighter">FINAL</div>
-                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 mb-4 flex items-center gap-2">🎯 STRATEGIC RECOMMENDATION</h3>
-                            <div className="text-lg font-bold text-white leading-relaxed"><ReactMarkdown>{decision.content}</ReactMarkdown></div>
+                        <div className={`p-8 border-2 rounded-[24px] relative overflow-hidden shadow-xl ${decision.content.toLowerCase().match(/avançar|proceder|avancer|fortfahren|avanzar|strong go/)
+                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-100'
+                            : decision.content.toLowerCase().match(/não|ne pas|nicht|no proceder|do not/)
+                                ? 'bg-red-500/10 border-red-500/30 text-red-100'
+                                : 'bg-amber-500/10 border-amber-500/30 text-amber-100'
+                            }`}>
+                            
+                            {isEmbrapa && (
+                                <div className="absolute top-0 right-0 px-6 py-2 font-black text-[12px] uppercase tracking-[0.3em] opacity-60 bg-white/10 rounded-bl-2xl">
+                                    {decision.content.toLowerCase().match(/avançar|proceder|avancer|fortfahren|avanzar|strong go/)
+                                        ? t(lang, 'cr_status_go')
+                                        : decision.content.toLowerCase().match(/não|ne pas|nicht|no proceder|do not/)
+                                            ? t(lang, 'cr_status_stop')
+                                            : t(lang, 'cr_status_caution')
+                                    }
+                                </div>
+                            )}
+
+                            <div className="absolute top-0 left-0 p-4 opacity-10 font-black text-6xl tracking-tighter uppercase whitespace-nowrap">
+                                {isEmbrapa ? 'PARECER' : 'DECISION'}
+                            </div>
+                            
+                            <h3 className={`text-xs font-black uppercase tracking-[0.2em] mb-4 flex items-center gap-2 ${decision.content.toLowerCase().match(/avançar|proceder|avancer|fortfahren|avanzar|strong go/)
+                                ? 'text-emerald-400'
+                                : decision.content.toLowerCase().match(/não|ne pas|nicht|no proceder|do not/)
+                                    ? 'text-red-400'
+                                    : 'text-amber-400'
+                                }`}>
+                                🎯 {isEmbrapa ? t(lang, 'cr_executive_opinion').toUpperCase() : 'STRATEGIC RECOMMENDATION'}
+                            </h3>
+                            <div className="text-xl font-bold leading-relaxed relative z-10">
+                                <ReactMarkdown>{decision.content}</ReactMarkdown>
+                            </div>
                         </div>
                     )}
                 </div>

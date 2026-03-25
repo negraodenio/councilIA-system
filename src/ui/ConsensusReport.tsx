@@ -439,8 +439,8 @@ export default function ConsensusReport({ validation, patches }: {
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <RoundHeader
                                         number="⚖️"
-                                        title={t(lang, 'cr_final_verdict')}
-                                        subtitle={t(lang, 'cr_verdict_subtitle')}
+                                        title={(result.isEmbrapa || validation.full_result?.isEmbrapa) ? t(lang, 'cr_executive_opinion') : t(lang, 'cr_final_verdict')}
+                                        subtitle={(result.isEmbrapa || validation.full_result?.isEmbrapa) ? t(lang, 'cr_executive_summary') : t(lang, 'cr_verdict_subtitle')}
                                         color="#FBBF24"
                                     />
 
@@ -503,17 +503,29 @@ export default function ConsensusReport({ validation, patches }: {
                                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                                     <div className="lg:col-span-2 flex flex-col gap-6">
                                                         {decision && (
-                                                            <div className={`p-6 rounded-2xl border-2 shadow-lg ${decision.content.toLowerCase().match(/avançar|proceder|avancer|fortfahren|avanzar|strong go/)
+                                                            <div className={`p-8 rounded-2xl border-2 shadow-2xl relative overflow-hidden ${decision.content.toLowerCase().match(/avançar|proceder|avancer|fortfahren|avanzar|strong go/)
                                                                 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
                                                                 : decision.content.toLowerCase().match(/não|ne pas|nicht|no proceder|do not/)
                                                                     ? 'bg-red-500/10 border-red-500/30 text-red-400'
                                                                     : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
                                                                 }`}>
-                                                                <div className="flex items-center gap-2 mb-2">
-                                                                    <span className="text-2xl">🎯</span>
-                                                                    <span className="font-display font-black uppercase tracking-widest text-sm">{decision.title}</span>
+                                                                
+                                                                {(result.isEmbrapa || validation.full_result?.isEmbrapa) && (
+                                                                    <div className="absolute top-0 right-0 px-4 py-1 font-black text-[10px] uppercase tracking-[0.2em] opacity-40 bg-current/10 rounded-bl-xl">
+                                                                        {decision.content.toLowerCase().match(/avançar|proceder|avancer|fortfahren|avanzar|strong go/)
+                                                                            ? t(lang, 'cr_status_go')
+                                                                            : decision.content.toLowerCase().match(/não|ne pas|nicht|no proceder|do not/)
+                                                                                ? t(lang, 'cr_status_stop')
+                                                                                : t(lang, 'cr_status_caution')
+                                                                        }
+                                                                    </div>
+                                                                )}
+
+                                                                <div className="flex items-center gap-3 mb-4">
+                                                                    <span className="text-3xl">🎯</span>
+                                                                    <span className="font-display font-black uppercase tracking-widest text-base">{decision.title}</span>
                                                                 </div>
-                                                                <div className="font-bold text-lg">
+                                                                <div className="font-bold text-xl leading-relaxed">
                                                                     <ReactMarkdown>{decision.content}</ReactMarkdown>
                                                                 </div>
                                                             </div>
