@@ -10,7 +10,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { createAdminClient } from '../src/lib/supabase/admin';
 import { embedMistralCached } from '../src/lib/embeddings/mistral';
-import pdf from 'pdf-parse';
+// @ts-ignore
+const pdf = require('pdf-parse');
 
 // POC Constants
 const EMBRAPA_USER_EMAIL = 'embrapa@embrapa.com';
