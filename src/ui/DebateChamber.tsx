@@ -14,9 +14,12 @@ const L: Record<string, Record<UILang, string>> = {
     title: { pt: 'Camara de Debate ao Vivo', en: 'Live Debate Chamber', es: 'Camara de Debate en Vivo' },
     connecting: { pt: 'A conectar ao conselho...', en: 'Connecting to council...', es: 'Conectando al consejo...' },
     waiting: { pt: 'A aguardar especialistas...', en: 'Waiting for experts...', es: 'Esperando expertos...' },
-    round1: { pt: 'Ronda 1 - Analise Inicial', en: 'Round 1 - Initial Analysis', es: 'Ronda 1 - Analisis Inicial' },
+    round1: { pt: 'Ronda 1 - Análise Inicial', en: 'Round 1 - Initial Analysis', es: 'Ronda 1 - Anális Inicial' },
     round2: { pt: 'Ronda 2 - Debate Cruzado', en: 'Round 2 - Cross-Debate', es: 'Ronda 2 - Debate Cruzado' },
-    round3: { pt: 'Ronda 3 - Convergencia', en: 'Round 3 - Convergence', es: 'Ronda 3 - Convergencia' },
+    round3: { pt: 'Ronda 3 - Convergência', en: 'Round 3 - Convergence', es: 'Ronda 3 - Convergencia' },
+    round4: { pt: 'Ronda 4 - Alinhamento de Consenso', en: 'Round 4 - Consensus Alignment', es: 'Ronda 4 - Alineación de Consenso' },
+    round5: { pt: 'Ronda 5 - Teste de Estresse (Cenários)', en: 'Round 5 - Scenario Stress-Test', es: 'Ronda 5 - Prueba de Estrés (Escenarios)' },
+    round6: { pt: 'Ronda 6 - Roadmap de Execução', en: 'Round 6 - Execution Roadmap', es: 'Ronda 6 - Hoja de Ruta de Ejecución' },
     verdict: { pt: 'Veredicto do Juiz', en: 'Judge Verdict', es: 'Veredicto del Juez' },
     complete: { pt: 'Sessao Completa', en: 'Session Complete', es: 'Sesion Completa' },
     consensus: { pt: 'Consenso Global', en: 'Global Consensus', es: 'Consenso Global' },
@@ -146,6 +149,9 @@ export default function DebateChamber({ runId }: { runId: string }) {
                         else if (last.round === 1) setPhase(t(lang, 'round1'));
                         else if (last.round === 2) setPhase(t(lang, 'round2'));
                         else if (last.round === 3) setPhase(t(lang, 'round3'));
+                        else if (last.round === 4) setPhase(t(lang, 'round4'));
+                        else if (last.round === 5) setPhase(t(lang, 'round5'));
+                        else if (last.round === 6) setPhase(t(lang, 'round6'));
                     }
 
                     const ce = events.filter(e => e.event_type === 'consensus');

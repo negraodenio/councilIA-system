@@ -46,10 +46,12 @@ export default function ConsensusReport({ validation, patches }: {
     validation: any;
     patches: any[];
 }) {
-    const [activeTab, setActiveTab] = useState<'verdict' | 'round1' | 'round2' | 'round3' | 'patches'>('verdict');
+    const [activeTab, setActiveTab] = useState<'verdict' | 'round1' | 'round2' | 'round3' | 'round4' | 'round5' | 'round6' | 'patches'>('verdict');
     const [isExporting, setIsExporting] = useState(false);
     const result = validation.full_result || {};
     const lang: UILang = resolveUILang(result.lang);
+
+    const isEmbrapa = result.is_embrapa || result.is_embrapa_poc || (validation.full_result?.is_embrapa);
 
     const score = Math.round(validation.consensus_score || 0);
     const align = score;
@@ -64,6 +66,12 @@ export default function ConsensusReport({ validation, patches }: {
     const round1 = (result.round1 || []) as { id: string; name: string; emoji?: string; text: string }[];
     const round2 = (result.round2 || []) as { id: string; name: string; emoji?: string; text: string }[];
     const round3 = (result.round3 || []) as { id: string; name: string; emoji?: string; text: string }[];
+    const round4 = (result.round4 || []) as { id: string; name: string; emoji?: string; text: string }[]; // These might be in execution_roadmap or separate
+    const round5 = (result.round5 || []) as { id: string; name: string; emoji?: string; text: string }[];
+    const round6 = (result.round6 || []) as { id: string; name: string; emoji?: string; text: string }[];
+
+    // Special handling for Embrapa 6-round data structure
+    const embrapaRounds = (result.rounds_extra || []) as any[]; // Assuming we might store them here or they are already in round4-6
 
     const allTranscriptTexts = [
         ...round1.map(r => r.text),
@@ -418,6 +426,33 @@ export default function ConsensusReport({ validation, patches }: {
                                     ROUND 3
                                 </button>
                             )}
+                            {round4.length > 0 && (
+                                <button
+                                    onClick={() => setActiveTab('round4')}
+                                    className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round4' ? 'border-[#3B82F6] text-[#3B82F6] bg-[#3B82F6]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                                        }`}
+                                >
+                                    ROUND 4
+                                </button>
+                            )}
+                            {round5.length > 0 && (
+                                <button
+                                    onClick={() => setActiveTab('round5')}
+                                    className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round5' ? 'border-[#F59E0B] text-[#F59E0B] bg-[#F59E0B]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                                        }`}
+                                >
+                                    ROUND 5
+                                </button>
+                            )}
+                            {round6.length > 0 && (
+                                <button
+                                    onClick={() => setActiveTab('round6')}
+                                    className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round6' ? 'border-[#06B6D4] text-[#06B6D4] bg-[#06B6D4]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                                        }`}
+                                >
+                                    ROUND 6
+                                </button>
+                            )}
                             {generatedPatches.length > 0 && (
                                 <button
                                     onClick={() => setActiveTab('patches')}
@@ -742,6 +777,57 @@ export default function ConsensusReport({ validation, patches }: {
                                     />
                                     <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
                                         {round3.map((r) => (
+                                            <PersonaCard key={r.id} entry={r} lang={lang} />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ── ROUND 4 ── */}
+                            {activeTab === 'round4' && round4.length > 0 && (
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <RoundHeader
+                                        number="04"
+                                        title="Ronda 4 - Alinhamento de Consenso"
+                                        subtitle="Experts identificam pontos de convergência técnica e estratégica."
+                                        color="#3B82F6"
+                                    />
+                                    <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
+                                        {round4.map((r) => (
+                                            <PersonaCard key={r.id} entry={r} lang={lang} />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ── ROUND 5 ── */}
+                            {activeTab === 'round5' && round5.length > 0 && (
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <RoundHeader
+                                        number="05"
+                                        title="Ronda 5 - Teste de Estresse (Cenários)"
+                                        subtitle="Avaliação de resiliência contra choques climáticos e logísticos."
+                                        color="#F59E0B"
+                                    />
+                                    <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
+                                        {round5.map((r) => (
+                                            <PersonaCard key={r.id} entry={r} lang={lang} />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ── ROUND 6 ── */}
+                            {activeTab === 'round6' && round6.length > 0 && (
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <RoundHeader
+                                        number="06"
+                                        title="Ronda 6 - Roadmap de Execução"
+                                        subtitle="Passos regulatórios e estratégia de fomento para implementação."
+                                        color="#06B6D4"
+                                    />
+                                    <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
+                                        {round6.map((r) => (
                                             <PersonaCard key={r.id} entry={r} lang={lang} />
                                         ))}
                                     </div>

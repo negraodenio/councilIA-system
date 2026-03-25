@@ -5,7 +5,7 @@ import { redactPII } from '@/lib/privacy/redact';
 import { apiOk, apiError } from '@/lib/api/error';
 import OpenAI from "openai";
 import { PERSONA_PROMPTS_V3_0, CONFLICT_MATRIX_V3_0 } from './prompts_v3_0';
-import { PERSONA_PROMPTS_EMBRAPA, EMBRAPA_CONFLICT_MATRIX, PERSONA_NAMES_EMBRAPA } from './prompts_embrapa';
+import { PERSONA_PROMPTS_EMBRAPA, EMBRAPA_CONFLICT_MATRIX, PERSONA_NAMES_EMBRAPA, EMBRAPA_GLOBAL_LAYER, EMBRAPA_ROUNDS, EMBRAPA_JUDGE_PROTOCOL } from './prompts_embrapa';
 
 const mistralClient = new OpenAI({
     apiKey: process.env.MISTRAL_API_KEY,
@@ -241,24 +241,18 @@ function buildIdeaAnchor(idea: string): string {
     return `\n\nCRITICAL ANCHOR (ANTI-HALLUCINATION): The original idea being evaluated is STRICTLY about:\n"${safeIdea}"\nIf the debate transcript or your analysis discusses features, target audiences, products, or business models NOT present in this original idea, you must discard them as HALLUCINATIONS and return to the core concept.`;
 }
 
-function buildRound1Prompt(persona: any, lang: string, idea: string = ''): string {
-    const cognitivePrompt = PERSONA_PROMPTS[persona.id] || '';
-    return `${cognitivePrompt}
+function buildRound1Prompt(persona: any, lang: string, idea: string = '', isEmbrapa: boolean = false): string {
+    const cognitivePrompt = isEmbrapa ? PERSONA_PROMPTS_EMBRAPA[persona.id] : PERSONA_PROMPTS[persona.id] || '';
+    const globalLayer = isEmbrapa ? EMBRAPA_GLOBAL_LAYER : '';
+    const roundProtocol = isEmbrapa ? EMBRAPA_ROUNDS[1] : `ROUND 1 — THESIS (Delphi Method: independent expert evaluation)\n\nRULES:\n1. Provide structured analysis with clear sections.\n2. Maximum 300 words. Be substantive, not verbose.\n3. Focus ONLY on your expertise area.\n4. End with a clear VERDICT: score 0-100.`;
+
+    return `${globalLayer}\n${cognitivePrompt}
 
 YOUR ROLE ON THE COUNCIL: ${persona.role}
 ${inferGeoContext(idea, lang)}
 ${buildIdeaAnchor(idea)}
 
-ROUND 1 — THESIS (Delphi Method: independent expert evaluation)
-
-RULES:
-1. Provide structured analysis with clear sections.
-2. Maximum 300 words. Be substantive, not verbose.
-3. Focus ONLY on your expertise area — stay in your lane.
-4. Start directly with analysis — no preamble or greetings.
-5. STICK TO THE FACTS: Do NOT invent features, hardware, or partnerships that are not in the original idea unless specifically proposing them as a REFINEMENT.
-6. If the idea is a simple question or concept, analyze it as such. Do not assume it is a billion-dollar startup unless the user said so.
-7. End with a clear VERDICT: score 0-100 for viability from your perspective.
+${roundProtocol}
 
 OUTPUT FORMAT (MANDATORY):
 ## [Your Expertise Title]
@@ -270,102 +264,60 @@ OUTPUT FORMAT (MANDATORY):
 (One sentence justification)
 
 DATA INTEGRITY (CRITICAL):
-- Do NOT fabricate citations, studies, or statistics.
-- If you reference data, mark it as [estimated] or [industry benchmark].
-- Prefer logical reasoning and ranges over fake precision.
-- NEVER invent specific hardware (e.g., 'CGM sensors') unless the user mentioned them or it is the ONLY possible implementation.
-- DO NOT assume the user has a team, funding, or existing customers.
-- NEVER invent author names, institution reports, or year-specific stats.${langInstruction(lang)}`;
+- Do NOT fabricate citations. 
+- NEVER invent author names or institutions.
+- Mark estimates as [estimated].${langInstruction(lang)}`;
 }
 
-function buildRound2AttackPrompt(persona: any, lang: string, idea: string = ''): string {
-    const conflict = CONFLICT_MATRIX[persona.id];
+function buildRound2AttackPrompt(persona: any, lang: string, idea: string = '', isEmbrapa: boolean = false): string {
+    const conflict = isEmbrapa ? EMBRAPA_CONFLICT_MATRIX[persona.id] : CONFLICT_MATRIX[persona.id];
     const targetInstruction = conflict
         ? `\n\nPRIMARY ATTACK TARGET:\n${conflict.instruction}`
         : '';
+    const globalLayer = isEmbrapa ? EMBRAPA_GLOBAL_LAYER : '';
+    const roundProtocol = isEmbrapa ? EMBRAPA_ROUNDS[2] : `ROUND 2 — ANTITHESIS (Red Teaming + Adversarial Alignment). Your role: CRITICAL CHALLENGER.`;
 
-    // Enhanced identity reminder: preserves core cognitive directive without full prompt (~80 tokens vs ~350)
-    const PERSONA_SUMMARIES: Record<string, string> = {
-        visionary: 'CEO-archetype. Think 10x scale, network effects, category creation. Your bias: radical optimism.',
-        technologist: 'CTO-archetype. Think systems, architecture, scaling walls, infra costs. Your bias: engineering rigor over hype.',
-        devil: 'Pre-Mortem Analyst. Use inversion: assume failure, find the cause of death. Your bias: structured pessimism.',
-        marketeer: 'CMO-archetype. Think distribution, positioning, customer psychology, go-to-market. Your bias: market reality over vision.',
-        ethicist: 'Chief Risk Officer. Think regulation, externalities, reputational risk. Your bias: precautionary principle.',
-        financier: 'CFO-archetype. Think unit economics, burn rate, margin of safety, worst-case modeling. Your bias: cash flow over dreams.',
-    };
-    const identity = PERSONA_SUMMARIES[persona.id] || persona.role;
-
-    return `You are ${persona.name} (${persona.emoji}). ${identity}
-
-ROUND 2 — ANTITHESIS (Red Teaming + Adversarial Alignment).
-Your role: CRITICAL CHALLENGER. Stress-test arguments using the Ellemers & Fiske (2020) rules.
-
-ADVERSARIAL ALIGNMENT RULES (PNAS 2020):
-1. LEVEL THE PLAYING FIELD: Treat all experts as competent rivals.
-2. CAPITALIZE ON CURIOSITY: Ask "Why?" to expose hidden assumptions.
-3. SEEK MEASURABLE PROGRESS: Focus on gaps in data and metrics.
-4. MUTUAL GAIN: Frame your attack as a path to a more robust final idea.
-5. DOWNWARD ALTERNATIVE: Be clear about the cost of ignoring the risk you identify.
-${inferGeoContext(idea, lang)}
-${buildIdeaAnchor(idea)}
-${targetInstruction}
+    return `${globalLayer}\n\nROUND 2 — ${roundProtocol}\n${targetInstruction}
 
 RULES:
-1. PRIMARY ATTACK (~200 words): Dismantle your primary target's core argument.
-2. SECONDARY SCAN (~50 words): Flag the single weakest claim from ANY other expert 
-   (not your primary target, not yourself).
-3. NO FANTASIZE: Do NOT attack arguments based on features YOU invented in your mind. ONLY attack what is actually in the Round 1 transcript.
-4. You MUST NOT challenge your own previous analysis. Only attack OTHER experts.
-5. Be brutally honest but professional — like a top-tier VC doing due diligence.
-6. Maximum 300 words total.
-7. Name which expert you're challenging: "Challenging [Expert Name]: ..."
-8. Use counter-evidence, historical failures, and logical contradictions.${langInstruction(lang)}`;
+1. PRIMARY ATTACK: Dismantle your primary target's core argument.
+2. CITATION AUDIT (Embrapa Only): If they didn't cite a RAG source for a claim, point it out.
+3. Maximum 300 words.${langInstruction(lang)}`;
 }
 
-function buildRound3DefensePrompt(persona: any, lang: string, idea: string = ''): string {
-    // Enhanced identity reminder: preserves core cognitive directive (~80 tokens vs ~350)
-    const PERSONA_SUMMARIES: Record<string, string> = {
-        visionary: 'CEO-archetype. Defend the scale opportunity. Your framework: Blue Ocean + First Principles.',
-        technologist: 'CTO-archetype. Defend with architecture evidence and cost projections. Your framework: Systems Thinking.',
-        devil: 'Pre-Mortem Analyst. Defend your risk assessment with data and historical precedent. Your framework: Inversion.',
-        marketeer: 'CMO-archetype. Defend with customer evidence and distribution data. Your framework: Crossing the Chasm.',
-        ethicist: 'Chief Risk Officer. Defend regulatory and ethical concerns with case law and precedent. Your framework: Precautionary Principle.',
-        financier: 'CFO-archetype. Defend with numbers, margins, and worst-case scenarios. Your framework: Unit Economics + Margin of Safety.',
-    };
-    const identity = PERSONA_SUMMARIES[persona.id] || persona.role;
+function buildRound3DefensePrompt(persona: any, lang: string, idea: string = '', isEmbrapa: boolean = false): string {
+    const globalLayer = isEmbrapa ? EMBRAPA_GLOBAL_LAYER : '';
+    const roundProtocol = isEmbrapa ? EMBRAPA_ROUNDS[3] : `ROUND 3 — SYNTHESIS (Hegelian Dialectics + Consensus Protocol). Defend, concede, and REFINE.`;
 
-    return `You are ${persona.name} (${persona.emoji}). ${identity}
-
-ROUND 3 — SYNTHESIS (Hegelian Dialectics + Consensus Protocol).
-Your role: Defend, concede, and REFINE. (Shaikh et al. 2025: Deliberation corrects 53% of majority errors).
-${inferGeoContext(idea, lang)}
-${buildIdeaAnchor(idea)}
+    return `${globalLayer}\n\nROUND 3 — ${roundProtocol}
 
 PROTOCOL:
-1. CONCEDE (be specific): Name what your attacker got RIGHT. Quote them.
-   "I concede that [Expert X]'s point about [specific claim] is valid because..."
-   This shows intellectual honesty and is REQUIRED.
-
+1. CONCEDE: Name what your attacker got RIGHT.
 2. REFINE: How does your original position CHANGE based on valid attacks?
-   What do you adjust? What do you keep and why?
-
-3. FINAL SCORE: X/100 with one-sentence justification.
-   This score may differ from Round 1 — that's expected and honest.
-
-MANDATORY OUTPUT FORMAT (END OF MESSAGE):
-SCORE: [X]
-CONFIDENCE: [X]%
-ALLIANCE: [Velocity|Stability|Neutral]
-${persona.id === 'devil' ? 'VACCINE: (A specific strategic move to turn a risk into a moat)\nCIRCUIT_BREAKER: (A specific condition where the founder should ABORT/PIVOT)' : ''}${persona.id === 'marketeer' ? 'CHAMPION_PROFILE: (Who is the specific individual buyer?)\nPROCUREMENT_LANE: [Standard|Fast|Complex]\nLAND_TEAM: (Which specific department to target first?)\nMETRIC_OWNED: (Which KPI does the buyer care about most?)' : ''}
-
-RULES:
-- Maximum 250 words.
-- Do NOT fabricate evidence in your defense. Mark uncertain data as [estimated].
-- If no valid attacks were made against you, acknowledge the strongest challenge 
-  anyway and explain why your position holds.${langInstruction(lang)}`;
+3. FINAL SCORE: Update your score 0-100.${langInstruction(lang)}`;
 }
 
-function buildJudgePrompt(lang: string, idea: string = ''): string {
+// ——— v5.0 Extra Rounds ———
+
+function buildRound4ConsensusPrompt(persona: any, lang: string, isEmbrapa: boolean = false): string {
+    return `${EMBRAPA_GLOBAL_LAYER}\n\nROUND 4 — ${EMBRAPA_ROUNDS[4]}
+
+Your goal is to reach a stable consensus with the others. Identify where you can align without sacrificing technical rigor.${langInstruction(lang)}`;
+}
+
+function buildRound5ScenarioPrompt(persona: any, lang: string, isEmbrapa: boolean = false): string {
+    return `${EMBRAPA_GLOBAL_LAYER}\n\nROUND 5 — ${EMBRAPA_ROUNDS[5]}
+
+Test the project against a catastrophic scenario (Climate shock, Logistics failure). How does it survive?${langInstruction(lang)}`;
+}
+
+function buildRound6ExecutionPrompt(persona: any, lang: string, isEmbrapa: boolean = false): string {
+    return `${EMBRAPA_GLOBAL_LAYER}\n\nROUND 6 — ${EMBRAPA_ROUNDS[6]}
+
+Provide the concrete roadmap: Regulatory steps, Pilot plan, and Funding strategy.${langInstruction(lang)}`;
+}
+
+function buildJudgePrompt(lang: string, idea: string = '', isEmbrapa: boolean = false): string {
     const structureEs = `
 ## 🏛️ CouncilIA — Veredicto Final
 
@@ -993,18 +945,66 @@ ${customPersonaContext}${langInstruction(lang)}`
         const r3Consensus = Math.round((r1Avg + r2Consensus + r3Avg) / 3);
         await addEvent(supabase, runId, 'consensus', null, { coreSync: r3Consensus, global: Math.round(r3Consensus * 0.9), phase: 'after_round_3', protocol: 'ACE_v3.0' });
 
+        // ——— EMBRAPA v5.0 Extra Rounds ———
+        let transcriptExtra = "";
+        let finalExecutionData: any = null;
+        let round4Results: any[] = [];
+        let round5Results: any[] = [];
+        let round6Results: any[] = [];
+
+        if (isEmbrapa) {
+            await addEvent(supabase, runId, 'system', null, {
+                msg: '🧬 PROTOCOLO v5.0 ATIVADO: Iniciando Rondas de Consenso, Cenários e Execução...',
+            });
+
+            // Round 4: Consensus
+            round4Results = await Promise.all(personas.map(async (p) => {
+                const assigned = config.assign[p.id as keyof typeof config.assign];
+                const out = await callModel(assigned, [{ role: 'system', content: buildRound4ConsensusPrompt(p, lang, true) }, { role: 'user', content: `Refine consensus based on:\n\n${transcriptR3}` }], { zdr: config.judge.zdr });
+                const text = extractText(out, '');
+                const expertName = PERSONA_NAMES_EMBRAPA[p.id] || p.name;
+                await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'round4_consensus', round: 4, persona: expertName, emoji: p.emoji });
+                return { id: p.id, name: expertName, text };
+            }));
+
+            // Round 5: Scenario
+            const transcriptR4 = round4Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n');
+            round5Results = await Promise.all(personas.map(async (p) => {
+                const assigned = config.assign[p.id as keyof typeof config.assign];
+                const out = await callModel(assigned, [{ role: 'system', content: buildRound5ScenarioPrompt(p, lang, true) }, { role: 'user', content: `Test consensus against scenarios:\n\n${transcriptR4}` }], { zdr: config.judge.zdr });
+                const text = extractText(out, '');
+                const expertName = PERSONA_NAMES_EMBRAPA[p.id] || p.name;
+                await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'round5_scenario', round: 5, persona: expertName, emoji: p.emoji });
+                return { id: p.id, name: expertName, text };
+            }));
+
+            // Round 6: Execution
+            const transcriptR5 = round5Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n');
+            round6Results = await Promise.all(personas.map(async (p) => {
+                const assigned = config.assign[p.id as keyof typeof config.assign];
+                const out = await callModel(assigned, [{ role: 'system', content: buildRound6ExecutionPrompt(p, lang, true) }, { role: 'user', content: `Provide execution roadmap based on scenarios:\n\n${transcriptR5}` }], { zdr: config.judge.zdr });
+                const text = extractText(out, '');
+                const expertName = PERSONA_NAMES_EMBRAPA[p.id] || p.name;
+                await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'round6_execution', round: 6, persona: expertName, emoji: p.emoji });
+                return { id: p.id, name: expertName, text };
+            }));
+
+            transcriptExtra = `\n\n=== ROUND 4: CONSENSUS ===\n${transcriptR4}\n\n=== ROUND 5: SCENARIOS ===\n${transcriptR5}\n\n=== ROUND 6: EXECUTION ROADMAP ===\n${round6Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n')}`;
+            finalExecutionData = round6Results;
+        }
+
         // ══════ JUDGE: Nash Equilibrium Verdict ══════
         let founderIntelFinal = await getFounderIntel();
         const transcriptR3 = round3Results.map((r) => `[${r.emoji} ${r.name}]: ${r.text}`).join('\n\n');
 
-        let fullTranscript = `=== ROUND 1: THESIS (Independent Analysis) ===\n${transcriptR1}\n\n=== ROUND 2: ANTITHESIS (Cross-Examination) ===\n${transcriptR2}\n\n=== ROUND 3: SYNTHESIS (Concession & Refinement) ===\n${transcriptR3}`;
+        let fullTranscript = `=== ROUND 1: THESIS ===\n${transcriptR1}\n\n=== ROUND 2: ATTACK ===\n${transcriptR2}\n\n=== ROUND 3: SYNTHESIS ===\n${transcriptR3}${transcriptExtra}`;
 
         if (founderIntelFinal) {
-            fullTranscript += `\n\n=== FOUNDER / USER INTERVENTION ===\n${founderIntelFinal}\n(NOTE: The founder intervened during the debate. Factor their insights into your final verdict)\n===================================`;
+            fullTranscript += `\n\n=== FOUNDER / USER INTERVENTION ===\n${founderIntelFinal}\n===================================`;
         }
 
         await addEvent(supabase, runId, 'system', null, {
-            msg: '⚖️ VERDICT · NASH EQUILIBRIUM — Judge Deliberating\n📚 Framework: Game Theory (Nash, 1950) — Optimal convergence from adversarial positions',
+            msg: isEmbrapa ? '⚖️ VEREDITO CIENTÍFICO FINAL — Auditoria de Evidências v5.0' : '⚖️ VERDICT · NASH EQUILIBRIUM — Judge Deliberating',
         });
 
         let finalScore = 0;
@@ -1012,35 +1012,33 @@ ${customPersonaContext}${langInstruction(lang)}`
         try {
             const judgeModel: ModelConfig = { provider: 'openrouter', model: config.judge.primary };
             const judgeMessages = [
-                { role: 'system', content: buildJudgePrompt(lang, ideaRedacted) },
-                { role: 'user', content: `Deliver your verdict on:\n\n"${ideaRedacted}"\n\nFULL ACE DEBATE (3 rounds, ${customPersona ? '7' : '6'} experts${customPersona ? ' including custom expert ' + customPersona.name : ''}):\n\n${fullTranscript}` },
+                { role: 'system', content: buildJudgePrompt(lang, ideaRedacted, isEmbrapa) },
+                { role: 'user', content: `Deliver your verdict on:\n\n"${ideaRedacted}"\n\nFULL SCIENTIFIC DEBATE (${isEmbrapa ? '6' : '3'} rounds):\n\n${fullTranscript}` },
             ];
 
-            const judgeOut = await callModel(judgeModel, judgeMessages, { zdr: config.judge.zdr, maxTokens: 1500, temperature: 0.2 });
+            const judgeOut = await callModel(judgeModel, judgeMessages, { zdr: config.judge.zdr, maxTokens: 2000, temperature: 0.2 });
             const judgeText = extractText(judgeOut, 'Judge deliberation complete.');
 
             const scoreMatch = judgeText.match(/(\d{1,3})\/100/);
             finalScore = scoreMatch ? Math.min(parseInt(scoreMatch[1]), 100) : 50;
 
-            await addEvent(supabase, runId, 'judge_note', isEmbrapa ? 'Specialized Agent Judge' : 'judge', {
+            await addEvent(supabase, runId, 'judge_note', isEmbrapa ? 'Auditores de Ciência Embrapa' : 'judge', {
                 text: judgeText, type: 'final_verdict', consensusDelta: finalScore,
-            });
-            await addEvent(supabase, runId, 'consensus', null, {
-                coreSync: finalScore, global: finalScore, phase: 'final',
             });
 
             await supabase.from('validations').update({
                 status: 'complete', consensus_score: finalScore,
                 full_result: {
                     lang,
-                    protocol: 'ACE_v3.0',
-                    judge: judgeText, round1: round1Results,
-                    round2: round2Results, round3: round3Results,
-                    model_config: {
-                        personas: Object.keys(config.assign),
-                        models: Object.values(config.assign).map((m) => m.model),
-                        judge: config.judge.primary,
-                    },
+                    protocol: isEmbrapa ? 'EMBRAPA_v5.0' : 'ACE_v3.0',
+                    judge: judgeText, 
+                    round1: round1Results,
+                    round2: round2Results, 
+                    round3: round3Results,
+                    round4: isEmbrapa ? round4Results : null,
+                    round5: isEmbrapa ? round5Results : null,
+                    round6: isEmbrapa ? round6Results : null,
+                    is_embrapa: isEmbrapa
                 },
             }).eq('id', validationId);
 

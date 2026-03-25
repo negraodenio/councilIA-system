@@ -225,11 +225,29 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                     )}
                 </div>
 
+                {isEmbrapa && (
+                    <div className="mt-8 p-6 glass border-blue-500/20 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-2xl rounded-full"></div>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-4 flex items-center gap-2">
+                            <span className="size-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                            GLOSSÁRIO TÉCNICO & HINTS (AUDITORIA v5.0)
+                        </h4>
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-[9px] text-slate-400 leading-tight relative z-10">
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">RDC 166/2017:</strong> Resolução da ANVISA sobre a validação de métodos analíticos para insumos farmacêuticos e medicamentos.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">ISO/IEC 17025:</strong> Padrão internacional para laboratórios de calibração e ensaio, essencial para exportação.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">TRL (Technology Readiness Level):</strong> Escala de maturação tecnológica (1-9). Foco em TRL 4-6 para projetos piloto.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">COST BRASIL:</strong> Conjunto de dificuldades estruturais, burocráticas e logísticas que tornam o investimento caro.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">HIERARCHY OF TRUTH:</strong> Protocolo Embrapa v5.0 de priorização de evidências regulatórias sobre opiniões empíricas.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">MAPA/ANVISA:</strong> Órgãos anuentes fundamentais para a liberação comercial de novos bioprodutos no Brasil.</div>
+                        </div>
+                    </div>
+                )}
+
                 <div className="absolute bottom-10 left-[60px] right-[60px] flex justify-between pt-6 border-t border-white/5 opacity-50 relative z-10">
-                    <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Engine // ACE 3.0 // PDF Synthesis</p>
+                    <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Engine // EMBER-ACE 5.0 // Embrapa Scientific Synthesis</p>
                     <p className="text-[10px] text-slate-500 font-bold flex items-center gap-2">
                         <span className="size-1 rounded-full bg-cyan-500 animate-pulse"></span>
-                        PAGE 01
+                        PAGE 01 // EXECUTIVE ONLY
                     </p>
                 </div>
             </section>
