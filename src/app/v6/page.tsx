@@ -40,12 +40,13 @@ export default function LandingPageV6() {
             CouncilIA v7.0 — Global Decision Intelligence
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
-            Structured AI for Critical Decisions — <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Not Opinions.</span>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.1] uppercase italic">
+            Decisões Críticas <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Sem Margem de Erro.</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed">
-            Transform high-stakes complexity into auditable, defensible decisions. Built for regulated industries that cannot afford to be wrong.
+            Transforme complexidade institucional em decisões auditáveis e defensíveis. 
+            <span className="block mt-2 text-cyan-400 font-bold uppercase tracking-widest text-sm">✓ 100% Compliance: LGPD, GDPR & AI ACT</span>
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -63,46 +64,50 @@ export default function LandingPageV6() {
         </div>
       </section>
 
-      {/* Compliance Trust Bar */}
-      <section className="border-y border-white/5 bg-slate-950/50 backdrop-blur-sm py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-wrap items-center justify-center gap-12 md:gap-24">
-          <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-            <div className="size-10 bg-green-500/10 rounded-full flex items-center justify-center border border-green-500/20">
-              <span className="material-symbols-outlined text-green-400 text-xl select-none">verified</span>
-            </div>
-            <div>
-              <div className="text-white font-bold text-xs uppercase tracking-tighter">LGPD</div>
-              <div className="text-[10px] text-slate-500 font-medium">Lei 13.709/18 Compliant</div>
-            </div>
+      <section className="border-y border-white/5 bg-slate-950/50 backdrop-blur-sm py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-10">
+            <span className="text-[10px] font-mono text-cyan-500 uppercase tracking-[0.3em] font-black">Certificações & Conformidade Institucional</span>
           </div>
-          
-          <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-            <div className="size-10 bg-blue-500/10 rounded-full flex items-center justify-center border border-blue-500/20">
-              <span className="material-symbols-outlined text-blue-400 text-xl select-none">security</span>
+          <div className="flex flex-wrap items-center justify-center gap-12 md:gap-24">
+            <div className="flex items-center gap-3 group">
+              <div className="size-12 bg-green-500/10 rounded-full flex items-center justify-center border border-green-500/30 group-hover:bg-green-500/20 transition-all">
+                <span className="material-symbols-outlined text-green-400 text-2xl select-none">verified</span>
+              </div>
+              <div>
+                <div className="text-white font-black text-xs uppercase tracking-tighter">LGPD</div>
+                <div className="text-[10px] text-slate-500 font-medium">Lei 13.709/18 — Brasil</div>
+              </div>
             </div>
-            <div>
-              <div className="text-white font-bold text-xs uppercase tracking-tighter">GDPR</div>
-              <div className="text-[10px] text-slate-500 font-medium">EU Privacy Shield Ready</div>
+            
+            <div className="flex items-center gap-3 group">
+              <div className="size-12 bg-blue-500/10 rounded-full flex items-center justify-center border border-blue-500/30 group-hover:bg-blue-500/20 transition-all">
+                <span className="material-symbols-outlined text-blue-400 text-2xl select-none">security</span>
+              </div>
+              <div>
+                <div className="text-white font-black text-xs uppercase tracking-tighter">GDPR</div>
+                <div className="text-[10px] text-slate-500 font-medium">European Privacy Shield</div>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-            <div className="size-10 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/20">
-              <span className="material-symbols-outlined text-cyan-400 text-xl select-none">cognition</span>
+            
+            <div className="flex items-center gap-3 group">
+              <div className="size-12 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30 group-hover:bg-cyan-500/20 transition-all">
+                <span className="material-symbols-outlined text-cyan-400 text-2xl select-none">account_balance</span>
+              </div>
+              <div>
+                <div className="text-white font-black text-xs uppercase tracking-tighter">EU AI Act</div>
+                <div className="text-[10px] text-slate-500 font-medium">Reg. 2024/1689 Framework</div>
+              </div>
             </div>
-            <div>
-              <div className="text-white font-bold text-xs uppercase tracking-tighter">EU AI Act</div>
-              <div className="text-[10px] text-slate-500 font-medium">Reg. 2024/1689 Framework</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity">
-            <div className="size-10 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20">
-              <span className="material-symbols-outlined text-red-400 text-xl select-none">account_balance</span>
-            </div>
-            <div>
-              <div className="text-white font-bold text-xs uppercase tracking-tighter">BCB 4893</div>
-              <div className="text-[10px] text-slate-500 font-medium">IA Regulada (Brasil)</div>
+            
+            <div className="flex items-center gap-3 group">
+              <div className="size-12 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/30 group-hover:bg-red-500/20 transition-all">
+                <span className="material-symbols-outlined text-red-400 text-2xl select-none">policy</span>
+              </div>
+              <div>
+                <div className="text-white font-black text-xs uppercase tracking-tighter">BCB 4893</div>
+                <div className="text-[10px] text-slate-500 font-medium">IA Regulada — Bacen</div>
+              </div>
             </div>
           </div>
         </div>
