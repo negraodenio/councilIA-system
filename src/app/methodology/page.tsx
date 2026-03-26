@@ -10,161 +10,184 @@ export const metadata: Metadata = {
 
 export default function MethodologyPage() {
     return (
-        <main className="bg-deep-blue text-slate-100 min-h-screen font-body relative overflow-x-hidden">
+        <main className="bg-[#020617] text-slate-100 min-h-screen font-sans relative overflow-x-hidden">
             {/* Background Effects */}
             <div className="absolute inset-0 tech-grid pointer-events-none opacity-20 z-0"></div>
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none"></div>
 
             <Navbar />
 
             {/* Hero Section */}
             <section className="relative pt-40 pb-20 px-6 z-10">
                 <div className="max-w-4xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
-                        <span className="material-symbols-outlined text-[14px] text-indigo-400">verified</span>
-                        <span className="text-[11px] font-mono font-bold text-indigo-300 uppercase tracking-widest">Academic Validation Moat</span>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-6 font-mono text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
+                        v6.1 PRO FINAL — Scientific Foundation
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight mb-8">
-                        The Science of <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-indigo-400">De-Risking</span>
+                    <h1 className="text-5xl md:text-7xl font-sans font-black tracking-tighter mb-8 uppercase italic">
+                        Evidence-Based <span className="text-cyan-400">Architecture</span>
                     </h1>
                     <p className="text-lg md:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">
-                        One AI model is prone to bias. Our architecture leverages a diverse council of agents, 
-                        pitting specialized personas against each other in a multi-round adversarial protocol.
+                        CouncilIA operationalizes research from multi-agent systems and decision science into a structured deliberation platform. 
+                        Our approach is <strong>scientifically grounded, not scientifically proven.</strong>
                     </p>
                 </div>
             </section>
 
             {/* Scientific Pillars */}
             <section className="relative pb-32 px-6 z-10">
-                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Pillar 1: Clinical Precision */}
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <MethodologyCard 
                         id="01"
-                        title="Clinical Precision"
+                        title="Multi-Agent Deliberation"
                         paper="Shaikh et al. (PLOS 2025)"
                         cite="https://doi.org/10.1371/journal.pdig.0000721"
-                        icon="medical_services"
-                        color="#3B82F6"
-                        description="Framework validates 97% accuracy in high-stakes clinical exams (Step 1). The 5-agent deliberation protocol corrects 53% of errors that majority voting would commit. CouncilIA evolves this via specialized personas."
-                        impact="53% Error Correction vs Voting"
+                        icon="hub"
+                        color="#06b6d4"
+                        description="Multi-instance LLM deliberation achieves 97% accuracy in high-stakes clinical exams. CouncilIA extends this by replacing identical instances with specialized personas for cognitive diversity."
                     />
 
-                    {/* Pillar 2: Adversarial Alignment */}
                     <MethodologyCard 
                         id="02"
-                        title="Adversarial Alignment"
+                        title="Adversarial Reasoning"
                         paper="Ellemers et al. (PNAS 2020)"
                         cite="https://doi.org/10.1073/pnas.1913936117"
                         icon="balance"
-                        color="#A855F7"
-                        description="Based on 'Adversarial alignment enables competing models to engage in cooperative theory building'. Our Persona engine uses these rules to reframe competition into a cooperative search for truth."
-                        impact="Kahneman-Based Alignment"
+                        color="#ec4899"
+                        description="Inspired by research on 'Adversarial Alignment' where structured conflict improves theory-building. CouncilIA operationalizes this through intentional role tension and forced challenges."
                     />
 
-                    {/* Pillar 3: Rational Multi-Agent Systems */}
                     <MethodologyCard 
                         id="03"
-                        title="Rational Multi-Agent Systems"
-                        paper="MpFL (NeurIPS 2025)"
-                        cite="https://arxiv.org/abs/2501.08263"
-                        icon="hub"
-                        color="#10B981"
-                        description="Multiplayer Federated Learning where clients are rational players with individual utility functions. Convergence to equilibrium is mathematically proven, mirroring our Collective Intelligence Engine."
-                        impact="Proven Rational Equilibrium"
+                        title="Independent Perspectives"
+                        paper="Distributed Multi-Agent Systems"
+                        cite="#"
+                        icon="groups"
+                        color="#8b5cf6"
+                        description="Based on game-theoretic principles where independent agents optimize domain-specific criteria. This improves decision robustness by surfacing risks that single-model outputs miss."
                     />
 
-                    {/* Pillar 4: Consensus vs. Majority Voting */}
                     <MethodologyCard 
                         id="04"
-                        title="Consensus vs. Majority Voting"
-                        paper="Kaesberg et al. (ACL Findings 2025)"
+                        title="Iterative Deliberation"
+                        paper="3-Round Optimization"
                         cite="#"
-                        icon="query_stats"
-                        color="#F59E0B"
-                        description="Determines that 3 rounds (CouncilIA protocol) optimize decision quality. Note: DOI pending — ACL Anthology publication expected Q3 2025."
-                        impact="3-Round Protocol Validation"
+                        icon="refresh"
+                        color="#f59e0b"
+                        description="Empirical data suggests diminishing returns beyond a limited round count. CouncilIA adopts a strict Thesis → Antithesis → Synthesis protocol for maximum efficiency."
                     />
 
-                    {/* Pillar 5: Human-AI Control */}
                     <MethodologyCard 
                         id="05"
-                        title="Sovereign Override & Clarity"
+                        title="Human-AI Governance"
                         paper="Amershi et al. (CHI 2019)"
                         cite="https://doi.org/10.1145/3290605.3300233"
                         icon="shield_person"
-                        color="#EC4899"
-                        description="Microsoft Research guidelines for Human-AI interaction. We strictly implement G11 (Explaning system rationale) and G17 (Global User Control) via the Sovereign Override feature."
-                        impact="Guidelines G11 & G17 Compliant"
+                        color="#10b981"
+                        description="Implementation of Microsoft Research G11 (Explainability) and G17 (Human Control) guidelines. AI structures decisions, but humans remain final and accountable."
                     />
 
-                    {/* CTA Card */}
-                    <div className="p-8 rounded-3xl bg-gradient-to-br from-indigo-600 to-purple-600 flex flex-col items-center justify-center text-center shadow-[0_20px_50px_rgba(79,70,229,0.3)]">
-                        <h3 className="text-2xl font-bold mb-4 text-white">Ready to test the science?</h3>
-                        <p className="text-indigo-100 text-sm mb-8">Start your first council session and see the methodology in action.</p>
-                        <Link href="/login" className="px-8 py-3 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-colors uppercase tracking-widest text-xs">
+                    <div className="p-8 rounded-2xl bg-gradient-to-br from-cyan-600 to-blue-700 flex flex-col items-center justify-center text-center shadow-xl">
+                        <h3 className="text-2xl font-bold mb-4 text-white">Audit-Ready Protocol</h3>
+                        <p className="text-cyan-100 text-sm mb-8">Ready to transform opinions into auditable decision documents?</p>
+                        <Link href="/login" className="px-8 py-3 bg-white text-cyan-600 font-bold rounded-lg hover:bg-cyan-50 transition-colors uppercase tracking-widest text-xs">
                             Start Session
                         </Link>
                     </div>
                 </div>
             </section>
 
-            {/* Technical Context Section */}
-            <section className="relative pb-32 px-6 z-10">
-                <div className="max-w-4xl mx-auto rounded-3xl bg-white/5 border border-white/10 p-8 md:p-12 backdrop-blur-md">
-                    <h2 className="text-3xl font-display font-black mb-8 underline decoration-indigo-500/50">Engine Specifications</h2>
-                    
-                    <div className="space-y-12">
-                        <div>
-                            <h4 className="text-indigo-400 font-mono text-xs uppercase tracking-widest font-black mb-4">01. The Synthesis Topography</h4>
-                            <p className="text-slate-300 leading-relaxed">
-                                Our dashboard utilizes real-time tracking of dissent range and neural alignment. 
-                                This isn't just visualization; it's a topographical map of the Council's decision-space. 
-                                We measure the "Frictional Force" between persona-clusters to identify hidden risks.
-                            </p>
-                        </div>
-                        
-                        <div>
-                            <h4 className="text-indigo-400 font-mono text-xs uppercase tracking-widest font-black mb-4">02. Value at Risk (VaR) Modeling</h4>
-                            <p className="text-slate-300 leading-relaxed">
-                                Inspired by financial risk management, we quantify the probability of a "System Failure" 
-                                (hallucination or logical breakdown) based on the divergence of Expert responses. 
-                                Higher dissent = Higher VaR.
-                            </p>
-                        </div>
-
-                        <div className="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
-                            <p className="text-sm font-bold text-indigo-300 italic">
-                                "We don't just provide an AI answer. We provide a bulletproof, academically defensible process for human decision-making."
-                            </p>
+            {/* Technical Implementation */}
+            <section className="relative pb-32 px-6 z-10 border-t border-white/5 pt-32">
+                <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+                    <div>
+                        <h2 className="text-3xl font-black mb-8 uppercase tracking-tight text-white">Technical Implementation</h2>
+                        <div className="space-y-8">
+                            <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                                <h4 className="text-cyan-400 font-mono text-xs uppercase tracking-widest font-black mb-2">Deliberation Trace System</h4>
+                                <p className="text-slate-400 text-sm leading-relaxed">
+                                    CouncilIA produces a structured decision trace: argument isolation, evidence mapping (RAG), and refinement logs. 
+                                    This enables complete auditability by regulatory bodies.
+                                </p>
+                            </div>
+                            <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                                <h4 className="text-cyan-400 font-mono text-xs uppercase tracking-widest font-black mb-2">VaR-Inspired Risk Modeling</h4>
+                                <p className="text-slate-400 text-sm leading-relaxed">
+                                    Decision uncertainty is quantified through agent disagreement and evidence gaps. 
+                                    High Dissent = High Uncertainty = Mandatory Human Review.
+                                </p>
+                            </div>
                         </div>
                     </div>
-
-                    {/* Round-by-Round Breakdown */}
-                    <div className="mt-20 border-t border-white/10 pt-20">
-                        <h2 className="text-3xl font-display font-black mb-12 text-center">The 3-Round Protocol</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                            <div className="space-y-4 p-6">
-                                <div className="text-indigo-400 font-mono text-2xl font-bold">R1</div>
-                                <h4 className="font-bold uppercase tracking-widest text-xs">Adversarial Opening</h4>
-                                <p className="text-xs text-slate-400 leading-relaxed">
-                                    Agents isolate variables. The Devil&apos;s Advocate is given primary authority to find &quot;Instant Failure&quot; points.
-                                </p>
-                            </div>
-                            <div className="space-y-4 p-6 border-x border-white/5">
-                                <div className="text-indigo-400 font-mono text-2xl font-bold">R2</div>
-                                <h4 className="font-bold uppercase tracking-widest text-xs">Cross-Examination</h4>
-                                <p className="text-xs text-slate-400 leading-relaxed">
-                                    Agents must address the specific dissent points raised in R1. Majority voting is disabled; logic must be defended.
-                                </p>
-                            </div>
-                            <div className="space-y-4 p-6">
-                                <div className="text-indigo-400 font-mono text-2xl font-bold">R3</div>
-                                <h4 className="font-bold uppercase tracking-widest text-xs">Recursive Synthesis</h4>
-                                <p className="text-xs text-slate-400 leading-relaxed">
-                                    The Arbitrator filters for argument density. Only the points that survived R1/R2 are included in the final verdict.
-                                </p>
-                            </div>
+                    
+                    <div>
+                        <h2 className="text-3xl font-black mb-8 uppercase tracking-tight text-white">Decision Metrics</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <MetricBox title="Dissent Range" value="0–100" desc="Variance between expert outputs" />
+                            <MetricBox title="Consensus Strength" value="%" desc="Arguments surviving all rounds" />
+                            <MetricBox title="Evidence Density" value="Cites" desc="Citations per critical claim" />
+                            <MetricBox title="Audit Score" value="0–100" desc="Adherence to regulatory RAG" />
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 3-Round Protocol Table */}
+            <section className="relative pb-32 px-6 z-10 overflow-hidden">
+                <div className="max-w-4xl mx-auto rounded-3xl bg-slate-900/50 border border-white/10 p-12 backdrop-blur-md">
+                    <h2 className="text-3xl font-black mb-12 text-center uppercase tracking-widest italic text-white">The 3-Round Protocol</h2>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left font-sans">
+                            <thead className="border-b border-white/10 text-cyan-400 text-[10px] uppercase font-bold tracking-widest">
+                                <tr>
+                                    <th className="pb-6 w-1/4">Round</th>
+                                    <th className="pb-6">Purpose</th>
+                                    <th className="pb-6">Output</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5 text-sm text-slate-300">
+                                <tr>
+                                    <td className="py-8 font-black text-white">R1: Thesis</td>
+                                    <td className="py-8">Independent expert evaluation</td>
+                                    <td className="py-8">Domain-specific analysis + Evidence</td>
+                                </tr>
+                                <tr>
+                                    <td className="py-8 font-black text-white">R2: Antithesis</td>
+                                    <td className="py-8">Structured adversarial critique</td>
+                                    <td className="py-8">Unrefuted risks + Direct challenges</td>
+                                </tr>
+                                <tr>
+                                    <td className="py-8 font-black text-white">R3: Synthesis</td>
+                                    <td className="py-8">Evidence-based refinement</td>
+                                    <td className="py-8">Decision document + Action plan</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            {/* Limitations & Forbidden Section */}
+            <section className="relative pb-32 px-6 z-10">
+                <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="p-10 rounded-3xl border border-red-500/20 bg-red-500/5">
+                        <h3 className="text-lg font-bold text-red-400 uppercase mb-6 tracking-widest">System Limitations</h3>
+                        <ul className="space-y-4 text-xs text-slate-400 list-disc list-inside">
+                            <li>Dependent on input quality (Garbage In → Structured Garbage Out)</li>
+                            <li>Does not guarantee correctness; only de-risks process</li>
+                            <li>Does not replace domain experts or regulatory sign-off</li>
+                            <li>Cannot validate outcome without empirical testing</li>
+                        </ul>
+                    </div>
+                    <div className="p-10 rounded-3xl border border-white/10 bg-white/5">
+                        <h3 className="text-lg font-bold text-white uppercase mb-6 tracking-widest">What We Do Not Claim</h3>
+                        <ul className="space-y-4 text-xs text-slate-400">
+                            <li className="flex items-center gap-2">❌ AI replaces human decision-making</li>
+                            <li className="flex items-center gap-2">❌ Universally proven accuracy</li>
+                            <li className="flex items-center gap-2">❌ Elimination of risk</li>
+                        </ul>
+                        <p className="mt-8 text-[10px] font-mono text-slate-500 italic uppercase">
+                            &quot;We structure decisions. Humans remain accountable.&quot;
+                        </p>
                     </div>
                 </div>
             </section>
@@ -174,42 +197,50 @@ export default function MethodologyPage() {
     );
 }
 
-function MethodologyCard({ id, title, paper, cite, icon, color, description, impact }: {
-    id: string; title: string; paper: string; cite: string; icon: string; color: string; description: string; impact: string;
+function MetricBox({ title, value, desc }: { title: string; value: string; desc: string }) {
+    return (
+        <div className="p-6 rounded-xl bg-white/5 border border-white/5 hover:border-cyan-500/30 transition-all group">
+            <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1 group-hover:text-cyan-400 transition-colors uppercase">{title}</div>
+            <div className="text-2xl font-black text-white mb-2">{value}</div>
+            <p className="text-[9px] text-slate-600 uppercase tracking-tighter leading-tight uppercase">{desc}</p>
+        </div>
+    );
+}
+
+function MethodologyCard({ id, title, paper, cite, icon, color, description }: {
+    id: string; title: string; paper: string; cite: string; icon: string; color: string; description: string;
 }) {
     return (
-        <div className="group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:translate-y-[-4px] flex flex-col">
+        <div className="group p-8 rounded-3xl bg-slate-900/40 border border-white/10 hover:border-cyan-500/30 transition-all hover:translate-y-[-4px] flex flex-col">
             <div className="flex justify-between items-start mb-6">
                 <div 
-                    className="size-12 rounded-2xl flex items-center justify-center text-white shadow-lg"
+                    className="size-12 rounded-xl flex items-center justify-center text-white shadow-lg"
                     style={{ background: `linear-gradient(135deg, ${color}, ${color}dd)` }}
                 >
-                    <span className="material-symbols-outlined">{icon}</span>
+                    <span className="material-symbols-outlined shrink-0 select-none">{icon}</span>
                 </div>
-                <span className="font-mono text-xs text-slate-600 font-black group-hover:text-slate-400 transition-colors">PILLAR {id}</span>
+                <span className="font-mono text-[10px] text-slate-600 font-black group-hover:text-cyan-400/50 transition-colors uppercase tracking-widest">Pillar {id}</span>
             </div>
             
-            <h3 className="text-xl font-bold mb-2 group-hover:text-white transition-colors">{title}</h3>
-            <p className="text-[10px] font-mono text-indigo-400 uppercase tracking-wider mb-6 font-bold">{paper}</p>
+            <h3 className="text-xl font-bold mb-2 group-hover:text-white transition-colors uppercase">{title}</h3>
+            <p className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider mb-6 font-bold">{paper}</p>
             
-            <p className="text-sm text-slate-400 leading-relaxed mb-8 flex-grow">
+            <p className="text-sm text-slate-500 leading-relaxed mb-8 flex-grow">
                 {description}
             </p>
 
-            <div className="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Real-World Impact</span>
-                    <span className="text-[10px] font-bold py-1 px-2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{impact}</span>
-                </div>
-                {cite !== "#" && (
+            <div className="mt-auto pt-6 border-t border-white/5">
+                {cite !== "#" ? (
                     <a 
                         href={cite} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-[10px] text-indigo-400 hover:text-indigo-300 font-mono flex items-center gap-1 transition-colors"
+                        className="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono flex items-center gap-1 transition-colors uppercase tracking-widest font-bold"
                     >
                         Read Publication <span className="material-symbols-outlined text-[12px]">open_in_new</span>
                     </a>
+                ) : (
+                    <span className="text-[10px] text-slate-600 font-mono italic uppercase tracking-widest">Technical Spec v6.1</span>
                 )}
             </div>
         </div>

@@ -1,15 +1,17 @@
 /**
  * scripts/ingest_embrapa_poc.js
  * 
- * JS version for easier execution with standard node.
- * Uses MISTRAL_API_KEY from .env.local
+ * Enhanced Version v7.1 with DOCX Support
+ * Uses Mistral embeddings and Supabase
  */
 
 const fs = require('fs');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
-const pdf = require('pdf-parse');
-require('dotenv').config({ path: '.env.local' });
+const { PDFParse } = require('pdf-parse');
+const mammoth = require('mammoth');
+const XLSX = require('xlsx');
+require('dotenv').config({ path: '.env.vercel.prod' });
 
 // POC Constants
 const EMBRAPA_USER_EMAIL = 'embrapa@embrapa.com';
@@ -45,8 +47,6 @@ async function embedMistral(inputs) {
 
 async function setupEmbrapaUser() {
     console.log(`[POC Setup] Ensuring user ${EMBRAPA_USER_EMAIL} exists...`);
-    
-    // Check if user exists
     const { data: { users } } = await supabase.auth.admin.listUsers();
     let existingUser = users.find(u => u.email === EMBRAPA_USER_EMAIL);
     let userId;
@@ -66,13 +66,7 @@ async function setupEmbrapaUser() {
 
     const tenantId = userId;
     await supabase.from('tenants').upsert({ id: tenantId, name: 'Embrapa POC' });
-    await supabase.from('profiles').upsert({ 
-        id: userId, 
-        tenant_id: tenantId, 
-        role: 'admin',
-        email: EMBRAPA_USER_EMAIL
-    });
-
+    await supabase.from('profiles').upsert({ id: userId, tenant_id: tenantId, role: 'admin', email: EMBRAPA_USER_EMAIL });
     await supabase.from('custom_personas').upsert({
         id: EMBRAPA_PERSONA_ID,
         tenant_id: tenantId,
@@ -84,70 +78,78 @@ async function setupEmbrapaUser() {
         emoji: '🔬',
         is_active: true
     });
-
     return userId;
 }
 
 async function ingestFolder(userId) {
-    if (!fs.existsSync(EMBRAPA_FOLDER)) {
-        console.error(`[POC Ingest] Folder not found: ${EMBRAPA_FOLDER}`);
-        return;
-    }
-
     const files = fs.readdirSync(EMBRAPA_FOLDER);
-    console.log(`[POC Ingest] Found ${files.length} files in ${EMBRAPA_FOLDER}`);
+    console.log(`[POC Ingest] Found ${files.length} files. Starting ingestion...`);
     
     for (const filename of files) {
-        if (!filename.toLowerCase().endsWith('.pdf')) continue;
+        const ext = path.extname(filename).toLowerCase();
+        if (ext !== '.pdf' && ext !== '.docx' && ext !== '.xlsx') continue;
         
         const filePath = path.join(EMBRAPA_FOLDER, filename);
         console.log(`[POC Ingest] Processing ${filename}...`);
         
         try {
-            const buffer = fs.readFileSync(filePath);
-            const data = await pdf(buffer);
-            let text = data.text || "";
-            text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, "").trim();
-            
-            if (text.length < 100) {
-                console.warn(`[POC Ingest] Skipping ${filename}: Too little text (${text.length} chars)`);
-                continue;
+            let text = "";
+            if (ext === '.pdf') {
+                const buffer = fs.readFileSync(filePath);
+                const parser = new PDFParse({ data: buffer });
+                const result = await parser.getText();
+                await parser.destroy();
+                text = result.text || "";
+            } else if (ext === '.docx') {
+                const result = await mammoth.extractRawText({ path: filePath });
+                text = result.value;
+            } else if (ext === '.xlsx') {
+                const workbook = XLSX.readFile(filePath);
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                // Convert to CSV for RAG
+                text = XLSX.utils.sheet_to_csv(worksheet);
             }
 
+            text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, "").trim();
+            if (text.length < 50) continue;
+
+            // Robust chunking: 1000 chars with 200 overlap
             const chunks = [];
-            for (let i = 0; i < text.length; i += 1000) {
-                const chunk = text.slice(i, i + 1200).trim();
+            const chunkSize = 1000;
+            const overlap = 200;
+            for (let i = 0; i < text.length; i += (chunkSize - overlap)) {
+                const chunk = text.slice(i, i + chunkSize).trim();
                 if (chunk.length > 50) chunks.push(chunk);
+                if (i + chunkSize >= text.length) break;
             }
 
             console.log(`[POC Ingest] Ingesting ${chunks.length} chunks for ${filename}...`);
             
-            for (let i = 0; i < chunks.length; i += 16) { // Batch size 16
+            for (let i = 0; i < chunks.length; i += 16) {
                 const batch = chunks.slice(i, i + 16);
                 const embeddings = await embedMistral(batch);
-                
                 const rows = batch.map((chunk, idx) => ({
                     persona_id: EMBRAPA_PERSONA_ID,
                     user_id: userId,
                     chunk_content: chunk,
                     embedding: embeddings[idx]
                 }));
-
                 const { error: insertErr } = await supabase.from('repo_embeddings').insert(rows);
-                if (insertErr) console.error(`[POC Ingest] Insert error for ${filename} at chunk ${i}:`, insertErr);
+                if (insertErr) console.error(`[POC Ingest] Insert error:`, insertErr);
             }
             
             await supabase.from('custom_persona_documents').upsert({
                 persona_id: EMBRAPA_PERSONA_ID,
                 user_id: userId,
                 filename,
-                file_type: 'pdf',
+                file_type: ext.substring(1),
                 status: 'ready',
                 chunk_count: chunks.length
             });
             console.log(`[POC Ingest] Finished ${filename}`);
         } catch (err) {
-            console.error(`[POC Ingest] Failed ${filename}:`, err);
+            console.error(`[POC Ingest] Error in ${filename}:`, err);
         }
     }
 }
@@ -156,9 +158,9 @@ async function run() {
     try {
         const userId = await setupEmbrapaUser();
         await ingestFolder(userId);
-        console.log('[POC Setup] All Embrapa documents ingested successfully.');
+        console.log('[POC Setup] Ingestion complete.');
     } catch (err) {
-        console.error('[POC Setup] Fatal Error:', err);
+        console.error('[POC Setup] Error:', err);
     }
 }
 

@@ -357,16 +357,16 @@ export default function ConsensusReport({ validation, patches }: {
                                 const meta = getMeta(id);
                                 const statBar = personaScores[id] ?? score;
                                 
-                                // Embrapa Name Mapping for the Summary Grid
+                                // Embrapa v5.0 Elite Name Mapping
                                 const embrapaNames: Record<string, string> = {
-                                    visionary: 'Inovação P&D',
+                                    visionary: 'Gestor de Inovação',
                                     technologist: 'Cientista Analítico',
                                     devil: 'Auditor de Riscos',
                                     marketeer: 'Transferência Tech',
                                     ethicist: 'Regulatório',
-                                    financier: 'Analista Fomento'
+                                    financier: 'Analista Financeiro'
                                 };
-                                const displayName = (validation.full_result?.isEmbrapa || result.isEmbrapa) ? (embrapaNames[id] || id) : id;
+                                const displayName = (validation.full_result?.is_embrapa || result.is_embrapa || isEmbrapa) ? (embrapaNames[id] || id) : id;
 
                                 return (
                                     <div key={id} className="group flex items-center justify-between text-xs p-2.5 bg-black/20 border border-white/5 rounded-lg hover:bg-black/40 hover:border-white/10 transition-colors cursor-help" title={`Expert: ${displayName}`}>
@@ -736,15 +736,15 @@ export default function ConsensusReport({ validation, patches }: {
                                                             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-400/5 blur-[80px] rounded-full pointer-events-none"></div>
                                                             <h3 className="text-sm font-black uppercase tracking-[0.3em] text-indigo-400 mb-6 flex items-center gap-3">
                                                                 <span className="material-symbols-outlined text-lg">info</span>
-                                                                GLOSSÁRIO TÉCNICO & HINTS (EMBRAPA v5.0)
+                                                                 GLOSSÁRIO TÉCNICO & HINTS (EMBRAPA v5.0)
                                                             </h3>
                                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs text-slate-400 leading-relaxed">
-                                                                <div><strong className="text-indigo-300 block mb-1">RDC 166/2017:</strong> Resolução da ANVISA sobre a validação de métodos analíticos. Non-negotiable em Level 1.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">RDC 166/2017:</strong> Resolução da ANVISA sobre validação de métodos analíticos. Obrigatória para Nível 1.</div>
                                                                 <div><strong className="text-indigo-300 block mb-1">ISO/IEC 17025:</strong> Requisito global para competência de laboratórios de ensaio e calibração.</div>
-                                                                <div><strong className="text-indigo-300 block mb-1">HIERARCHY OF TRUTH:</strong> Protocolo v5.0 de priorização: Normas {'>'} Standards {'>'} Literatura {'>'} Empírico.</div>
-                                                                <div><strong className="text-indigo-300 block mb-1">COST BRASIL:</strong> Auditoria obrigatória de gargalos logísticos e tributários específicos do agronegócio.</div>
-                                                                <div><strong className="text-indigo-300 block mb-1">HORWITZ PROTOCOL:</strong> Parâmetro estatístico para aceitação de precisão inter-laboratorial.</div>
-                                                                <div><strong className="text-indigo-300 block mb-1">NASH EQUILIBRIUM:</strong> Ponto de convergência onde nenhum agente tem incentivo para mudar seu veredito.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">HIERARQUIA DA VERDADE:</strong> Protocolo v5.0: Normas {'>'} Padrões {'>'} Literatura {'>'} Empírico.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">CUSTO BRASIL:</strong> Auditoria de gargalos logísticos e tributários específicos do agro.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">PROTOCOLO HORWITZ:</strong> Parâmetro estatístico para reprodutibilidade inter-laboratorial.</div>
+                                                                <div><strong className="text-indigo-300 block mb-1">EQUILÍBRIO DE NASH:</strong> Ponto de convergência lógica onde o veredito é estável e defensável.</div>
                                                             </div>
                                                         </div>
 
@@ -1075,7 +1075,7 @@ const SCIENCE_PILLARS = [
     {
         key: 'precision',
         label: 'Clinical Precision',
-        cite: 'Shaikh et al. — PLOS Digital Health (2025)',
+        cite: 'Shaikh et al. (PLOS 2025)',
         doi: 'https://doi.org/10.1371/journal.pdig.0000721',
         color: 'indigo',
         twClasses: 'bg-indigo-500/5 border-indigo-500/20 hover:bg-indigo-500/10 hover:border-indigo-500/40',
@@ -1084,13 +1084,13 @@ const SCIENCE_PILLARS = [
         footerClass: 'text-indigo-300/80',
         glowClass: 'bg-indigo-500/5 group-hover:bg-indigo-500/10',
         headline: '97% accuracy via multi-agent consensus',
-        description: 'The multi-agent deliberation protocol used in this session is based on a clinical framework that achieves 97% accuracy on high-stakes medical decisions. Critically, it corrects 53% of errors that a single-agent or simple majority-vote system would commit — the same logical flaw in most AI tools.',
+        description: 'The protocol is based on a clinical framework that achieves 97% accuracy on high-stakes medical decisions and corrects 53% of errors vs. majority voting.',
         status: 'Inference Logic Active',
     },
     {
         key: 'alignment',
         label: 'Adversarial Alignment',
-        cite: 'Ellemers, Fiske et al. — PNAS (2020)',
+        cite: 'Ellemers et al. (PNAS 2020)',
         doi: 'https://doi.org/10.1073/pnas.1913936117',
         color: 'purple',
         twClasses: 'bg-purple-500/5 border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40',
@@ -1098,14 +1098,14 @@ const SCIENCE_PILLARS = [
         dotClass: 'bg-purple-400',
         footerClass: 'text-purple-300/80',
         glowClass: 'bg-purple-500/5 group-hover:bg-purple-500/10',
-        headline: 'Kahneman\'s 5 rules for productive conflict',
-        description: 'Inspired by Daniel Kahneman\'s adversarial collaboration model, each agent in Round 2 is required to directly challenge a specific argument from Round 1 — not just express a different opinion. This structured disagreement, proven in PNAS research, leads to more robust shared conclusions.',
+        headline: 'Kahneman-Based Productive Conflict',
+        description: 'Competing models engage in cooperative theory building. Each agent must directly challenge specific arguments, leading to robust conclusions.',
         status: 'Kahneman Rules Engaged',
     },
     {
         key: 'strategy',
-        label: 'Rational Multi-Agent Strategy',
-        cite: 'MpFL — NeurIPS (2025)',
+        label: 'Rational Multi-Agent Systems',
+        cite: 'MpFL (NeurIPS 2025)',
         doi: 'https://arxiv.org/abs/2501.08263',
         color: 'emerald',
         twClasses: 'bg-emerald-500/5 border-emerald-500/20 hover:bg-emerald-500/10 hover:border-emerald-500/40',
@@ -1113,14 +1113,14 @@ const SCIENCE_PILLARS = [
         dotClass: 'bg-emerald-400',
         footerClass: 'text-emerald-300/80',
         glowClass: 'bg-emerald-500/5 group-hover:bg-emerald-500/10',
-        headline: 'Mathematically proven convergence to equilibrium',
-        description: 'Multiplayer Federated Learning (NeurIPS 2025) proves that rational agents with conflicting utility functions can converge to a stable, communication-efficient equilibrium. This is the mathematical foundation for why 6 agents with competing directives (growth vs. risk vs. ethics) can produce a single reliable Consensus Score.',
+        headline: 'Mathematically proven equilibrium',
+        description: 'Multiplayer Federated Learning proves that rational agents with conflicting functions can converge to a stable, efficient equilibrium.',
         status: 'Equilibrium Achieved',
     },
     {
         key: 'protocol',
-        label: 'Optimal Deliberation Protocol',
-        cite: 'Kaesberg et al. — ACL Findings (2025)',
+        label: 'Consensus vs. Majority Voting',
+        cite: 'Kaesberg et al. (ACL Findings 2025)',
         doi: '#',
         color: 'amber',
         twClasses: 'bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40',
@@ -1128,14 +1128,14 @@ const SCIENCE_PILLARS = [
         dotClass: 'bg-amber-400',
         footerClass: 'text-amber-300/80',
         glowClass: 'bg-amber-500/5 group-hover:bg-amber-500/10',
-        headline: '3 rounds is the scientifically optimal number',
-        description: 'Research published at ACL 2025 (the premier NLP conference) specifically determines that 3 rounds of deliberation is the optimum for maximizing decision quality. Fewer rounds produce shallow analysis. More rounds introduce noise and rhetorical drift — degrading the signal.',
-        status: '3-Round Protocol Validated',
+        headline: '3-Round optimal deliberation',
+        description: 'ACL 2025 research determines that 3 rounds of deliberation is the scientific optimum for maximizing decision quality without introducing noise.',
+        status: 'Protocol Validated',
     },
     {
         key: 'interface',
-        label: 'Human-in-the-Loop Control',
-        cite: 'Amershi et al. — CHI / Microsoft Research (2019)',
+        label: 'Sovereign Override & Clarity',
+        cite: 'Amershi et al. (CHI 2019)',
         doi: 'https://doi.org/10.1145/3290605.3300233',
         color: 'pink',
         twClasses: 'bg-pink-500/5 border-pink-500/20 hover:bg-pink-500/10 hover:border-pink-500/40',
@@ -1143,8 +1143,8 @@ const SCIENCE_PILLARS = [
         dotClass: 'bg-pink-400',
         footerClass: 'text-pink-300/80',
         glowClass: 'bg-pink-500/5 group-hover:bg-pink-500/10',
-        headline: 'Microsoft Research\'s 18 guidelines for Human-AI trust',
-        description: 'Every verdict in CouncilIA complies with Guidelines G11 (the AI must explain *why* it made a decision, not just *what*) and G17 (the human must retain global override control at any point) from the foundational Microsoft Research CHI paper on Human-AI interaction. You are always the final decision-maker.',
+        headline: 'Microsoft Research Trust Guidelines',
+        description: 'Complies with Guidelines G11 (Explanations) and G17 (Global Control), ensuring the human remains the final decision-maker.',
         status: 'Human Override Active',
     },
 ];
@@ -1163,25 +1163,10 @@ function MethodologyMoat({ score, lang, validation, isEmbrapa }: { score: number
             footerClass: 'text-indigo-300/80',
             glowClass: 'bg-indigo-500/5 group-hover:bg-indigo-500/10',
             headline: 'Strict Alignment with ANVISA/MAPA Standards',
-            description: 'Every technical claim undergoes high-precision mapping against RDC 166 (Metrological Validation) and relevant Normative Instructions from MAPA. Arguments that contradict regulatory Level 1 are automatically flagged as critical failures.',
+            description: 'technical claims undergo high-precision mapping against RDC 166 and relevant Normative Instructions from MAPA. Arguments that contradict regulatory Level 1 are automatically flagged as critical failures.',
             status: 'Regulatory Engine v5.0 Active',
         },
-        {
-            key: 'adversarial',
-            label: 'Scientific Conflict Matrix',
-            cite: 'Kahneman Collaboration Model (PNAS)',
-            doi: 'https://doi.org/10.1073/pnas.1913936117',
-            color: 'purple',
-            twClasses: 'bg-purple-500/5 border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40',
-            labelClass: 'text-purple-400',
-            dotClass: 'bg-purple-400',
-            footerClass: 'text-purple-300/80',
-            glowClass: 'bg-purple-500/5 group-hover:bg-purple-500/10',
-            headline: '6-Round Adversarial Scrutiny',
-            description: 'This session executed a full 6-round deliberation loop (Thesis, Cross-Ex, Synthesis, Consensus, Stress, Roadmap). This ensures that innovation is not just "good on paper" but survives adversarial challenge from 6 specialized technical domains.',
-            status: '6-Round Swarm Engaged',
-        },
-        ...SCIENCE_PILLARS.slice(2, 5) // Use strategy, protocol, and interface from standard
+        ...SCIENCE_PILLARS.slice(1, 5) // Use alignment, strategy, protocol, and interface
     ] : SCIENCE_PILLARS;
 
     return (

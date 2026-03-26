@@ -132,7 +132,8 @@ function detectLanguage(text: string): string {
 }
 
 function langInstruction(lang: string): string {
-    return `\n\nCRITICAL: You MUST respond entirely in ${lang}.`;
+    return `\n\n### LANGUAGE REQUIREMENT:
+You MUST respond entirely in ${lang}. This is non-negotiable. Even if the frameworks are in English (like ISO or RDC), your explanation and analysis must be in ${lang}.`;
 }
 
 function inferGeoContext(idea: string, lang: string): string {
@@ -243,7 +244,7 @@ function buildJudgePrompt(lang: string, idea: string = '', isEmbrapa: boolean = 
 ### 🎯 Recomendação Final
 (AVANÇAR | CONDICIONAL | NÃO AVANÇAR)
 
-### 📈 Nível de Confiança (Evidence Audit)
+### 📈 Nivel de Confiança (Evidence Audit)
 (ALTO / MÉDIO / BAIXO)`;
 
     const structureEn = `
@@ -325,8 +326,9 @@ export async function POST(req: Request) {
             const assigned = config.assign[p.id as keyof typeof config.assign];
             const out = await callModel(assigned, [{ role: 'system', content: buildRound1Prompt(p, lang, ideaRedacted, isEmbrapa) }, { role: 'user', content: ideaRedacted }], { zdr: config.judge.zdr });
             const text = extractText(out, '');
-            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r1', round: 1, persona: isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name, emoji: p.emoji });
-            return { id: p.id, emoji: p.emoji, name: p.name, text };
+            const pName = isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
+            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r1', round: 1, persona: pName, emoji: p.emoji });
+            return { id: p.id, emoji: p.emoji, name: pName, text };
         }));
 
         // Round 2
@@ -335,8 +337,9 @@ export async function POST(req: Request) {
             const assigned = config.assign[p.id as keyof typeof config.assign];
             const out = await callModel(assigned, [{ role: 'system', content: buildRound2AttackPrompt(p, lang, ideaRedacted, isEmbrapa) }, { role: 'user', content: transcriptR1 }], { zdr: config.judge.zdr });
             const text = extractText(out, '');
-            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r2', round: 2, persona: isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name, emoji: p.emoji });
-            return { id: p.id, emoji: p.emoji, name: p.name, text };
+            const pName = isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
+            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r2', round: 2, persona: pName, emoji: p.emoji });
+            return { id: p.id, emoji: p.emoji, name: pName, text };
         }));
 
         // Round 3
@@ -345,8 +348,9 @@ export async function POST(req: Request) {
             const assigned = config.assign[p.id as keyof typeof config.assign];
             const out = await callModel(assigned, [{ role: 'system', content: buildRound3DefensePrompt(p, lang, ideaRedacted, isEmbrapa) }, { role: 'user', content: transcriptR2 }], { zdr: config.judge.zdr });
             const text = extractText(out, '');
-            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r3', round: 3, persona: isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name, emoji: p.emoji });
-            return { id: p.id, emoji: p.emoji, name: p.name, text };
+            const pName = isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
+            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r3', round: 3, persona: pName, emoji: p.emoji });
+            return { id: p.id, emoji: p.emoji, name: pName, text };
         }));
 
         // Extra Rounds
@@ -384,7 +388,8 @@ export async function POST(req: Request) {
         const fullTranscript = `=== Swarm Deliberation ===\n${transcriptR1}\n\n${transcriptR2}\n\n${round3Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n')}${transcriptExtra}`;
         const judgeOut = await callModel({ provider: 'openrouter', model: config.judge.primary }, [{ role: 'system', content: buildJudgePrompt(lang, ideaRedacted, isEmbrapa) }, { role: 'user', content: fullTranscript }], { zdr: config.judge.zdr, maxTokens: 2000, temperature: 0.2 });
         const judgeText = extractText(judgeOut, 'Judge error');
-        const score = (judgeText.match(/(\d{1,3})\/100/)?.[1] || extractScoresFromResults(round3Results));
+        const scoreString = judgeText.match(/(\d{1,3})\/100/)?.[1];
+        const score = scoreString ? Number(scoreString) : extractScoresFromResults(round3Results);
 
         await addEvent(supabase, runId, 'judge_note', 'Auditores Embrapa', { text: judgeText, type: 'final_verdict' });
         await supabase.from('validations').update({ 

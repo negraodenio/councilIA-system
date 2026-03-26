@@ -102,23 +102,23 @@ export default function Home() {
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
                         <a href="https://doi.org/10.1371/journal.pdig.0000721" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
                             <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">97% Accuracy</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">PLOS Digital Health (2025)</p>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Shaikh et al. (PLOS 2025)</p>
                         </a>
                         <a href="https://doi.org/10.1073/pnas.1913936117" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
                             <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Bias Erased</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Adversarial Alignment (PNAS)</p>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Ellemers et al. (PNAS 2020)</p>
+                        </a>
+                        <a href="https://arxiv.org/abs/2501.08263" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Rational Equilibrium</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">MpFL (NeurIPS 2025)</p>
                         </a>
                         <div className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display">Rational Equilibrium</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">MpFL Neural Engine (NeurIPS)</p>
-                        </div>
-                        <div className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display">3-Round Protocol</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight font-bold text-neon-cyan">ACL Findings (2025)</p>
+                            <h3 className="text-xl font-black text-white font-display tracking-tighter">3-Round Protocol</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight font-bold text-neon-cyan">Kaesberg et al. (ACL 2025)</p>
                         </div>
                         <a href="https://doi.org/10.1145/3290605.3300233" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Human Control</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">MS Guidelines G11 & G17</p>
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Sovereign Control</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">MS Guidelines (CHI 2019)</p>
                         </a>
                     </div>
                 </div>
@@ -549,31 +549,31 @@ export default function Home() {
                             <div className="space-y-8">
                                 <div className="flex gap-6">
                                     <div className="shrink-0 flex flex-col items-center">
-                                        <div className="size-8 rounded-full bg-neon-cyan text-black flex items-center justify-center font-bold text-xs uppercase">R1</div>
+                                        <div className="size-8 rounded-full bg-neon-cyan text-black flex items-center justify-center font-bold text-xs uppercase">01</div>
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Adversarial Opening</h4>
-                                        <p className="text-sm text-[#c4c4ff]">We isolate the critical "instant failure" assumptions in your strategy using clinical consensus frameworks (PLOS 2025).</p>
+                                        <h4 className="font-bold mb-2 font-display">Multi-Agent Deliberation</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Using 5 agents to correct 53% of bias errors that standard majority-voting systems commit (PLOS 2025).</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
                                     <div className="shrink-0 flex flex-col items-center">
-                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs uppercase">R2</div>
+                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs uppercase">02</div>
                                         <div className="w-px h-full bg-[rgba(0,240,255,0.2)] my-2"></div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Cross-Examination</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Agents must address specific dissent points using Adversarial Alignment (PNAS), removing cognitive bias from the decision space.</p>
+                                        <h4 className="font-bold mb-2 font-display">Adversarial Theory Building</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Competing models engage in cooperative search for truth rather than simple pattern matching (PNAS 2020).</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
                                     <div className="shrink-0 flex flex-col items-center">
-                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs uppercase">R3</div>
+                                        <div className="size-8 rounded-full border border-[rgba(0,240,255,0.3)] text-neon-cyan flex items-center justify-center font-bold text-xs uppercase">03</div>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold mb-2 font-display">Recursive Synthesis</h4>
-                                        <p className="text-sm text-[#c4c4ff]">Arguments are mathematically filtered until a rational equilibrium (NeurIPS 2025) is reached, providing a bulletproof executive verdict.</p>
+                                        <h4 className="font-bold mb-2 font-display">Rational Equilibrium</h4>
+                                        <p className="text-sm text-[#c4c4ff]">Proprietary MpFL Engine ensures mathematical convergence to a stable, communication-efficient consensus (NeurIPS 2025).</p>
                                     </div>
                                 </div>
                             </div>

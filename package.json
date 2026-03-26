@@ -25,6 +25,7 @@
     "dotenv": "^17.3.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.0",
+    "mammoth": "^1.12.0",
     "nanoid": "^5.1.6",
     "next": "14.2.15",
     "node-fetch": "^2.7.0",
@@ -34,7 +35,8 @@
     "react-diff-viewer-continued": "^4.1.2",
     "react-dom": "^18",
     "react-markdown": "^10.1.0",
-    "stripe": "^20.3.1"
+    "stripe": "^20.3.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@langchain/textsplitters": "^1.0.1",

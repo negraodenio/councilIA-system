@@ -19,10 +19,21 @@ const PERSONAS: Record<string, { lbl: string; pt: string; em: string; c: string 
     financier: { lbl: 'Financial', pt: 'Financeiro', em: '💰', c: '#3B82F6' }
 };
 
-function gp(name: string, lang: UILang) {
-    const key = Object.keys(PERSONAS).find(k => name.toLowerCase().includes(k));
+function gp(name: string, lang: UILang | string) {
+    const n = name.toLowerCase();
+    const isPT = lang === 'Portuguese' || lang === 'pt';
+    
+    // Exact mapping for Embrapa localized names sent from worker
+    if (n.includes('inovação')) return { ...PERSONAS.visionary, dn: name };
+    if (n.includes('cientista')) return { ...PERSONAS.technologist, dn: name };
+    if (n.includes('auditor')) return { ...PERSONAS.devil, dn: name };
+    if (n.includes('transferência')) return { ...PERSONAS.marketeer, dn: name };
+    if (n.includes('regulatório')) return { ...PERSONAS.ethicist, dn: name };
+    if (n.includes('financeiro') || n.includes('fomento')) return { ...PERSONAS.financier, dn: name };
+
+    const key = Object.keys(PERSONAS).find(k => n.includes(k));
     const p = key ? PERSONAS[key] : { lbl: name, pt: name, em: '🤖', c: '#6366F1' };
-    return { ...p, dn: (lang as string) === 'Portuguese' ? p.pt : p.lbl };
+    return { ...p, dn: isPT ? p.pt : p.lbl };
 }
 
 export default function PDFReportTemplate({ validation, lang }: PDFReportTemplateProps) {
@@ -35,6 +46,8 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
     const round1 = (r.round1 || []) as any[];
     const roundToParse = round3.length > 0 ? round3 : round1;
 
+    const isEmbrapa = !!(r.is_embrapa || r.is_embrapa_poc || r.isEmbrapa || r.isEmbrapaPOC || validation.full_result?.is_embrapa);
+
     // v3.0 Strategic Metadata
     const personaData = roundToParse.map(node => ({
         id: node.id || node.name.toLowerCase(),
@@ -43,8 +56,8 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
         meta: parsePersonaResponseV3(node.text)
     }));
 
-    const devilData = personaData.find(d => d.id.includes('devil'))?.meta;
-    const marketeerData = personaData.find(d => d.id.includes('marketeer'))?.meta;
+    const devilData = personaData.find(d => d.id.includes('devil') || d.name.toLowerCase().includes('auditor'))?.meta;
+    const marketeerData = personaData.find(d => d.id.includes('marketeer') || d.name.toLowerCase().includes('transfer'))?.meta;
 
     let cleanJudgeText = typeof judgeText === 'string' ? judgeText.replace(/\\n/g, '\n') : '';
     cleanJudgeText = cleanJudgeText.replace(/## 🏛️ CouncilIA.*?Verdict Final\n/i, '');
@@ -76,8 +89,6 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
     const risks = sections.find(s => s.id === 'risks');
     const recommendations = sections.find(s => s.id === 'recommendations');
 
-    const isEmbrapa = !!(r.is_embrapa || r.is_embrapa_poc || r.isEmbrapa || r.isEmbrapaPOC || validation.full_result?.is_embrapa);
-
     return (
         <div id="pdf-report-container" className="bg-[#050810] text-white font-sans w-[210mm] relative overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
             <style dangerouslySetInnerHTML={{
@@ -98,16 +109,16 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                 <div className="flex justify-between items-start mb-12 relative z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-400 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">C</div>
-                        <span className="font-bold text-2xl tracking-tight">CouncilIA <span className="text-cyan-400 opacity-60 text-xs align-top">V3.0</span></span>
+                        <span className="font-bold text-2xl tracking-tight">CouncilIA <span className="text-cyan-400 opacity-60 text-xs align-top">V5.0 Elite</span></span>
                     </div>
                     <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{isEmbrapa ? t(lang, 'cr_executive_opinion') : 'Strategic Analysis Report'}</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{isEmbrapa ? 'Parecer Técnico de Inovação' : 'Strategic Analysis Report'}</p>
                         <p className="text-[10px] mono text-cyan-500/70">ID // VAL-{validation.id.substring(0, 12).toUpperCase()}</p>
                     </div>
                 </div>
 
                 <div className="mb-12 relative z-10">
-                    <h1 className="text-4xl mb-6 leading-tight max-w-[90%]">{isEmbrapa ? t(lang, 'cr_executive_summary') : 'Executive Briefing Consensus'}</h1>
+                    <h1 className="text-4xl mb-6 leading-tight max-w-[90%]">{isEmbrapa ? 'Relatório Executivo de Consenso' : 'Executive Briefing Consensus'}</h1>
                     <div className="p-6 glass italic text-slate-400 text-sm leading-relaxed border-l-2 border-cyan-500/50">
                         &quot;{validation.idea.substring(0, 300)}{validation.idea.length > 300 ? '...' : ''}&quot;
                     </div>
@@ -115,7 +126,7 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
 
                 <div className="grid grid-cols-2 gap-8 mb-12 relative z-10">
                     <div className="p-8 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center">
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6 font-mono">Consensus Score</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6 font-mono">{isEmbrapa ? 'Pontuação de Consenso' : 'Consensus Score'}</p>
                         <div className="relative flex items-center justify-center">
                             <div className="text-7xl font-black">{score}</div>
                             <div className="absolute -inset-8 bg-cyan-400/10 blur-xl rounded-full"></div>
@@ -125,15 +136,15 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                              <div className={`size-2.5 rounded-full ${score >= 40 && score < 70 ? 'bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)]' : 'bg-white/10'}`}></div>
                              <div className={`size-2.5 rounded-full ${score < 40 ? 'bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.5)]' : 'bg-white/10'}`}></div>
                         </div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 font-mono">STATUS: {score >= 70 ? 'VIABLE' : score >= 40 ? 'CAUTION' : 'HIGH RISK'}</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 font-mono">STATUS: {score >= 70 ? (isEmbrapa ? 'VIÁVEL' : 'VIABLE') : score >= 40 ? (isEmbrapa ? 'CAUTELA' : 'CAUTION') : (isEmbrapa ? 'ALTO RISCO' : 'HIGH RISK')}</p>
                     </div>
 
                     <div className="p-8 glass flex flex-col justify-center">
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-8 text-center font-mono">Diagnostics</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-8 text-center font-mono">{isEmbrapa ? 'Diagnósticos' : 'Diagnostics'}</p>
                         <div className="space-y-6">
                             <div>
                                 <div className="flex justify-between text-[10px] font-black mb-2 tracking-widest font-mono">
-                                    <span className="text-slate-400">MISSION CONFIDENCE</span>
+                                    <span className="text-slate-400">{isEmbrapa ? 'CONFIANÇA DA MISSÃO' : 'MISSION CONFIDENCE'}</span>
                                     <span className="text-cyan-400">{score}%</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
@@ -158,18 +169,18 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                     {devilData && (
                         <div className="p-6 rounded-2xl bg-red-500/5 border border-red-500/20">
                             <div className="flex items-center gap-2 text-red-400 mb-3">
-                                <span className="text-[10px] font-black uppercase tracking-widest">Antifragile Vaccine</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest">{isEmbrapa ? 'Vacina Antifrágil' : 'Antifragile Vaccine'}</span>
                             </div>
                             <p className="text-xs text-red-100 italic font-medium">&quot;{devilData.vaccine || 'N/A'}&quot;</p>
                             <p className="mt-4 py-2 px-3 bg-black/40 rounded border border-red-500/20 text-[9px] font-mono text-red-300 flex items-center gap-2">
-                                <span className="opacity-50">▲</span> CIRCUIT BREAKER: {devilData.circuitBreaker || 'ROI < 1x'}
+                                <span className="opacity-50">▲</span> CIRCUIT BREAKER: {devilData.circuitBreaker || 'Abort if ROI < 1x'}
                             </p>
                         </div>
                     )}
                     {marketeerData && (
                         <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/20">
                             <div className="flex items-center gap-2 text-indigo-400 mb-3">
-                                <span className="text-[10px] font-black uppercase tracking-widest">Champion Profile</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest">{isEmbrapa ? 'Perfil do Campeão' : 'Champion Profile'}</span>
                             </div>
                             <p className="text-xs text-indigo-100 font-bold mb-1">{marketeerData.championProfile || 'N/A'}</p>
                             <div className="grid grid-cols-2 gap-2 mt-4 text-[9px] font-mono">
@@ -198,10 +209,10 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                             {isEmbrapa && (
                                 <div className="absolute top-0 right-0 px-6 py-2 font-black text-[12px] uppercase tracking-[0.3em] opacity-60 bg-white/10 rounded-bl-2xl">
                                     {decision.content.toLowerCase().match(/avançar|proceder|avancer|fortfahren|avanzar|strong go/)
-                                        ? t(lang, 'cr_status_go')
+                                        ? 'AVANÇAR'
                                         : decision.content.toLowerCase().match(/não|ne pas|nicht|no proceder|do not/)
-                                            ? t(lang, 'cr_status_stop')
-                                            : t(lang, 'cr_status_caution')
+                                            ? 'PARAR'
+                                            : 'CAUTELA'
                                     }
                                 </div>
                             )}
@@ -216,7 +227,7 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                                     ? 'text-red-400'
                                     : 'text-amber-400'
                                 }`}>
-                                🎯 {isEmbrapa ? t(lang, 'cr_executive_opinion').toUpperCase() : 'STRATEGIC RECOMMENDATION'}
+                                🎯 {isEmbrapa ? 'PARECER EXECUTIVO ESTRATÉGICO' : 'STRATEGIC RECOMMENDATION'}
                             </h3>
                             <div className="text-xl font-bold leading-relaxed relative z-10">
                                 <ReactMarkdown>{decision.content}</ReactMarkdown>
@@ -230,15 +241,15 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-2xl rounded-full"></div>
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-4 flex items-center gap-2">
                             <span className="size-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                            GLOSSÁRIO TÉCNICO & HINTS (AUDITORIA v5.0)
+                            GLOSSÁRIO TÉCNICO & HINTS (EMBRAPA v5.0)
                         </h4>
                         <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-[9px] text-slate-400 leading-tight relative z-10">
-                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">RDC 166/2017:</strong> Resolução da ANVISA sobre a validação de métodos analíticos para insumos farmacêuticos e medicamentos.</div>
-                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">ISO/IEC 17025:</strong> Padrão internacional para laboratórios de calibração e ensaio, essencial para exportação.</div>
-                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">TRL (Technology Readiness Level):</strong> Escala de maturação tecnológica (1-9). Foco em TRL 4-6 para projetos piloto.</div>
-                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">COST BRASIL:</strong> Conjunto de dificuldades estruturais, burocráticas e logísticas que tornam o investimento caro.</div>
-                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">HIERARCHY OF TRUTH:</strong> Protocolo Embrapa v5.0 de priorização de evidências regulatórias sobre opiniões empíricas.</div>
-                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">MAPA/ANVISA:</strong> Órgãos anuentes fundamentais para a liberação comercial de novos bioprodutos no Brasil.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">RDC 166/2017:</strong> Resolução da ANVISA sobre validação de métodos analíticos. Obrigatória para Nível 1.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">ISO/IEC 17025:</strong> Requisito global para competência de laboratórios de ensaio e calibração.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">HIERARQUIA DA VERDADE:</strong> Protocolo v5.0: Normas {'>'} Padrões {'>'} Literatura {'>'} Empírico.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">CUSTO BRASIL:</strong> Auditoria de gargalos logísticos e tributários específicos do agro.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">PROTOCOLO HORWITZ:</strong> Parâmetro estatístico para reprodutibilidade inter-laboratorial.</div>
+                            <div><strong className="text-slate-200 uppercase tracking-tighter mr-1">EQUILÍBRIO DE NASH:</strong> Ponto de convergência lógica onde o veredito é estável e defensável.</div>
                         </div>
                     </div>
                 )}

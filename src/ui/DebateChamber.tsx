@@ -6,58 +6,66 @@ import ReactMarkdown from 'react-markdown';
 
 type UILang = 'pt' | 'en' | 'es';
 function resolveUILang(locale: string): UILang {
-    // Force English for the US Market
+    if (locale.startsWith('pt')) return 'pt';
+    if (locale.startsWith('es')) return 'es';
     return 'en';
 }
 
 const L: Record<string, Record<UILang, string>> = {
-    title: { pt: 'Camara de Debate ao Vivo', en: 'Live Debate Chamber', es: 'Camara de Debate en Vivo' },
-    connecting: { pt: 'A conectar ao conselho...', en: 'Connecting to council...', es: 'Conectando al consejo...' },
-    waiting: { pt: 'A aguardar especialistas...', en: 'Waiting for experts...', es: 'Esperando expertos...' },
-    round1: { pt: 'Ronda 1 - Análise Inicial', en: 'Round 1 - Initial Analysis', es: 'Ronda 1 - Anális Inicial' },
-    round2: { pt: 'Ronda 2 - Debate Cruzado', en: 'Round 2 - Cross-Debate', es: 'Ronda 2 - Debate Cruzado' },
-    round3: { pt: 'Ronda 3 - Convergência', en: 'Round 3 - Convergence', es: 'Ronda 3 - Convergencia' },
-    round4: { pt: 'Ronda 4 - Alinhamento de Consenso', en: 'Round 4 - Consensus Alignment', es: 'Ronda 4 - Alineación de Consenso' },
-    round5: { pt: 'Ronda 5 - Teste de Estresse (Cenários)', en: 'Round 5 - Scenario Stress-Test', es: 'Ronda 5 - Prueba de Estrés (Escenarios)' },
-    round6: { pt: 'Ronda 6 - Roadmap de Execução', en: 'Round 6 - Execution Roadmap', es: 'Ronda 6 - Hoja de Ruta de Ejecución' },
-    verdict: { pt: 'Veredicto do Juiz', en: 'Judge Verdict', es: 'Veredicto del Juez' },
-    complete: { pt: 'Sessao Completa', en: 'Session Complete', es: 'Sesion Completa' },
+    title: { pt: 'Câmara de Debate ao Vivo', en: 'Live Debate Chamber', es: 'Câmara de Debate en Vivo' },
+    connecting: { pt: 'Conectando ao conselho...', en: 'Connecting to council...', es: 'Conectando al consejo...' },
+    waiting: { pt: 'Aguardando especialistas...', en: 'Waiting for experts...', es: 'Esperando expertos...' },
+    round1: { pt: 'Rodada 1 - Análise Inicial', en: 'Round 1 - Initial Analysis', es: 'Ronda 1 - Análise Inicial' },
+    round2: { pt: 'Rodada 2 - Debate Cruzado', en: 'Round 2 - Cross-Debate', es: 'Ronda 2 - Debate Cruzado' },
+    round3: { pt: 'Rodada 3 - Convergência', en: 'Round 3 - Convergence', es: 'Ronda 3 - Convergencia' },
+    round4: { pt: 'Rodada 4 - Alinhamento de Consenso', en: 'Round 4 - Consensus Alignment', es: 'Ronda 4 - Alineación de Consenso' },
+    round5: { pt: 'Rodada 5 - Teste de Estresse', en: 'Round 5 - Scenario Stress-Test', es: 'Ronda 5 - Prueba de Estrés' },
+    round6: { pt: 'Rodada 6 - Roadmap de Execução', en: 'Round 6 - Execution Roadmap', es: 'Hoja de Ruta de Ejecución' },
+    verdict: { pt: 'Veredito do Juiz', en: 'Judge Verdict', es: 'Veredicto del Juez' },
+    complete: { pt: 'Sessão Completa', en: 'Session Complete', es: 'Sesión Completa' },
     consensus: { pt: 'Consenso Global', en: 'Global Consensus', es: 'Consenso Global' },
-    transcript: { pt: 'Transcricao ao Vivo', en: 'Live Transcript', es: 'Transcripcion en Vivo' },
+    transcript: { pt: 'Transcrição ao Vivo', en: 'Live Transcript', es: 'Transcripción en Vivo' },
     msgs: { pt: 'mensagens', en: 'messages', es: 'mensajes' },
-    speaking: { pt: 'a falar...', en: 'speaking...', es: 'hablando...' },
+    speaking: { pt: 'falando...', en: 'speaking...', es: 'hablando...' },
     interject: { pt: 'Intervir', en: 'Interject', es: 'Intervenir' },
-    placeholder: { pt: 'A sua contribuicao...', en: 'Your input...', es: 'Tu aporte...' },
-    redirect: { pt: 'A redirecionar para o relatorio...', en: 'Redirecting to report...', es: 'Redirigiendo al informe...' },
+    placeholder: { pt: 'Sua contribuição...', en: 'Your input...', es: 'Tu aporte...' },
+    redirect: { pt: 'Redirecionando para o relatório...', en: 'Redirecting to report...', es: 'Redirigiendo al informe...' },
 };
 function t(lang: UILang, key: string): string {
     return L[key]?.[lang] || L[key]?.en || key;
 }
 
 const PERSONAS: Record<string, { lbl: string; pt: string; em: string; c: string }> = {
-    visionary: { lbl: 'Visionary', pt: 'Visionario', em: '\u{1F52E}', c: '#A855F7' },
-    technologist: { lbl: 'Technologist', pt: 'Tecnologista', em: '\u2699\uFE0F', c: '#06B6D4' },
-    devil: { lbl: 'Devils Advocate', pt: 'Advogado do Diabo', em: '\u{1F608}', c: '#EF4444' },
-    marketeer: { lbl: 'Market Analyst', pt: 'Analista de Mercado', em: '\u{1F4CA}', c: '#22C55E' },
-    ethicist: { lbl: 'Ethics and Risk', pt: 'Etica e Risco', em: '\u2696\uFE0F', c: '#F59E0B' },
-    financier: { lbl: 'Financial', pt: 'Financeiro', em: '\u{1F4B0}', c: '#3B82F6' },
-    judge: { lbl: 'Judge', pt: 'Juiz', em: '\u{1F3DB}\uFE0F', c: '#FFD700' },
+    visionary: { lbl: 'Visionary', pt: 'Gestor de Inovação', em: '✨', c: '#A855F7' },
+    technologist: { lbl: 'Technologist', pt: 'Cientista Analítico', em: '⚙️', c: '#06B6D4' },
+    devil: { lbl: 'Devils Advocate', pt: 'Auditor de Qualidade', em: '😈', c: '#EF4444' },
+    marketeer: { lbl: 'Market Analyst', pt: 'Transferência de Tec.', em: '📊', c: '#22C55E' },
+    ethicist: { lbl: 'Ethics and Risk', pt: 'Estrategista Regulatório', em: '⚖️', c: '#F59E0B' },
+    financier: { lbl: 'Financial', pt: 'Analista Financeiro', em: '💰', c: '#3B82F6' },
+    judge: { lbl: 'Judge', pt: 'Conselho Embrapa', em: '🏛️', c: '#FFD700' },
 };
 
 function gp(name: string, lang: UILang) {
     const n = name.toLowerCase();
-    // Embrapa Specialized Mappings
-    if (n.includes('inovação') || n.includes('visionary')) return { ...PERSONAS.visionary, dn: name };
-    if (n.includes('cientista') || n.includes('technologist')) return { ...PERSONAS.technologist, dn: name };
-    if (n.includes('auditor') || n.includes('devil')) return { ...PERSONAS.devil, dn: name };
-    if (n.includes('transferência') || n.includes('market')) return { ...PERSONAS.marketeer, dn: name };
-    if (n.includes('regulatório') || n.includes('ethics')) return { ...PERSONAS.ethicist, dn: name };
-    if (n.includes('fomento') || n.includes('financial')) return { ...PERSONAS.financier, dn: name };
-    if (n.includes('especializado') || n.includes('judge')) return { ...PERSONAS.judge, dn: name };
+    
+    // Check if the name matches a Portuguese label already
+    if (n.includes('inovação')) return { ...PERSONAS.visionary, dn: name };
+    if (n.includes('cientista')) return { ...PERSONAS.technologist, dn: name };
+    if (n.includes('auditor')) return { ...PERSONAS.devil, dn: name };
+    if (n.includes('transferência')) return { ...PERSONAS.marketeer, dn: name };
+    if (n.includes('regulatório')) return { ...PERSONAS.ethicist, dn: name };
+    if (n.includes('financeiro') || n.includes('fomento')) return { ...PERSONAS.financier, dn: name };
 
-    const key = Object.keys(PERSONAS).find(k => n.includes(k));
-    const p = key ? PERSONAS[key] : { lbl: name, pt: name, em: '\u{1F916}', c: '#6366F1' };
-    return { ...p, dn: lang === 'pt' ? p.pt : p.lbl };
+    // Standard English mappings
+    if (n.includes('visionary')) return { ...PERSONAS.visionary, dn: lang === 'pt' ? PERSONAS.visionary.pt : PERSONAS.visionary.lbl };
+    if (n.includes('technologist')) return { ...PERSONAS.technologist, dn: lang === 'pt' ? PERSONAS.technologist.pt : PERSONAS.technologist.lbl };
+    if (n.includes('devil')) return { ...PERSONAS.devil, dn: lang === 'pt' ? PERSONAS.devil.pt : PERSONAS.devil.lbl };
+    if (n.includes('market')) return { ...PERSONAS.marketeer, dn: lang === 'pt' ? PERSONAS.marketeer.pt : PERSONAS.marketeer.lbl };
+    if (n.includes('ethic')) return { ...PERSONAS.ethicist, dn: lang === 'pt' ? PERSONAS.ethicist.pt : PERSONAS.ethicist.lbl };
+    if (n.includes('financial')) return { ...PERSONAS.financier, dn: lang === 'pt' ? PERSONAS.financier.pt : PERSONAS.financier.lbl };
+    if (n.includes('judge')) return { ...PERSONAS.judge, dn: lang === 'pt' ? PERSONAS.judge.pt : PERSONAS.judge.lbl };
+
+    return { lbl: name, pt: name, em: '🤖', c: '#6366F1', dn: name };
 }
 
 const HEX = [

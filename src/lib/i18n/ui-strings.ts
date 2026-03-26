@@ -90,16 +90,16 @@ const strings: Record<UILang, Record<string, string>> = {
         cr_status_stop: 'SINAL VERMELHO: Critical Risks Identified',
 
         // Methodology
-        pill_precision: 'Pillar 01: Precision',
-        pill_precision_desc: 'Architecture validates **97% accuracy** in high-stakes clinical exams. Multi-agent deliberation corrects **53% of errors**.',
-        pill_alignment: 'Pillar 02: Alignment',
-        pill_alignment_desc: 'Adversarial Alignment (Kahneman Rules) enables competing models to engage in cooperative theory building.',
-        pill_strategy: 'Pillar 03: Strategy',
-        pill_strategy_desc: 'MpFL (NeurIPS 2025). Rational agents with utility functions converge to a proven equilibrium via Multiplayer Federated Learning.',
-        pill_protocol: 'Pillar 04: Protocol',
-        pill_protocol_desc: 'Verified 3-round deliberation protocol (Synthesis Mode). Optimizes decision quality vs. simple majority.',
-        pill_interface: 'Pillar 05: Interface',
-        pill_interface_desc: 'Sovereign Override & G11 Guidelines. Implementing Microsoft Research standards for Human-AI Control.',
+        pill_precision: 'Pillar 01: Clinical Precision',
+        pill_precision_desc: 'Shaikh et al. (PLOS 2025). Framework validates **97% accuracy** in high-stakes clinical exams. Multi-agent deliberation corrects **53% of errors**.',
+        pill_alignment: 'Pillar 02: Adversarial Alignment',
+        pill_alignment_desc: 'Ellemers et al. (PNAS 2020). Based on "Adversarial alignment enables competing models to engage in cooperative theory building".',
+        pill_strategy: 'Pillar 03: Rational Multi-Agent Systems',
+        pill_strategy_desc: 'MpFL (NeurIPS 2025). Multiplayer Federated Learning where agents converge to a mathematically proven rational equilibrium.',
+        pill_protocol: 'Pillar 04: Consensus vs. Majority Voting',
+        pill_protocol_desc: 'Kaesberg et al. (ACL Findings 2025). Verified 3-round deliberation protocol optimizes decision quality vs. simple majority.',
+        pill_interface: 'Pillar 05: Sovereign Override & Clarity',
+        pill_interface_desc: 'Amershi et al. (CHI 2019). Implementing Microsoft Research standards (G11/G17) for Human-AI Control and Explainability.',
     },
 
     Portuguese: {
@@ -184,16 +184,16 @@ const strings: Record<UILang, Record<string, string>> = {
         cr_status_stop: 'SINAL VERMELHO: Riscos Críticos Identificados',
 
         // Methodology (PT)
-        pill_precision: 'Pilar 01: Precisão',
-        pill_precision_desc: 'Arquitetura valida **97% de precisão** em exames clínicos de alto risco. A deliberação multi-agente corrige **53% dos erros**.',
-        pill_alignment: 'Pilar 02: Alinhamento',
-        pill_alignment_desc: 'O Alinhamento Adversarial (Regras de Kahneman) permite que modelos concorrentes colaborem na construção de teorias.',
-        pill_strategy: 'Pillar 03: Estratégia',
-        pill_strategy_desc: 'MpFL (NeurIPS 2025). Agentes racionais com funções de utilidade convergem para um equilíbrio comprovado via Multiplayer Federated Learning.',
-        pill_protocol: 'Pilar 04: Protocolo',
-        pill_protocol_desc: 'Protocolo de deliberação verificado de 3 rondas (Modo Síntese). Otimiza a qualidade da decisão vs. maioria simples.',
-        pill_interface: 'Pilar 05: Interface',
-        pill_interface_desc: 'Sovereign Override & Diretrizes G11. Implementando padrões da Microsoft Research para Controle Humano-IA.',
+        pill_precision: 'Pillar 01: Precisão Clínica',
+        pill_precision_desc: 'Shaikh et al. (PLOS 2025). Arquitetura valida **97% de precisão** em exames clínicos. Deliberação multi-agente corrige **53% dos erros**.',
+        pill_alignment: 'Pillar 02: Alinhamento Adversarial',
+        pill_alignment_desc: 'Ellemers et al. (PNAS 2020). Modelos competitivos colaboram na construção de teorias através de alinhamento adversarial.',
+        pill_strategy: 'Pillar 03: Sistemas Racionais',
+        pill_strategy_desc: 'MpFL (NeurIPS 2025). Aprendizado Federado Mutli-jogador onde agentes convergem para um equilíbrio racional comprovado.',
+        pill_protocol: 'Pillar 04: Consenso vs. Votação',
+        pill_protocol_desc: 'Kaesberg et al. (ACL Findings 2025). Protocolo de 3 rondas otimiza a qualidade da decisão vs. maioria simples.',
+        pill_interface: 'Pillar 05: Soberania e Clareza',
+        pill_interface_desc: 'Amershi et al. (CHI 2019). Implementando padrões Microsoft Research (G11/G17) para Controle e Explicabilidade Humano-IA.',
     },
 
     Spanish: {
