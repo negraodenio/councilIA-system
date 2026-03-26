@@ -46,7 +46,7 @@ export default function ConsensusReport({ validation, patches }: {
     validation: any;
     patches: any[];
 }) {
-    const [activeTab, setActiveTab] = useState<'verdict' | 'round1' | 'round2' | 'round3' | 'round4' | 'round5' | 'round6' | 'patches'>('verdict');
+    const [activeTab, setActiveTab] = useState<'verdict' | 'round1' | 'round2' | 'round3' | 'patches'>('verdict');
     const [isExporting, setIsExporting] = useState(false);
     const result = validation.full_result || {};
     const lang: UILang = resolveUILang(result.lang);
@@ -405,7 +405,7 @@ export default function ConsensusReport({ validation, patches }: {
                                     className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round1' ? 'border-[#06B6D4] text-[#06B6D4] bg-[#06B6D4]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
                                         }`}
                                 >
-                                    ROUND 1
+                                    TESE (R1)
                                 </button>
                             )}
                             {round2.length > 0 && (
@@ -414,7 +414,7 @@ export default function ConsensusReport({ validation, patches }: {
                                     className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round2' ? 'border-[#EF4444] text-[#EF4444] bg-[#EF4444]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
                                         }`}
                                 >
-                                    ROUND 2
+                                    ANTÍTESE (R2)
                                 </button>
                             )}
                             {round3.length > 0 && (
@@ -423,34 +423,7 @@ export default function ConsensusReport({ validation, patches }: {
                                     className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round3' ? 'border-[#22C55E] text-[#22C55E] bg-[#22C55E]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
                                         }`}
                                 >
-                                    ROUND 3
-                                </button>
-                            )}
-                            {round4.length > 0 && (
-                                <button
-                                    onClick={() => setActiveTab('round4')}
-                                    className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round4' ? 'border-[#3B82F6] text-[#3B82F6] bg-[#3B82F6]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
-                                        }`}
-                                >
-                                    ROUND 4
-                                </button>
-                            )}
-                            {round5.length > 0 && (
-                                <button
-                                    onClick={() => setActiveTab('round5')}
-                                    className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round5' ? 'border-[#F59E0B] text-[#F59E0B] bg-[#F59E0B]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
-                                        }`}
-                                >
-                                    ROUND 5
-                                </button>
-                            )}
-                            {round6.length > 0 && (
-                                <button
-                                    onClick={() => setActiveTab('round6')}
-                                    className={`px-6 py-4 text-xs font-mono uppercase tracking-[0.15em] whitespace-nowrap border-b-2 transition-colors ${activeTab === 'round6' ? 'border-[#06B6D4] text-[#06B6D4] bg-[#06B6D4]/5' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5'
-                                        }`}
-                                >
-                                    ROUND 6
+                                    SÍNTESE (R3)
                                 </button>
                             )}
                             {generatedPatches.length > 0 && (
@@ -759,13 +732,14 @@ export default function ConsensusReport({ validation, patches }: {
                                                             </div>
                                                             
                                                             <div className="space-y-4 max-h-[800px] overflow-y-auto custom-scrollbar pr-4 p-6 bg-black/40 border border-white/5 rounded-2xl">
-                                                                {[round1, round2, round3, round4, round5, round6].map((round, idx) => {
+                                                                {[round1, round2, round3].map((round, idx) => {
                                                                     if (round.length === 0) return null;
-                                                                    const roundTitle = idx === 0 ? 'Tese Inicial' : idx === 1 ? 'Contraditório' : idx === 2 ? 'Síntese' : idx === 3 ? 'Alinhamento' : idx === 4 ? 'Stress Test' : 'Roadmap';
+                                                                    const roundTitle = idx === 0 ? 'Tese Adversa' : idx === 1 ? 'Antítese de Risco' : 'Síntese Executiva (Final)';
+                                                                    const roundColor = idx === 0 ? 'text-neon-cyan' : idx === 1 ? 'text-red-400' : 'text-emerald-400';
                                                                     return (
                                                                         <div key={idx} className="mb-10 last:mb-0">
                                                                             <div className="flex items-center gap-4 mb-4">
-                                                                                <div className="size-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-display font-black text-xs text-neon-cyan">0{idx + 1}</div>
+                                                                                <div className={`size-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-display font-black text-xs ${roundColor}`}>0{idx + 1}</div>
                                                                                 <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{roundTitle}</h4>
                                                                                 <div className="h-px flex-1 bg-white/5"></div>
                                                                             </div>
@@ -776,7 +750,7 @@ export default function ConsensusReport({ validation, patches }: {
                                                                                             <span className="text-sm">{r.emoji || '🤖'}</span>
                                                                                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-200">{r.name}</span>
                                                                                         </div>
-                                                                                        <div className="prose prose-invert text-[11px] line-clamp-6 opacity-60 hover:opacity-100 transition-opacity">
+                                                                                        <div className="prose prose-invert text-[11px] line-clamp-6 opacity-60 hover:opacity-100 transition-opacity text-justify">
                                                                                             <ReactMarkdown>{r.text}</ReactMarkdown>
                                                                                         </div>
                                                                                     </div>
