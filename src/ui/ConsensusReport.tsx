@@ -831,56 +831,6 @@ export default function ConsensusReport({ validation, patches }: {
                                 </div>
                             )}
 
-                            {/* ── ROUND 4 ── */}
-                            {activeTab === 'round4' && round4.length > 0 && (
-                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <RoundHeader
-                                        number="04"
-                                        title="Ronda 4 - Alinhamento de Consenso"
-                                        subtitle="Experts identificam pontos de convergência técnica e estratégica."
-                                        color="#3B82F6"
-                                    />
-                                    <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
-                                        {round4.map((r) => (
-                                            <PersonaCard key={r.id} entry={r} lang={lang} />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* ── ROUND 5 ── */}
-                            {activeTab === 'round5' && round5.length > 0 && (
-                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <RoundHeader
-                                        number="05"
-                                        title="Ronda 5 - Teste de Estresse (Cenários)"
-                                        subtitle="Avaliação de resiliência contra choques climáticos e logísticos."
-                                        color="#F59E0B"
-                                    />
-                                    <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
-                                        {round5.map((r) => (
-                                            <PersonaCard key={r.id} entry={r} lang={lang} />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* ── ROUND 6 ── */}
-                            {activeTab === 'round6' && round6.length > 0 && (
-                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <RoundHeader
-                                        number="06"
-                                        title="Ronda 6 - Roadmap de Execução"
-                                        subtitle="Passos regulatórios e estratégia de fomento para implementação."
-                                        color="#06B6D4"
-                                    />
-                                    <div className="mt-6 grid gap-4 grid-cols-1 md:grid-cols-2">
-                                        {round6.map((r) => (
-                                            <PersonaCard key={r.id} entry={r} lang={lang} />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
 
                             {/* ── PATCHES ENGINE ── */}
                             {validTab === 'patches' && generatedPatches.length > 0 && (
