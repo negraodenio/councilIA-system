@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { verifySignature } from "@upstash/qstash/nextjs";
+import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { CouncilIAEngine } from '@/services/councilia/engine';
 import { createClient } from '@supabase/supabase-js';
 
@@ -15,9 +15,8 @@ const supabaseAdmin = createClient(
 );
 
 async function handler(req: any) {
-  // QStash verifySignature wrapper uses NextApiHandler internally which has issues with NextRequest
-  // We handle it as 'any' or use the body directly if verified.
-  const body = req instanceof NextRequest ? await req.json() : req.body;
+  // Use any for req to avoid complex NextRequest/Request mismatches in the HOF
+  const body = await req.json();
   
   if (body.type !== 'execute-councilia-session') {
     return NextResponse.json({ error: 'Unsupported task type' }, { status: 400 });
@@ -70,5 +69,6 @@ async function handler(req: any) {
   }
 }
 
-// Wrap with QStash signature verification for security
-export const POST = verifySignature(handler);
+// Wrap with QStash signature verification for security (App Router version)
+export const POST = verifySignatureAppRouter(handler);
+export const runtime = 'edge'; // Optional but good for QStash callbacks

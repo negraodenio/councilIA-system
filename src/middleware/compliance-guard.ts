@@ -11,7 +11,7 @@ import { AnvisaComplianceManager } from '@/lib/compliance/anvisa';
 
 export interface ComplianceContext {
   jurisdiction: 'BR' | 'EU' | 'BR_EU' | 'GLOBAL';
-  domain: 'agro' | 'healthcare' | 'finance' | 'general';
+  domain: 'agro' | 'healthcare' | 'government' | 'finance' | 'corporate' | 'general';
   dataSubjectRights: string[];
   retentionPeriod: number; // days
   internationalTransfer: boolean;

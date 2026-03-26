@@ -6,9 +6,8 @@
 import { RoundResult, PersonaResponse } from '../types';
 import OpenAI from 'openai';
 
-const openai = new OpenAI();
-
 export async function executeRound1(proposal: string, docs: any[]): Promise<RoundResult> {
+  const openai = new OpenAI();
   const personas = [
     { name: 'Technical Architect', focus: 'Scalability, Tech Stack, Technical Moat' },
     { name: 'Regulatory Specialist', focus: 'Compliance, ISO Standards, Legal Gaps' },

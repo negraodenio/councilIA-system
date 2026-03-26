@@ -35,7 +35,7 @@ export class GDPRComplianceManager {
    * Determines AI Act risk classification
    */
   classifyAIRisk(
-    domain: 'agro' | 'healthcare' | 'finance' | 'justice' | 'general',
+    domain: 'agro' | 'healthcare' | 'government' | 'finance' | 'corporate' | 'general',
     autonomyLevel: 'ASSISTED' | 'AUTONOMOUS' | 'FULLY_AUTONOMOUS'
   ): AIActCompliance {
     // CouncilIA is "assisted" (human-in-the-loop)

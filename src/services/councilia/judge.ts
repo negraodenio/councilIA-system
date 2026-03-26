@@ -6,10 +6,9 @@
 import { CouncilIAVerdict } from './types';
 import OpenAI from 'openai';
 
-const openai = new OpenAI();
-
 export class JudgeService {
   async execute(proposal: string, rounds: any[], jurisdiction: string): Promise<any> {
+    const openai = new OpenAI();
     // This is the core "Audit" model. 
     // It takes all rounds and outputs a strict JSON.
     
