@@ -560,7 +560,7 @@ export default function ConsensusReport({ validation, patches }: {
                                                                     <span className="text-3xl">🎯</span>
                                                                     <span className="font-display font-black uppercase tracking-widest text-base">{decision.title}</span>
                                                                 </div>
-                                                                <div className="font-bold text-xl leading-relaxed">
+                                                                <div className="font-bold text-xl leading-relaxed text-justify">
                                                                     <ReactMarkdown>{decision.content}</ReactMarkdown>
                                                                 </div>
                                                             </div>
@@ -571,7 +571,7 @@ export default function ConsensusReport({ validation, patches }: {
                                                                     <span className="text-xl">📊</span>
                                                                     <span className="font-mono text-[10px] uppercase tracking-[0.2em]">{summary.title}</span>
                                                                 </div>
-                                                                <div className="prose prose-invert prose-base max-w-none text-slate-200 leading-relaxed italic">
+                                                                <div className="prose prose-invert prose-base max-w-none text-slate-200 leading-relaxed italic text-justify">
                                                                     <ReactMarkdown>{summary.content}</ReactMarkdown>
                                                                 </div>
                                                             </div>
@@ -615,7 +615,7 @@ export default function ConsensusReport({ validation, patches }: {
                                                                 <span className="text-xl">✅</span>
                                                                 <span className="font-display font-bold uppercase tracking-widest text-xs">{strengths.title}</span>
                                                             </div>
-                                                            <div className="prose prose-invert prose-sm max-w-none prose-li:text-slate-300">
+                                                            <div className="prose prose-invert prose-sm max-w-none prose-li:text-slate-300 text-justify">
                                                                 <ReactMarkdown>{strengths.content}</ReactMarkdown>
                                                             </div>
                                                         </div>
@@ -626,7 +626,7 @@ export default function ConsensusReport({ validation, patches }: {
                                                                 <span className="text-xl">⚠️</span>
                                                                 <span className="font-display font-bold uppercase tracking-widest text-xs">{risks.title}</span>
                                                             </div>
-                                                            <div className="prose prose-invert prose-sm max-w-none prose-li:text-slate-300">
+                                                            <div className="prose prose-invert prose-sm max-w-none prose-li:text-slate-300 text-justify">
                                                                 <ReactMarkdown>{risks.content}</ReactMarkdown>
                                                             </div>
                                                         </div>
@@ -656,7 +656,7 @@ export default function ConsensusReport({ validation, patches }: {
                                                             </div>
                                                             <div className="prose prose-invert prose-base max-w-none 
                                                                 prose-ol:space-y-4 prose-li:text-slate-200 prose-li:pl-2
-                                                                prose-li:marker:text-neon-cyan prose-li:marker:font-mono">
+                                                                prose-li:marker:text-neon-cyan prose-li:marker:font-mono text-justify">
                                                                 <ReactMarkdown>{recommendations.content}</ReactMarkdown>
                                                             </div>
                                                         </div>
