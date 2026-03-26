@@ -221,10 +221,20 @@ export default function ConsensusReport({ validation, patches }: {
                         <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">RAG Fidelity</span>
                         <span className="text-[10px] font-mono text-emerald-400">98.4%</span>
                     </div>
-                    <div className="hidden md:flex flex-col items-end pr-4">
+                    <div className="hidden md:flex flex-col items-end pr-4 border-r border-white/10">
                         <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Precision</span>
                         <span className="text-[10px] font-mono text-indigo-400">{fidelityIndex}</span>
                     </div>
+                    <button
+                        onClick={() => {
+                            navigator.clipboard.writeText(JSON.stringify(validation, null, 2));
+                            alert('JSON copiado para a área de transferência!');
+                        }}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider"
+                    >
+                        <span className="material-symbols-outlined text-[14px]">code</span>
+                        Copy JSON
+                    </button>
                     <button
                         onClick={handleExportPDF}
                         disabled={isExporting}
