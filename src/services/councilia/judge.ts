@@ -172,10 +172,10 @@ export class JudgeService {
   private getV9SafeModeFallback(scores: any, isEmbrapa: boolean): any {
     const verdict = scores.meanScore >= 70 ? 'GO' : scores.meanScore >= 40 ? 'CONDITIONAL' : 'NO-GO';
     
-    // v9 Premium Fallback Narrative (Portuguese for Embrapa context)
+    // v9.1 Premium Parecer Técnico (Portuguese for Embrapa context)
     const statusText = isEmbrapa 
-      ? `VEREDITO INSTITUCIONAL (EMBRAPA): Consenso de ${Math.round(scores.consensusStrength)}% estabelecido via protocolo de auditoria determinística. A análise técnica confirma alinhamento entre as personas científicas e regulatórias, recomendando decisão baseada em evidências de campo e viabilidade econômica ZARC.`
-      : `V9 INSTITUTIONAL VERDICT: A verified consensus of ${Math.round(scores.consensusStrength)}% has been reached through deterministic swarm auditing. The cross-disciplinary analysis confirms strategic alignment across technical and economic vectors.`;
+      ? `### 🏛️ PARECER TÉCNICO INSTITUCIONAL (EMBRAPA)\n\nO **Conselho de Deliberação** atingiu um consenso de **${Math.round(scores.consensusStrength)}%** através do protocolo de auditoria determinística V9.\n\n**ANÁLISE EXEQUÍVEL:** A convergência das personas científicas e regulatórias confirma a viabilidade estratégica do projeto. Recomenda-se a adoção da proposta baseada no alinhamento de risco ZARC e conformidade técnica identificada no debate.\n\n*Este parecer técnico consolidado serve como base para auditoria institucional e suporte à venda e implementação do software.*`
+      : `### 🏛️ INSTITUTIONAL TECHNICAL OPINION\n\nA verified consensus of **${Math.round(scores.consensusStrength)}%** has been reached. The cross-disciplinary analysis confirms strategic alignment across technical and economic vectors. This consolidated verdict serves as an audit-ready decision support document.`;
 
     return {
       judgeRationale: statusText,

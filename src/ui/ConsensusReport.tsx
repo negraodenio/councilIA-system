@@ -94,9 +94,9 @@ export default function ConsensusReport({ validation }: { validation: any }) {
                             <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter text-white mb-8 group-hover:tracking-tight transition-all duration-700">
                                 {statusLabel}
                             </h1>
-                            <p className="text-xl md:text-2xl text-slate-200/80 font-medium leading-relaxed italic text-justify">
-                                "{ev.var?.interpretation || 'Análise de swarm convergente aponta viabilidade técnica dentro dos parâmetros de risco ZARC.'}"
-                            </p>
+                            <div className="prose prose-invert max-w-none text-xl text-slate-200/90 leading-relaxed text-justify opacity-90 group-hover:opacity-100 transition-opacity">
+                                <ReactMarkdown>{result.judgeRationale || 'Aguardando consolidação do parecer técnico...'}</ReactMarkdown>
+                            </div>
                         </div>
                         <div className="shrink-0">
                             <div className="bg-[#050810]/40 backdrop-blur-3xl p-10 rounded-[40px] border border-white/10 flex flex-col items-center text-center shadow-2xl">
