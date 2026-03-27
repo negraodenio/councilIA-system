@@ -23,29 +23,43 @@ export async function callLLM(
     return response.choices[0].message.content || '';
   }
 
-  // OpenRouter implementation
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://councilia.com',
-      'X-Title': 'CouncilIA v7.3.1'
-    },
-    body: JSON.stringify({
-      model: model.includes('/') ? model : `openai/${model}`, // Map to OpenRouter format
-      messages,
-      temperature: options.temperature ?? 0.4,
-      response_format: options.json ? { type: 'json_object' } : undefined
-    })
-  });
+  // OpenRouter implementation with Resilience (45s timeout)
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error(`[LLM Bridge] OpenRouter Error: ${errorText}`);
-    throw new Error(`LLM_ERROR: ${response.status}`);
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://councilia.com',
+        'X-Title': 'CouncilIA v7.3.1'
+      },
+      body: JSON.stringify({
+        model: model.includes('/') ? model : `openai/${model}`,
+        messages,
+        temperature: options.temperature ?? 0.4,
+        response_format: options.json ? { type: 'json_object' } : undefined
+      })
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[LLM Bridge] API Error: ${response.status}`, errorText);
+      return "O especialista está temporariamente indisponível (Erro de Conexão).";
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content || '';
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      console.warn(`[LLM Bridge] Timeout reached for ${model}`);
+      return "Análise postergada devido à alta latência do especialista. (Timeout)";
+    }
+    throw err;
   }
-
-  const data = await response.json();
-  return data.choices[0].message.content || '';
 }
