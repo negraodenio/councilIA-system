@@ -79,11 +79,12 @@ function runGuardConsensusScore(output: CouncilIAOutput): any {
   const { strengthPercentage } = output.consensusAnalysis;
   const { score } = output.executiveVerdict;
   
-  if (strengthPercentage > 90 && score < 70) {
+  // Logical Failure: High consensus on a "perfectly neutral" score (Hedging/Neutral Leak)
+  if (strengthPercentage > 85 && (score >= 48 && score <= 52)) {
     return {
       type: 'ERROR',
       code: GUARDS.CONSENSUS_SCORE.code,
-      message: GUARDS.CONSENSUS_SCORE.message,
+      message: 'Neural Leak detected: High consensus on a neutral score (50±2) indicates system hedging or lack of deliberation.',
       field: 'consensusAnalysis.strengthPercentage + executiveVerdict.score',
       severity: 'CRITICAL'
     };

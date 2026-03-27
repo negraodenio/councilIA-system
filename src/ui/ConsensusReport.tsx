@@ -60,7 +60,7 @@ export default function ConsensusReport({ validation, patches }: {
     const realDissent = ca.dissentRange || (100 - realConsensus);
     const varValue = ev.var?.percentage || 0;
     const varDisplay = `${varValue}%`;
-    const isValidOutput = result.is_valid !== false && ev.verdict !== 'NO-GO' && result.metadata?.protocolVersion === '7.3.1';
+    const isValidOutput = result.is_valid !== false && result.metadata?.protocolVersion === '7.3.1';
 
     const allTranscriptTexts = [
         ...(result.fullTranscript?.round1?.responses?.map((r: any) => r.text) || []),
