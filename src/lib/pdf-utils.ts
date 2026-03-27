@@ -13,32 +13,40 @@ export async function exportToPDF(elementId: string, filename: string = 'Council
     }
 
     try {
-        // Optimize for high-DPI capture
         const canvas = await html2canvas(element, {
-            scale: 2, // Retained quality
+            scale: 2,
             useCORS: true,
-            backgroundColor: '#050810', // Match Command Center theme
+            backgroundColor: '#050810',
             logging: false,
-            windowWidth: 794, // Fixed A4 width in px for consistent layout
+            windowWidth: 794,
         });
 
         const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF({
-            orientation: 'portrait',
-            unit: 'mm',
-            format: 'a4',
-        });
-
-        const imgProps = pdf.getImageProperties(imgData);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        const pdfHeight = (canvasHeight * pdfWidth) / canvasWidth;
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        
+        let heightLeft = pdfHeight;
+        let position = 0;
 
-        // Add to PDF
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
-        
-        // Finalize
+        // Page 1
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pageHeight;
+
+        // Additional Pages
+        while (heightLeft >= 0) {
+            position = heightLeft - pdfHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+            heightLeft -= pageHeight;
+        }
+
         pdf.save(filename);
-        
     } catch (error) {
         console.error('[PDF Export] Failed to generate report:', error);
         throw error;
