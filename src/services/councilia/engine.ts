@@ -12,7 +12,7 @@ export class CouncilIAEngine {
   }
 
   /**
-   * Main Execution Entry Point (v7.3.1)
+   * Main Execution Entry Point (v12.0.0)
    * Standard 3-round deliberation protocol (Thesis -> Antithesis -> Synthesis).
    */
   async execute(
@@ -28,7 +28,7 @@ export class CouncilIAEngine {
     }, 180000);
 
     try {
-      console.log(`[Engine] Processing Session ${sessionId} in ${input.domain} domain. protocol=v7.3.1`);
+      console.log(`[Engine] Processing Session ${sessionId} in ${input.domain} domain. protocol=v12.0.0`);
 
       // --- DELIBERATION PIPELINE (v7.3.1.8 - Anti-Deadlock) ---
       const r1 = await executeRound1(input.proposal, input.ragDocuments, isEmbrapa, onEvent);
@@ -37,7 +37,7 @@ export class CouncilIAEngine {
 
       // --- FINAL JUDGE: VERDICT & TRUTH SYNTHESIS ---
       if (onEvent) {
-        await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '⚖️ Juiz v7.3.1 Iniciando Veredito Final...' } });
+        await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '⚖️ Juiz v12.0.0 Iniciando Veredito Final...' } });
       }
       
       const finalVerdict = await this.judge.execute(
@@ -60,7 +60,7 @@ export class CouncilIAEngine {
       finalVerdict.metadata = {
         ...finalVerdict.metadata,
         sessionId,
-        protocolVersion: '11.0.0',
+        protocolVersion: '12.0.0',
         domain: input.domain,
         is_embrapa: isEmbrapa
       };

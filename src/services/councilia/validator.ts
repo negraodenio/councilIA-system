@@ -1,6 +1,6 @@
 /**
- * CouncilIA v7.3.1 — Validation Engine
- * 4 Inconsistency Guards + Automated Safe Mode Fallback.
+ * CouncilIA v12.0.0 — Validation Engine (Scientific Authority)
+ * 5 Inconsistency Guards + Automated Safe Mode Fallback.
  */
 
 import type { 
@@ -32,6 +32,10 @@ const GUARDS = {
   EVIDENCE_CONFIDENCE: {
     code: 'LOW_EVIDENCE_HIGH_CONFIDENCE' as ValidationErrorCode,
     message: 'High confidence with low evidence density indicates fake confidence.'
+  },
+  TEMPORAL_CONSISTENCY: {
+    code: 'CONTEXTUAL_DRIFT' as ValidationErrorCode,
+    message: 'Current verdict contradicts the historical trend of the session or previous findings.'
   }
 } as const;
 
@@ -53,7 +57,8 @@ export function validateOutput(
     runGuardVarScore(output),
     runGuardEvidenceConfidence(output),
     runGuardEvidenceAudit(output),
-    runGuardScoreRange(output)
+    runGuardScoreRange(output),
+    runGuardTemporalConsistency(output)
   ];
   
   for (const result of guardResults) {
@@ -163,6 +168,26 @@ function runGuardScoreRange(output: CouncilIAOutput): any {
       field: 'executiveVerdict.score',
       severity: 'CRITICAL'
     };
+  }
+  return { type: 'PASS' };
+}
+
+function runGuardTemporalConsistency(output: CouncilIAOutput): any {
+  const { score } = output.executiveVerdict;
+  const prevScore = (output.metadata as any).previousScore;
+
+  if (prevScore !== undefined) {
+    const delta = Math.abs(score - prevScore);
+    // Alert if score flip-flops by more than 40% without significant new evidence
+    if (delta > 40) {
+      return {
+        type: 'ERROR',
+        code: GUARDS.TEMPORAL_CONSISTENCY.code,
+        message: `Temporal Inconsistency: Score shifted from ${prevScore}% to ${score}% in a single cycle. Potential executive flip-flopping.`,
+        field: 'executiveVerdict.score',
+        severity: 'HIGH'
+      };
+    }
   }
   return { type: 'PASS' };
 }

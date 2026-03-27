@@ -107,7 +107,7 @@ export default function ConsensusReport({ validation }: { validation: any }) {
                     <div className="h-4 w-px bg-white/10 hidden md:block"></div>
                     <div className="flex items-center gap-3">
                         <div className="size-2 rounded-full bg-neon-cyan animate-pulse shadow-[0_0_10px_#00f2ff]"></div>
-                        <span className="font-mono text-[11px] uppercase tracking-[0.3em] font-black text-white/50">CouncilIA v9.0 Intelligence</span>
+                        <span className="font-mono text-[11px] uppercase tracking-[0.3em] font-black text-white/50">CouncilIA v12.0.0 Elite Intelligence</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-4">

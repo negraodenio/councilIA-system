@@ -210,7 +210,7 @@ export interface ValidationResult {
 export interface OutputMetadata {
   sessionId: string;
   timestamp: string;
-  protocolVersion: '11.0.0';
+  protocolVersion: '12.0.0';
   executionTimeMs: number;
   complianceFlags: string[];
   retentionUntil: string;

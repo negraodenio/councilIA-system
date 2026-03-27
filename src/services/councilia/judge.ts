@@ -218,10 +218,11 @@ export class JudgeService {
     return {
       sessionId: input.metadata?.sessionId || `v11_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      protocolVersion: '11.0.0',
+      protocolVersion: '12.0.0',
       executionTimeMs: duration,
       complianceFlags: ['LGPD_CONSENT_VALID', 'ISO_17025_ALIGNMENT'],
-      domain: input.domain
+      domain: input.domain,
+      previousScore: (input.metadata as any)?.previousScore
     };
   }
 

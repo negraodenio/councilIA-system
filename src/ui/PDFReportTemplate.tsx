@@ -43,7 +43,7 @@ export default function PDFReportTemplate({ validation }: PDFReportTemplateProps
 
             {/* 🤖 WATERMARK / HEADER */}
             <div className="flex justify-between items-start mb-16 opacity-40">
-                <div className="font-black italic text-xl tracking-tighter text-white">CouncilIA <span className="text-[#00f2ff]">V9.2 Elite</span></div>
+                <div className="font-black italic text-xl tracking-tighter text-white">CouncilIA <span className="text-[#00f2ff]">V12.0.0 Elite</span></div>
                 <div className="text-right font-mono text-[9px] uppercase tracking-widest">
                     Audit Tracking ID: {validation.id || 'VAL-ST-001'}<br/>
                     {dateStr} // Institutional Protocol
@@ -141,7 +141,7 @@ export default function PDFReportTemplate({ validation }: PDFReportTemplateProps
             {/* 🧭 DOMAIN-SPECIFIC FOOTER */}
             {isEmbrapa && (
                 <div className="mt-auto pt-8 border-t border-white/5 opacity-50">
-                    <div className="text-[8px] font-black uppercase tracking-[0.2em] text-[#00f2ff] mb-2">Protocolo agro-embrapa v9</div>
+                    <div className="text-[8px] font-black uppercase tracking-[0.2em] text-[#00f2ff] mb-2">Protocolo agro-embrapa v12.0.0</div>
                     <p className="text-[8px] leading-relaxed text-slate-500 italic">
                         Este parecer técnico foi gerado através de uma arquitetura de Swarm Intelligence otimizada para riscos agronômicos e conformidade ZARC. 
                         A validação cruzada entre especialistas em ciência, mercado e regulação garante uma margem de confiança institucional superior a 90%.

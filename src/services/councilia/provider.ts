@@ -26,7 +26,7 @@ export async function callLLM(
 
   // OpenRouter implementation with Resilience (45s timeout)
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 45000);
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
