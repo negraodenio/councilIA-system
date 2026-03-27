@@ -50,6 +50,12 @@ export class CouncilIAEngine {
         await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '✅ Veredito Concluído. Gerando Relatório...' } });
       }
 
+      // Final synchronization delay for UI consistency
+      if (onEvent) {
+        await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '🏁 Finalizando Protocolo de Auditoria e Sincronização...' } });
+        await new Promise(r => setTimeout(r, 1500));
+      }
+
       // Ensure metadata is correctly passed for UI validation
       finalVerdict.metadata = {
         ...finalVerdict.metadata,

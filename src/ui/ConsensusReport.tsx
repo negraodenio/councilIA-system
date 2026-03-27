@@ -56,9 +56,9 @@ export default function ConsensusReport({ validation, patches }: {
     const isEmbrapa = !!(result.is_embrapa || result.domain === 'agro');
 
     const meanScore = Math.round(ev.score || 0);
-    const realConsensus = ca.strengthPercentage || meanScore;
-    const realDissent = ca.dissentRange || (100 - realConsensus);
-    const varValue = ev.var?.percentage || 0;
+    const realConsensus = Math.round(ca.strengthPercentage || meanScore);
+    const realDissent = Math.round(ca.dissentRange || (100 - realConsensus));
+    const varValue = Math.round(ev.var?.percentage || 0);
     const varDisplay = `${varValue}%`;
     const isValidOutput = result.is_valid !== false && result.metadata?.protocolVersion === '7.3.1';
 
