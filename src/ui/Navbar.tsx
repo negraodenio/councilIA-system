@@ -14,7 +14,7 @@ export function Navbar() {
                     <Link href="/#council" className="hover:text-neutral-900 transition font-medium">The Council</Link>
                     <Link href="/#usecases" className="hover:text-neutral-900 transition font-medium">Use cases</Link>
                     <Link href="/pricing" className="hover:text-neutral-900 transition font-medium">Pricing</Link>
-                    <Link href="/methodology" className="hover:text-neutral-900 transition font-medium">Methodology</Link>
+                    <Link href="/methodology" className="hover:text-neutral-900 transition font-bold text-cyan-600">Metodologia</Link>
                     <Link
                         href="/login"
                         className="bg-neutral-900 text-white px-4 py-2 rounded-md text-sm hover:bg-neutral-800 transition shadow-sm"
