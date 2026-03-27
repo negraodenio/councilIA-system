@@ -36,7 +36,9 @@ export default function ConsensusReport({ validation }: { validation: any }) {
     const handleExportPDF = async () => {
         setIsExporting(true);
         try {
-            await exportToPDF('pdf-report-v9', `CouncilIA_Relatorio_${validation.id?.substring(0, 8)}.pdf`);
+            await exportToPDF('pdf-report-v9', { 
+                filename: `CouncilIA_Relatorio_${validation.id?.substring(0, 8)}.pdf` 
+            });
         } catch (err) {
             alert('Falha na geração do PDF. Tente novamente.');
         } finally {
