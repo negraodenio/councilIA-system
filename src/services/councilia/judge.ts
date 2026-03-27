@@ -137,7 +137,17 @@ export class JudgeService {
     try {
       const result = await callLLM([
         { role: "system", content: systemPrompt },
-        { role: "user", content: `Aja como um Analista Sênior da Embrapa. O parecer deve ser decisivo e estratégico para uma reunião de diretoria imediata.\n\nPROPOSTA: ${input.proposal}\n\nTRANSCRITO DO DEBATE:\n${transcript}\n\nMETRICAS DETERMINÍSTICAS:\nConsenso=${scores.consensusStrength}%, Variância=${scores.var}%, Score Médio=${scores.meanScore}%` }
+        { role: "user", content: `Aja como um Analista Sênior da Embrapa. O parecer deve ser decisivo e estratégico para uma reunião de diretoria imediata. 
+        
+        IMPORTANTE: No campo 'judgeRationale', você DEVE incluir uma seção final 'FONTES DE EVIDÊNCIA' listando todas as citações normativas (ISO, RDC, MAPA) ou técnicas feitas pelas personas durante o debate para dar credibilidade institucional à decisão.
+
+        PROPOSTA: ${input.proposal}
+
+        TRANSCRITO DO DEBATE:
+        ${transcript}
+
+        METRICAS DETERMINÍSTICAS:
+        Consenso=${scores.consensusStrength}%, Variância=${scores.var}%, Score Médio=${scores.meanScore}%` }
       ], { temperature: 0.1, json: true, model: 'openai/gpt-4o-mini' });
 
       let parsed: any;

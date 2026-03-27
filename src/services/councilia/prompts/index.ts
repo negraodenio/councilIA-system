@@ -28,7 +28,11 @@ export function getSystemPrompt(round: number, personaId: string, isEmbrapa: boo
   const jsonSchema = personaId === 'judge' ? `
     RESPONSE MUST BE VALID JSON:
     {
-      "judgeRationale": "Detailed technical opinion (Parecer Técnico) in ${lang}. Synthesize CV%, Accreditation, and ZARC findings.",
+      "judgeRationale": "Detailed technical opinion (Parecer Técnico) in ${lang}. 
+                         STRUCTURE: 
+                         1. Executive Summary. 
+                         2. Technical Synthesis (CV%, Accreditation, ZARC). 
+                         3. FONTES E EVIDÊNCIAS (List RAG sources cited by personas like [SOURCE: RDC 166/2017]).",
       "executiveVerdict": {
         "verdict": "GO|CONDITIONAL|NO-GO",
         "verdictEmoji": "🟢|🟡|🔴",
