@@ -12,7 +12,12 @@ export const PROTOCOL_VERSION = '7.3.1';
 
 export function getSystemPrompt(round: number, personaId: string, isEmbrapa: boolean, lang: string = 'Portuguese') {
   const prompts = isEmbrapa ? PERSONA_PROMPTS_EMBRAPA : PERSONA_PROMPTS_V3_0;
-  const cognitivePrompt = prompts[personaId] || '';
+  let cognitivePrompt = prompts[personaId] || '';
+  
+  if (personaId === 'judge' && isEmbrapa) {
+    cognitivePrompt = EMBRAPA_JUDGE_PROTOCOL;
+  }
+
   const globalLayer = isEmbrapa ? EMBRAPA_GLOBAL_LAYER : '';
   const narrative = isEmbrapa ? EMBRAPA_NARRATIVE : '';
   
@@ -20,7 +25,27 @@ export function getSystemPrompt(round: number, personaId: string, isEmbrapa: boo
     ? EMBRAPA_ROUNDS[round] 
     : getStandardRoundInstruction(round);
 
-  return `${narrative}\n${globalLayer}\n${cognitivePrompt}\n\n${roundInstructions}\n\nRESPOND ENTIRELY IN ${lang.toUpperCase()}.`;
+  const jsonSchema = personaId === 'judge' ? `
+    RESPONSE MUST BE VALID JSON:
+    {
+      "judgeRationale": "Detailed technical opinion (Parecer Técnico) in ${lang}. Synthesize CV%, Accreditation, and ZARC findings.",
+      "executiveVerdict": {
+        "verdict": "GO|CONDITIONAL|NO-GO",
+        "verdictEmoji": "🟢|🟡|🔴",
+        "score": 0-100,
+        "scoreBreakdown": { "technical": 0, "regulatory": 0, "economic": 0, "social": 0 },
+        "confidence": { "level": "HIGH|MEDIUM|LOW", "evidenceDensity": "high|moderate|low", "validationStatus": "string" },
+        "var": { "percentage": 0, "drivers": ["string"], "interpretation": "string" }
+      },
+      "criticalRisks": [ { "id": 1, "name": "string", "violates": "string", "evidence": "string", "impact": "string", "mitigation": "string", "status": "OPEN" } ],
+      "consensusAnalysis": { "strengthPercentage": 0, "strengthLabel": "string", "dissentDrivers": ["string"], "interpretation": "string" },
+      "evidenceAudit": { "highConfidence": ["string"], "mediumConfidence": ["string"], "unsupported": ["string"] },
+      "actionPlan": { "actions": [ { "id": "1", "name": "string", "owner": "string", "deadline": "string" } ] },
+      "decisionRule": { "proceedOnlyIf": ["string"], "otherwise": "string" }
+    }
+  ` : '';
+
+  return `${narrative}\n${globalLayer}\n${cognitivePrompt}\n\n${roundInstructions}\n\n${jsonSchema}\n\nRESPOND ENTIRELY IN ${lang.toUpperCase()}.`;
 }
 
 function getStandardRoundInstruction(round: number): string {

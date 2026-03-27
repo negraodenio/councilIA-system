@@ -137,7 +137,7 @@ export class JudgeService {
     try {
       const result = await callLLM([
         { role: "system", content: systemPrompt },
-        { role: "user", content: `PROPOSTA: ${input.proposal}\n\nTRANSCRITO:\n${transcript}\n\nMETRICAS: Consenso=${scores.consensusStrength}%, Variancia=${scores.var}%` }
+        { role: "user", content: `Aja como um Analista Sênior da Embrapa. O parecer deve ser decisivo e estratégico para uma reunião de diretoria imediata.\n\nPROPOSTA: ${input.proposal}\n\nTRANSCRITO DO DEBATE:\n${transcript}\n\nMETRICAS DETERMINÍSTICAS:\nConsenso=${scores.consensusStrength}%, Variância=${scores.var}%, Score Médio=${scores.meanScore}%` }
       ], { temperature: 0.1, json: true, model: 'openai/gpt-4o-mini' });
 
       let parsed: any;
