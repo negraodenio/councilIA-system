@@ -149,9 +149,10 @@ export default async function DashboardPage() {
                                                     <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest border ${
                                                         v.status === 'complete' ? 'border-[#ff00e5]/30 text-[#ff00e5] bg-[#ff00e5]/10' : 
                                                         v.status === 'error' ? 'border-red-500/30 text-red-500 bg-red-500/10' :
+                                                        (Date.now() - new Date(v.created_at).getTime() > 15 * 60 * 1000) ? 'border-slate-500/30 text-slate-500 bg-slate-500/10' :
                                                         'border-amber-400/30 text-amber-400 bg-amber-400/10'
                                                     }`}>
-                                                        {v.status === 'complete' ? 'Analyzed' : v.status === 'error' ? 'Failed' : 'Pending'}
+                                                        {v.status === 'complete' ? 'Analyzed' : v.status === 'error' ? 'Failed' : (Date.now() - new Date(v.created_at).getTime() > 15 * 60 * 1000) ? 'Timed Out' : 'Pending'}
                                                     </span>
                                                     <span className="text-[10px] font-mono text-slate-500">{new Date(v.created_at).toLocaleDateString()}</span>
                                                 </div>

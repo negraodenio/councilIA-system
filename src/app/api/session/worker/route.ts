@@ -389,6 +389,13 @@ export async function POST(req: Request) {
         return apiOk({ runId, validationId, score: result.executiveVerdict.score });
     } catch (error: any) { 
         console.error('[Worker] Fatal v7.3.1:', error); 
+        const supabase = createAdminClient();
+        if (body?.validationId) {
+            await supabase.from('validations').update({ status: 'error' }).eq('id', body.validationId);
+        }
+        if (body?.runId) {
+            await supabase.from('debate_runs').update({ status: 'error' }).eq('id', body.runId);
+        }
         return apiError(error.message, 500);
     }
 }
