@@ -1,5 +1,5 @@
 /**
- * Round 1: Thesis (v7.3.1)
+ * Round 1: Thesis (v7.3.1.8 - Anti-Deadlock)
  */
 
 import { CouncilIAEvent, PersonaResponse, RoundResult } from '@/types/councilia-universal';
@@ -21,35 +21,55 @@ export async function executeRound1(
   isEmbrapa: boolean = false,
   onEvent?: (event: CouncilIAEvent) => Promise<void>
 ): Promise<RoundResult> {
-  const responses: PersonaResponse[] = await Promise.all(PERSONAS.map(async (p) => {
-    const systemPrompt = getSystemPrompt(1, p.id, isEmbrapa);
-    const userPrompt = `PROPOSTA PARA ANÁLISE: ${proposal}\n\nCONTEXTO RAG: ${JSON.stringify(docs)}`;
+  const personaResults = await Promise.allSettled(PERSONAS.map(async (p) => {
+    try {
+      const systemPrompt = getSystemPrompt(1, p.id, isEmbrapa);
+      const userPrompt = `PROPOSTA PARA ANÁLISE: ${proposal}\n\nCONTEXTO RAG: ${JSON.stringify(docs)}`;
 
-    const text = await callLLM([
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt }
-    ], { temperature: 0.4 });
+      const text = await callLLM([
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ], { temperature: 0.4, model: 'openai/gpt-4o-mini' });
 
-    const scoreMatch = text.match(/Score:?\s*\[?(\d{1,3})\]?/i) || text.match(/(\d{1,3})\/100/);
-    const score = scoreMatch ? parseInt(scoreMatch[1], 10) : 50;
-    const pName = isEmbrapa ? p.embrapa : p.name;
+      const scoreMatch = text.match(/Score:?\s*\[?(\d{1,3})\]?/i) || text.match(/(\d{1,3})\/100/);
+      const score = scoreMatch ? parseInt(scoreMatch[1], 10) : 50;
+      const pName = isEmbrapa ? p.embrapa : p.name;
 
-    if (onEvent) {
-      await onEvent({
-        type: 'model_msg',
-        personaId: p.id,
-        payload: { text, phase: 'r1', round: 1, persona: pName, emoji: p.emoji }
-      });
+      if (onEvent) {
+        await onEvent({
+          type: 'model_msg',
+          personaId: p.id,
+          payload: { text, phase: 'r1', round: 1, persona: pName, emoji: p.emoji }
+        });
+      }
+
+      return {
+        persona: pName,
+        analysis: text,
+        score: score,
+        unrefuted_risks: [],
+        kill_condition_triggered: text.toLowerCase().includes('kill condition') || text.toLowerCase().includes('no-go')
+      };
+    } catch (err) {
+      const pName = isEmbrapa ? p.embrapa : p.name;
+      console.warn(`[Round1] Persona ${p.id} failed:`, err);
+      return {
+        persona: pName,
+        analysis: "Análise postergada devido à latência técnica do especialista. (Modo de Segurança)",
+        score: 50,
+        unrefuted_risks: [],
+        kill_condition_triggered: false
+      };
     }
-
-    return {
-      persona: pName,
-      analysis: text,
-      score: score,
-      unrefuted_risks: [],
-      kill_condition_triggered: text.toLowerCase().includes('kill condition') || text.toLowerCase().includes('no-go')
-    };
   }));
 
-  return { round: 1, responses };
+  const responses = personaResults.map(r => r.status === 'fulfilled' ? r.value : {
+    persona: 'Especialista Indisponível',
+    analysis: 'Erro na deliberação do especialista.',
+    score: 50,
+    unrefuted_risks: [],
+    kill_condition_triggered: false
+  });
+
+  return { round: 1, responses: responses as PersonaResponse[] };
 }

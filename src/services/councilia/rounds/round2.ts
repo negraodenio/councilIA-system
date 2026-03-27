@@ -1,5 +1,5 @@
 /**
- * Round 2: Antithesis (v7.3.1)
+ * Round 2: Antithesis (v7.3.1.8 - Anti-Deadlock)
  */
 
 import { CouncilIAEvent, PersonaResponse, RoundResult } from '@/types/councilia-universal';
@@ -24,33 +24,53 @@ export async function executeRound2(
 ): Promise<RoundResult> {
   const transcript = prevRound.responses.map(r => `[${r.persona}]: ${r.analysis}`).join('\n\n');
   
-  const responses: PersonaResponse[] = await Promise.all(PERSONAS.map(async (p) => {
-    const systemPrompt = getSystemPrompt(2, p.id, isEmbrapa);
-    const userPrompt = `PROPOSTA: ${proposal}\n\nRESULTADOS DA RODADA 1:\n${transcript}`;
+  const personaResults = await Promise.allSettled(PERSONAS.map(async (p) => {
+    try {
+      const systemPrompt = getSystemPrompt(2, p.id, isEmbrapa);
+      const userPrompt = `PROPOSTA: ${proposal}\n\nRESULTADOS DA RODADA 1:\n${transcript}`;
 
-    const text = await callLLM([
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt }
-    ], { temperature: 0.5 });
+      const text = await callLLM([
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ], { temperature: 0.5, model: 'openai/gpt-4o-mini' });
 
-    const pName = isEmbrapa ? p.embrapa : p.name;
+      const pName = isEmbrapa ? p.embrapa : p.name;
 
-    if (onEvent) {
-      await onEvent({
-        type: 'model_msg',
-        personaId: p.id,
-        payload: { text, phase: 'r2', round: 2, persona: pName, emoji: p.emoji }
-      });
+      if (onEvent) {
+        await onEvent({
+          type: 'model_msg',
+          personaId: p.id,
+          payload: { text, phase: 'r2', round: 2, persona: pName, emoji: p.emoji }
+        });
+      }
+
+      return {
+        persona: pName,
+        analysis: text,
+        score: 50,
+        unrefuted_risks: [],
+        kill_condition_triggered: false
+      };
+    } catch (err) {
+      const pName = isEmbrapa ? p.embrapa : p.name;
+      console.warn(`[Round2] Persona ${p.id} failed:`, err);
+      return {
+        persona: pName,
+        analysis: "Ponto de vista postergado. O especialista não pôde concluir a contesta devido à latência.",
+        score: 50,
+        unrefuted_risks: [],
+        kill_condition_triggered: false
+      };
     }
-
-    return {
-      persona: pName,
-      analysis: text,
-      score: 50,
-      unrefuted_risks: [],
-      kill_condition_triggered: false
-    };
   }));
 
-  return { round: 2, responses };
+  const responses = personaResults.map(r => r.status === 'fulfilled' ? r.value : {
+    persona: 'Especialista Indisponível',
+    analysis: 'Erro na deliberação do especialista.',
+    score: 50,
+    unrefuted_risks: [],
+    kill_condition_triggered: false
+  });
+
+  return { round: 2, responses: responses as PersonaResponse[] };
 }
