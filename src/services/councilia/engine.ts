@@ -60,7 +60,7 @@ export class CouncilIAEngine {
       finalVerdict.metadata = {
         ...finalVerdict.metadata,
         sessionId,
-        protocolVersion: '7.3.1',
+        protocolVersion: '11.0.0',
         domain: input.domain,
         is_embrapa: isEmbrapa
       };
