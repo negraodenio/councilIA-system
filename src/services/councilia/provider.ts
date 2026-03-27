@@ -5,7 +5,7 @@
 
 export async function callLLM(
   messages: any[], 
-  options: { model?: string; temperature?: number; json?: boolean } = {}
+  options: { model?: string; temperature?: number; json?: boolean; seed?: number } = {}
 ): Promise<string> {
   const model = options.model || "gpt-4o";
   const apiKey = process.env.OPENROUTER_API_KEY;
@@ -18,8 +18,9 @@ export async function callLLM(
       model,
       messages,
       temperature: options.temperature ?? 0.4,
-      response_format: options.json ? { type: 'json_object' } : undefined
-    });
+      response_format: options.json ? { type: 'json_object' } : undefined,
+      seed: options.seed
+    } as any);
     return response.choices[0].message.content || '';
   }
 
@@ -41,7 +42,8 @@ export async function callLLM(
         model: model === "gpt-4o" ? "openai/gpt-4o-mini" : (model.includes('/') ? model : `openai/${model}`),
         messages,
         temperature: options.temperature ?? 0.4,
-        response_format: options.json ? { type: 'json_object' } : undefined
+        response_format: options.json ? { type: 'json_object' } : undefined,
+        seed: options.seed
       })
     });
 

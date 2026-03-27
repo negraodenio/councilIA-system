@@ -380,7 +380,7 @@ export async function POST(req: Request) {
             full_result: {
                 ...result,
                 is_embrapa: isEmbrapa,
-                protocol: 'v7.3.1'
+                protocol: 'v11.0.0'
             }
         }).eq('id', validationId);
 

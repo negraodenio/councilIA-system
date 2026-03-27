@@ -161,7 +161,10 @@ export interface CouncilIAOutput {
   criticalRisks: CriticalRisk[];       
   consensusAnalysis: ConsensusAnalysis;
   evidenceAudit: EvidenceAudit;
-  judgeRationale: string;
+  judgeRationale?: string; // Legacy/Fallback
+  decisaoImediata?: string; // v11.0 High-Authority
+  sinteseTecnica?: string;  // v11.0 High-Authority
+  fontesEvidencia?: string; // v11.0 High-Authority
   actionPlan: ActionPlan;
   decisionRule: DecisionRule;
   fullTranscript?: RoundTranscript;
@@ -207,7 +210,7 @@ export interface ValidationResult {
 export interface OutputMetadata {
   sessionId: string;
   timestamp: string;
-  protocolVersion: '7.3.1';
+  protocolVersion: '11.0.0';
   executionTimeMs: number;
   complianceFlags: string[];
   retentionUntil: string;

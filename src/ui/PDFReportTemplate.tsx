@@ -53,8 +53,40 @@ export default function PDFReportTemplate({ validation }: PDFReportTemplateProps
                             <div className="text-5xl font-black text-[#00f2ff] italic">{meanScore}<span className="text-xl text-slate-600 not-italic">/100</span></div>
                         </div>
                     </div>
-                    <div className="prose prose-invert max-w-none text-slate-200 text-sm leading-relaxed border-t border-white/5 pt-6">
-                        <ReactMarkdown>{result.judgeRationale || 'Análise consolidada pendente.'}</ReactMarkdown>
+                    <div className="space-y-12">
+                        {/* DECISÃO IMEDIATA */}
+                        <div className="p-10 bg-emerald-500/[0.05] border-l-8 border-emerald-500 rounded-r-[40px]">
+                            <h2 className="text-[12px] font-black tracking-[0.3em] text-emerald-400 mb-6 uppercase">
+                                01. DECISÃO IMEDIATA
+                            </h2>
+                            <div className="prose prose-invert prose-lg max-w-none text-white font-semibold leading-tight mb-4">
+                                <ReactMarkdown>{result.decisaoImediata || result.judgeRationale || 'PARECER PENDENTE'}</ReactMarkdown>
+                            </div>
+                        </div>
+
+                        {/* SÍNTESE TÉCNICA */}
+                        {result.sinteseTecnica && (
+                            <div className="px-10">
+                                <h2 className="text-[12px] font-black tracking-[0.3em] text-[#ff00e5] mb-6 uppercase">
+                                    02. SÍNTESE TÉCNICA
+                                </h2>
+                                <div className="prose prose-invert prose-base max-w-none text-slate-300 italic leading-relaxed">
+                                    <ReactMarkdown>{result.sinteseTecnica}</ReactMarkdown>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* FONTES DE EVIDÊNCIA */}
+                        {result.fontesEvidencia && (
+                            <div className="px-10 border-t border-white/5 pt-12">
+                                <h2 className="text-[10px] font-black tracking-[0.3em] text-white/40 mb-4 uppercase">
+                                    FONTES DE EVIDÊNCIA
+                                </h2>
+                                <div className="prose prose-invert prose-xs max-w-none text-slate-500 text-[10px]">
+                                    <ReactMarkdown>{result.fontesEvidencia}</ReactMarkdown>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

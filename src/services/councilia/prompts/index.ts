@@ -8,7 +8,7 @@ import {
   EMBRAPA_NARRATIVE 
 } from '@/app/api/session/worker/prompts_embrapa';
 
-export const PROTOCOL_VERSION = '7.3.1';
+export const PROTOCOL_VERSION = '11.0';
 
 export function getSystemPrompt(round: number, personaId: string, isEmbrapa: boolean, lang: string = 'Portuguese') {
   const prompts = isEmbrapa ? PERSONA_PROMPTS_EMBRAPA : PERSONA_PROMPTS_V3_0;
@@ -28,17 +28,16 @@ export function getSystemPrompt(round: number, personaId: string, isEmbrapa: boo
   const jsonSchema = personaId === 'judge' ? `
     RESPONSE MUST BE VALID JSON:
     {
-      "judgeRationale": "PARECER TÉCNICO DECISIVO (Portuguese). 
+      "decisaoImediata": "DECISÃO PRÁTICA E ACIONÁVEL. 
+                         RULES: 
+                         - Resolva o conflito lab (Acreditado PEP > Não-acreditado).
+                         - Resolva o solo limítrofe via Incerteza Expandida (k=2) e Guard-bands.
+                         - Use verbos imperativos: 'Determina-se', 'Prevalece'.",
+      "sinteseTecnica": "FUNDAMENTAÇÃO CIENTÍFICA. 
                          RULES:
-                         1. DIRECT ANSWERS: Responda exatamente COMO resolver o dilema técnico.
-                         2. INLINE CITATIONS: Use citações [SOURCE: ...] DENTRO do fluxo do texto (ex: 'Conforme RDC 166/2017 [SOURCE: RDC 166/2017]...').
-                         3. DECISION RULES: 
-                            - Casos limítrofes: Adote 'Zona de Ambiguidade' equivalente à 'Incerteza Expandida (k=2)' para não penalizar o produtor.
-                            - Conflito de Labs: Prevalece laboratório acreditado (PEP), salvo evidência de 'vício de amostragem'.
-                         4. STRUCTURE: 
-                            ### 1. DECISÃO IMEDIATA
-                            ### 2. SÍNTESE TÉCNICA (Analise CV% e Reprodutibilidade)
-                            ### 3. FONTES E REFERÊNCIAS (Lista auditada)",
+                         - Analise CV% e reprodutibilidade (ISO 5725).
+                         - Use citações inline formatadas como [SOURCE: Norma].",
+      "fontesEvidencia": "LISTA AUDITÁVEL DE NORMAS (ISO, RDC, MAPA).",
       "executiveVerdict": {
         "verdict": "GO|CONDITIONAL|NO-GO",
         "verdictEmoji": "🟢|🟡|🔴",

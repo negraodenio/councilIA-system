@@ -132,9 +132,36 @@ export default function ConsensusReport({ validation }: { validation: any }) {
                             <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter text-white mb-8 group-hover:tracking-tight transition-all duration-700">
                                 {statusLabel}
                             </h1>
-                            <div className="prose prose-invert max-w-none text-xl text-slate-200/90 leading-relaxed text-justify opacity-90 group-hover:opacity-100 transition-opacity">
-                                <ReactMarkdown>{result.judgeRationale || 'Aguardando consolidação do parecer técnico...'}</ReactMarkdown>
-                            </div>
+                            <div className="space-y-8">
+                            {result.decisaoImediata ? (
+                                <>
+                                    <div className="bg-emerald-500/5 border-l-4 border-emerald-500 p-6 rounded-r-2xl">
+                                        <h4 className="text-[10px] font-black tracking-widest text-emerald-400 mb-3 uppercase">1. Decisão Imediata</h4>
+                                        <div className="prose prose-invert prose-sm max-w-none text-white leading-relaxed font-medium">
+                                            <ReactMarkdown>{result.decisaoImediata}</ReactMarkdown>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="border border-white/5 bg-white/[0.02] p-6 rounded-2xl">
+                                        <h4 className="text-[10px] font-black tracking-widest text-neon-cyan mb-3 uppercase">2. Síntese Técnica</h4>
+                                        <div className="prose prose-invert prose-sm max-w-none text-slate-300 leading-relaxed italic">
+                                            <ReactMarkdown>{result.sinteseTecnica}</ReactMarkdown>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-8 pt-8 border-t border-white/5 opacity-50">
+                                        <h4 className="text-[10px] font-black tracking-widest text-white mb-3 uppercase">3. Fontes de Evidência</h4>
+                                        <div className="prose prose-invert prose-xs max-w-none text-slate-500 text-[10px]">
+                                            <ReactMarkdown>{result.fontesEvidencia}</ReactMarkdown>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="prose prose-invert prose-sm max-w-none text-slate-300 leading-relaxed">
+                                    <ReactMarkdown>{result.judgeRationale || 'Aguardando consolidação do parecer técnico...'}</ReactMarkdown>
+                                </div>
+                            )}
+                        </div>
                         </div>
                         <div className="shrink-0">
                             <div className="bg-[#050810]/40 backdrop-blur-3xl p-10 rounded-[40px] border border-white/10 flex flex-col items-center text-center shadow-2xl">
