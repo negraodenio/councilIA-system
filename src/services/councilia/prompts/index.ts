@@ -28,6 +28,7 @@ function getStandardRoundInstruction(round: number): string {
     case 1: return "ROUND 1 — THESIS. Provide substantive analysis. Score 0-100.";
     case 2: return "ROUND 2 — ANTITHESIS. Challenge the others. Identify gaps.";
     case 3: return "ROUND 3 — SYNTHESIS. Concede, Refine, Update score.";
+    case 0: return "FINAL VERDICT — You are the Supreme Judge. synthesize the debate into a STERN, STRATEGIC JSON verdict. No conversational filler.";
     default: return "DELIBERATION PHASE. Analyze and evaluate.";
   }
 }

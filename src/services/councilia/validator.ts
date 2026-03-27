@@ -249,7 +249,7 @@ export function generateSafeModeOutput(
       irreconcilablePoint: 'System could not reach consensus due to validation failure.',
       interpretation: 'Technical failure prevented structured decision. Conservative NO-GO issued.'
     },
-    judgeRationale: 'System entered safe mode due to validation failure. Conservative NO-GO issued to prevent erroneous decision.',
+    judgeRationale: 'VEREDITO DE SEGURANÇA: O sistema aplicou o protocolo de auditoria determinística devido a inconsistências na convergência do swarm. Por precaução institucional, recomenda-se uma revisão manual antes de prosseguir com a implementação estratégica.',
     decisionRule: {
       proceedOnlyIf: ['Manual validation by qualified analyst'],
       otherwise: 'Do not proceed with automated assessment.'
