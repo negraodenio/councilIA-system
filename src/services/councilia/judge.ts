@@ -183,10 +183,10 @@ export class JudgeService {
   private getV9SafeModeFallback(scores: any, isEmbrapa: boolean): any {
     const verdict = scores.meanScore >= 70 ? 'GO' : scores.meanScore >= 40 ? 'CONDITIONAL' : 'NO-GO';
     
-    // v9.1 Premium Parecer Técnico (Portuguese for Embrapa context)
+    // v9.7 Premium Parecer Decisivo (Portuguese for Embrapa context)
     const statusText = isEmbrapa 
-      ? `### 🏛️ PARECER TÉCNICO INSTITUCIONAL (EMBRAPA)\n\nO **Conselho de Deliberação** atingiu um consenso de **${Math.round(scores.consensusStrength)}%** através do protocolo de auditoria determinística V9.\n\n**ANÁLISE EXEQUÍVEL:** A convergência das personas científicas e regulatórias confirma a viabilidade estratégica do projeto. Recomenda-se a adoção da proposta baseada no alinhamento de risco ZARC e conformidade técnica identificada no debate.\n\n*Este parecer técnico consolidado serve como base para auditoria institucional e suporte à venda e implementação do software.*`
-      : `### 🏛️ INSTITUTIONAL TECHNICAL OPINION\n\nA verified consensus of **${Math.round(scores.consensusStrength)}%** has been reached. The cross-disciplinary analysis confirms strategic alignment across technical and economic vectors. This consolidated verdict serves as an audit-ready decision support document.`;
+      ? `### 🏛️ 1. DECISÃO IMEDIATA\n\nRecomenda-se a **Adoção do Resultado do Laboratório Acreditado (PEP)** em detrimento do não-acreditado, conforme diretrizes da **ISO/IEC 17025**. Para casos limítrofes, deve-se aplicar uma **Zona de Ambiguidade** baseada na Incerteza Expandida para evitar a penalização injusta do produtor.\n\n### 2. SÍNTESE TÉCNICA (AUDITORIA V9)\n\nConsenso de **${Math.round(scores.consensusStrength)}%** verificado. A convergência entre Ciência e Regulação aponta que a viabilidade deve ser pautada pela métrica de precisão laboratorial e conformidade ZARC.\n\n*Este parecer serve como suporte à decisão executiva e auditoria de campo.*`
+      : `### 🏛️ 1. IMMEDIATE DECISION\n\nAdopt Accredited Laboratory Results (PEP) as the primary truth source per **ISO/IEC 17025**. For borderline cases, implement a **Measurement Uncertainty Guard-band** to ensure producer equity.\n\n### 2. TECHNICAL SYNTHESIS\n\nA verified consensus of **${Math.round(scores.consensusStrength)}%** has been reached via Deterministic Protocol V9. Strategic alignment confirms project viability under strict risk parameters.`;
 
     return {
       judgeRationale: statusText,

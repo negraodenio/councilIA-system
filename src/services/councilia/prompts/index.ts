@@ -28,11 +28,17 @@ export function getSystemPrompt(round: number, personaId: string, isEmbrapa: boo
   const jsonSchema = personaId === 'judge' ? `
     RESPONSE MUST BE VALID JSON:
     {
-      "judgeRationale": "Detailed technical opinion (Parecer Técnico) in ${lang}. 
-                         STRUCTURE: 
-                         1. Executive Summary. 
-                         2. Technical Synthesis (CV%, Accreditation, ZARC). 
-                         3. FONTES E EVIDÊNCIAS (List RAG sources cited by personas like [SOURCE: RDC 166/2017]).",
+      "judgeRationale": "PARECER TÉCNICO DECISIVO (Portuguese). 
+                         RULES:
+                         1. DIRECT ANSWERS: Answer exactly HOW to solve the practical dilemma (e.g., borderline cases, lab conflicts).
+                         2. INLINE CITATIONS: Use citations [SOURCE: ...] INSIDE the text to justify each decision.
+                         3. DECISION RULES: 
+                            - For borderline cases: Use 'Incerteza Expandida' (ISO GUM) and 'Guard-bands' to protect the producer.
+                            - For lab conflicts: Use 'Hierarquia de Qualidade' (Accredited PEP > Non-accredited).
+                         4. STRUCTURE: 
+                            ### 1. DECISÃO IMEDIATA (Direct solution)
+                            ### 2. SÍNTESE TÉCNICA (CV%, ZARC, Metrology)
+                            ### 3. FONTES E REFERÊNCIAS (Detailed list)",
       "executiveVerdict": {
         "verdict": "GO|CONDITIONAL|NO-GO",
         "verdictEmoji": "🟢|🟡|🔴",
