@@ -14,6 +14,12 @@ export type CouncilDomain =
   | 'finance'      // BCB, banks, fintechs, insurance
   | 'government';  // Public policy, compliance
 
+export interface CouncilIAEvent {
+  type: 'model_msg' | 'judge_note' | 'system_status';
+  personaId: string;
+  payload: any;
+}
+
 export type Jurisdiction = 
   | 'BR'      // Brazil (LGPD)
   | 'EU'      // European Union (GDPR)

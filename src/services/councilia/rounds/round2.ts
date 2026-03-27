@@ -6,21 +6,23 @@
 import { RoundResult, PersonaResponse } from '../types';
 import OpenAI from 'openai';
 import { getSystemPrompt } from '../prompts';
+import { CouncilIAEvent } from '@/types/councilia-universal';
 
 const PERSONAS = [
-  { id: 'visionary', name: 'Visionário / Inovação' },
-  { id: 'technologist', name: 'Especialista Técnico / Cientista' },
-  { id: 'devil', name: 'Auditor de Riscos / Crítico' },
-  { id: 'marketeer', name: 'Adoção de Mercado / Operador' },
-  { id: 'ethicist', name: 'Estrategista Regulatório / Ética' },
-  { id: 'financier', name: 'Analista Financeiro / ROI' }
+  { id: 'visionary', name: 'Visionário / Inovação', emoji: '💡', embrapa: 'Visionário Embrapa' },
+  { id: 'technologist', name: 'Especialista Técnico / Cientista', emoji: '🔬', embrapa: 'Cientista Analítico' },
+  { id: 'devil', name: 'Auditor de Riscos / Crítico', emoji: '👺', embrapa: 'Auditor de Riscos ZARC' },
+  { id: 'marketeer', name: 'Adoção de Mercado / Operador', emoji: '📈', embrapa: 'Analista de Mercado/Safra' },
+  { id: 'ethicist', name: 'Estrategista Regulatório / Ética', emoji: '⚖️', embrapa: 'Gestor Ambiental/Ético' },
+  { id: 'financier', name: 'Analista Financeiro / ROI', emoji: '💰', embrapa: 'Analista de Fomento (BNDES)' }
 ];
 
 export async function executeRound2(
   proposal: string, 
   prevRound: RoundResult,
   docs: any[], 
-  isEmbrapa: boolean = false
+  isEmbrapa: boolean = false,
+  onEvent?: (event: CouncilIAEvent) => Promise<void>
 ): Promise<RoundResult> {
   const openai = new OpenAI();
   const transcript = prevRound.responses.map(r => `[${r.persona}]: ${r.analysis}`).join('\n\n');
@@ -39,10 +41,21 @@ export async function executeRound2(
     });
 
     const text = response.choices[0].message.content || 'Erro na deliberação.';
+    const pName = isEmbrapa ? p.embrapa : p.name;
+
+    // --- TELEMETRY EMISSION ---
+    if (onEvent) {
+      await onEvent({
+        type: 'model_msg',
+        personaId: p.id,
+        payload: { text, phase: 'r2', round: 2, persona: pName, emoji: p.emoji }
+      });
+    }
+
     return {
-      persona: p.name,
+      persona: pName,
       analysis: text,
-      score: 50, // Scores are refined in Round 3
+      score: 50,
       unrefuted_risks: [],
       kill_condition_triggered: false
     };

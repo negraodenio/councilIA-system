@@ -9,6 +9,7 @@ import { validateOutput } from './validator';
 import type { 
   CouncilIAInput, 
   CouncilIAOutput, 
+  CouncilIAEvent,
   ScoringInput,
   RoundTranscript,
   ConfidenceLevel,
@@ -27,7 +28,8 @@ export class JudgeService {
 
   async execute(
     rounds: any[], // Full round history
-    input: CouncilIAInput
+    input: CouncilIAInput,
+    onEvent?: (event: CouncilIAEvent) => Promise<void>
   ): Promise<CouncilIAOutput> {
     const startTime = Date.now();
     
@@ -59,6 +61,15 @@ export class JudgeService {
       ...structured,
       fullTranscript: this.formatTranscript(rounds)
     };
+
+    // --- TELEMETRY EMISSION ---
+    if (onEvent) {
+      await onEvent({
+        type: 'judge_note',
+        personaId: 'judge',
+        payload: { text: structured.judgeRationale || 'Verdict rendered.', type: 'final_verdict' }
+      });
+    }
     
     // 5. Mandatory Validator Post-Check
     const validation = validateOutput(output);
@@ -159,7 +170,7 @@ export class JudgeService {
     parsed.executiveVerdict.var.percentage = scores.var;
     parsed.executiveVerdict.confidence.level = scores.confidence;
     parsed.consensusAnalysis.strengthPercentage = scores.consensusStrength;
-    
+
     return parsed;
   }
 

@@ -341,7 +341,9 @@ export async function POST(req: Request) {
             }
         };
 
-        const result = await engine.execute(input);
+        const result = await engine.execute(input, async (event) => {
+            await addEvent(supabase, runId, event.type, event.personaId, event.payload);
+        });
 
         // --- PERSISTENCE (v7.3.1 Compatible) ---
         await supabase.from('validations').update({ 
