@@ -59,6 +59,12 @@ export class JudgeOutputValidator {
       return { isValid: false, errors };
     }
 
+    // --- NEW v11.1: Heading Duplication Check ---
+    const headingRegex = /^\d+\.\s*(DECISÃO\s*IMEDIATA|SÍNTESE\s*TÉCNICA|FONTES\s*DE\s*EVIDÊNCIA)/i;
+    if (headingRegex.test(parsedOutput.decisaoImediata)) errors.push('Título duplicado detectado em decisaoImediata');
+    if (headingRegex.test(parsedOutput.sinteseTecnica)) errors.push('Título duplicado detectado em sinteseTecnica');
+    if (headingRegex.test(parsedOutput.fontesEvidencia)) errors.push('Título duplicado detectado em fontesEvidencia');
+
     // 3. Valida conteúdo da DECISÃO IMEDIATA
     const decisao = parsedOutput.decisaoImediata.toLowerCase();
     const hasHierarchy = decisao.includes('acreditado') || decisao.includes('pep') || decisao.includes('17025');
@@ -93,23 +99,30 @@ export class JudgeOutputValidator {
   }
 
   private attemptCorrection(partial: any): JudgeOutput {
-    // Tenta corrigir estrutura faltante com fallbacks técnicos seguros
+    // Tenta corrigir estrutura faltante com fallbacks técnicos seguros e remove cabeçalhos redundantes
     return {
-      decisaoImediata: partial.decisaoImediata || this.getDefaultDecisao(),
-      sinteseTecnica: partial.sinteseTecnica || this.getDefaultSintese(),
-      fontesEvidencia: partial.fontesEvidencia || this.getDefaultFontes()
+      decisaoImediata: this.removeHeadings(partial.decisaoImediata) || this.getDefaultDecisao(),
+      sinteseTecnica: this.removeHeadings(partial.sinteseTecnica) || this.getDefaultSintese(),
+      fontesEvidencia: this.removeHeadings(partial.fontesEvidencia) || this.getDefaultFontes()
     };
   }
 
+  private removeHeadings(text: string): string {
+    if (!text) return '';
+    return text
+      .replace(/^\d+\.\s*(DECISÃO\s*IMEDIATA|SÍNTESE\s*TÉCNICA|FONTES\s*DE\s*EVIDÊNCIA|Decisão\s*Imediata|Síntese\s*Técnica|Fontes\s*de\s*Evidência)[:\-\s]*/gi, '')
+      .trim();
+  }
+
   public getDefaultDecisao(): string {
-    return `### 1. DECISÃO IMEDIATA\n\n**Conflito entre laboratórios**: Determina-se que **prevalece** o resultado do laboratório acreditado (ISO/IEC 17025) em PEP (Programa de Excelência em Análises de Solo). O laboratório não acreditado deve ser desconsiderado para fins de elegibilidade, conforme RDC 166/2017 [SOURCE: RDC 166/2017].\n\n**Situação limítrofe**: Aplica-se o princípio da **incerteza expandida (k=2)** conforme ISO GUM. O solo deve ser considerado elegível caso a diferença esteja dentro da margem de erro analítica.`;
+    return `**Conflito entre laboratórios**: Determina-se que **prevalece** o resultado do laboratório acreditado conforme ISO/IEC 17025 e com desempenho satisfatório em PEP (Programa de Excelência). O laboratório não acreditado deve ser desconsiderado para fins oficiais. **Situação limítrofe**: Aplica-se o princípio da **incerteza expandida (k=2)** e Guard-bands. O solo deve ser considerado elegível caso o intervalo de confiança toque a zona de transição favorável ao produtor.`;
   }
 
   public getDefaultSintese(): string {
-    return `### 2. SÍNTESE TÉCNICA\n\nA análise granulométrica está sujeita a incertezas inerentes. Conforme ISO 5725 [SOURCE: ISO 5725], a reprodutibilidade deve ser controlada. Em situações limítrofes, a aplicação de **Guard-bands** garante que a variabilidade não prejudique o produtor rural injustamente.`;
+    return `A análise granulométrica está sujeita a incertezas inerentes de amostragem e medição. Conforme ISO 5725 [SOURCE: ISO 5725], a reprodutibilidade deve ser monitorada. Em situações de borda, a aplicação de critérios metrológicos rigorosos mitiga o risco de descrédito indevido e garante a segurança jurídica do processo de seguro rural ZARC.`;
   }
 
   public getDefaultFontes(): string {
-    return `### 3. FONTES DE EVIDÊNCIA\n\n- RDC 166/2017 – Acreditação de laboratórios\n- ISO 5725 – Precisão e reprodutibilidade\n- ISO/IEC Guide 98-3 (GUM) – Avaliação de incerteza\n- ISO 11277 – Distribuição granulométrica do solo`;
+    return `- ISO/IEC 17025:2017 – Competência de Laboratórios\n- ISO 5725 – Exatidão de Métodos\n- ISO/IEC Guide 98-3 (GUM) – Incerteza de Medição\n- ISO 11277 – Distribuição granulométrica do solo`;
   }
 }

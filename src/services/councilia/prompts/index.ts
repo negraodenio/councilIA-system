@@ -28,16 +28,18 @@ export function getSystemPrompt(round: number, personaId: string, isEmbrapa: boo
   const jsonSchema = personaId === 'judge' ? `
     RESPONSE MUST BE VALID JSON:
     {
-      "decisaoImediata": "DECISÃO PRÁTICA E ACIONÁVEL. 
+      "decisaoImediata": "RESUMO DA DECISÃO (Apenas conteúdo, SEM títulos). 
                          RULES: 
-                         - Resolva o conflito lab (Acreditado PEP > Não-acreditado).
-                         - Resolva o solo limítrofe via Incerteza Expandida (k=2) e Guard-bands.
-                         - Use verbos imperativos: 'Determina-se', 'Prevalece'.",
-      "sinteseTecnica": "FUNDAMENTAÇÃO CIENTÍFICA. 
+                         - Resolva conflito (Acreditado ISO 17025/PEP > Não-acreditado).
+                         - Resolva solo limítrofe via Incerteza Expandida (k=2) e Guard-bands.
+                         - PROIBIDO incluir '1. Decisão Imediata' no texto.",
+      "sinteseTecnica": "CONSTRUÇÃO CIENTÍFICA (Apenas conteúdo, SEM títulos). 
                          RULES:
                          - Analise CV% e reprodutibilidade (ISO 5725).
-                         - Use citações inline formatadas como [SOURCE: Norma].",
-      "fontesEvidencia": "LISTA AUDITÁVEL DE NORMAS (ISO, RDC, MAPA).",
+                         - Use citações [SOURCE: Norma].
+                         - PROIBIDO incluir '2. Síntese Técnica' no texto.",
+      "fontesEvidencia": "LISTA DE NORMAS (Apenas nomes, SEM títulos)."
+    }
       "executiveVerdict": {
         "verdict": "GO|CONDITIONAL|NO-GO",
         "verdictEmoji": "🟢|🟡|🔴",

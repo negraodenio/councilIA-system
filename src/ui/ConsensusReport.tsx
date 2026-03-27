@@ -64,6 +64,13 @@ export default function ConsensusReport({ validation }: { validation: any }) {
         }
     };
 
+    const cleanContent = (text: string): string => {
+        if (!text) return '';
+        return text
+            .replace(/^\d+\.\s*(DECISÃO\s*IMEDIATA|SÍNTESE\s*TÉCNICA|FONTES\s*DE\s*EVIDÊNCIA|Decisão\s*Imediata|Síntese\s*Técnica|Fontes\s*de\s*Evidência)[:\-\s]*/gi, '')
+            .trim();
+    };
+
     const result = validation.full_result || validation || {};
     const ev = result.executiveVerdict || {};
     const ca = result.consensusAnalysis || {};
@@ -138,21 +145,21 @@ export default function ConsensusReport({ validation }: { validation: any }) {
                                     <div className="bg-emerald-500/5 border-l-4 border-emerald-500 p-6 rounded-r-2xl">
                                         <h4 className="text-[10px] font-black tracking-widest text-emerald-400 mb-3 uppercase">1. Decisão Imediata</h4>
                                         <div className="prose prose-invert prose-sm max-w-none text-white leading-relaxed font-medium">
-                                            <ReactMarkdown>{result.decisaoImediata}</ReactMarkdown>
+                                            <ReactMarkdown>{cleanContent(result.decisaoImediata)}</ReactMarkdown>
                                         </div>
                                     </div>
                                     
                                     <div className="border border-white/5 bg-white/[0.02] p-6 rounded-2xl">
                                         <h4 className="text-[10px] font-black tracking-widest text-neon-cyan mb-3 uppercase">2. Síntese Técnica</h4>
                                         <div className="prose prose-invert prose-sm max-w-none text-slate-300 leading-relaxed italic">
-                                            <ReactMarkdown>{result.sinteseTecnica}</ReactMarkdown>
+                                            <ReactMarkdown>{cleanContent(result.sinteseTecnica)}</ReactMarkdown>
                                         </div>
                                     </div>
 
                                     <div className="mt-8 pt-8 border-t border-white/5 opacity-50">
                                         <h4 className="text-[10px] font-black tracking-widest text-white mb-3 uppercase">3. Fontes de Evidência</h4>
                                         <div className="prose prose-invert prose-xs max-w-none text-slate-500 text-[10px]">
-                                            <ReactMarkdown>{result.fontesEvidencia}</ReactMarkdown>
+                                            <ReactMarkdown>{cleanContent(result.fontesEvidencia)}</ReactMarkdown>
                                         </div>
                                     </div>
                                 </>

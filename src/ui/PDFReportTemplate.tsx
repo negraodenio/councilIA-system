@@ -23,6 +23,13 @@ export default function PDFReportTemplate({ validation }: PDFReportTemplateProps
 
     const personas = result.fullTranscript?.round3?.responses || [];
 
+    const cleanContent = (text: string): string => {
+        if (!text) return '';
+        return text
+            .replace(/^\d+\.\s*(DECISÃO\s*IMEDIATA|SÍNTESE\s*TÉCNICA|FONTES\s*DE\s*EVIDÊNCIA|Decisão\s*Imediata|Síntese\s*Técnica|Fontes\s*de\s*Evidência)[:\-\s]*/gi, '')
+            .trim();
+    };
+
     return (
         <div id="pdf-report-v9" className="bg-[#050810] text-[#d1d5db] font-sans w-[210mm] min-h-[297mm] p-12 overflow-hidden relative">
             <style dangerouslySetInnerHTML={{
@@ -60,18 +67,18 @@ export default function PDFReportTemplate({ validation }: PDFReportTemplateProps
                                 01. DECISÃO IMEDIATA
                             </h2>
                             <div className="prose prose-invert prose-lg max-w-none text-white font-semibold leading-tight mb-4">
-                                <ReactMarkdown>{result.decisaoImediata || result.judgeRationale || 'PARECER PENDENTE'}</ReactMarkdown>
+                                <ReactMarkdown>{cleanContent(result.decisaoImediata || result.judgeRationale || 'PARECER PENDENTE')}</ReactMarkdown>
                             </div>
                         </div>
 
                         {/* SÍNTESE TÉCNICA */}
-                        {result.sinteseTecnica && (
+                        {(result.sinteseTecnica || result.judgeRationale) && (
                             <div className="px-10">
                                 <h2 className="text-[12px] font-black tracking-[0.3em] text-[#ff00e5] mb-6 uppercase">
                                     02. SÍNTESE TÉCNICA
                                 </h2>
                                 <div className="prose prose-invert prose-base max-w-none text-slate-300 italic leading-relaxed">
-                                    <ReactMarkdown>{result.sinteseTecnica}</ReactMarkdown>
+                                    <ReactMarkdown>{cleanContent(result.sinteseTecnica || '')}</ReactMarkdown>
                                 </div>
                             </div>
                         )}
@@ -83,7 +90,7 @@ export default function PDFReportTemplate({ validation }: PDFReportTemplateProps
                                     FONTES DE EVIDÊNCIA
                                 </h2>
                                 <div className="prose prose-invert prose-xs max-w-none text-slate-500 text-[10px]">
-                                    <ReactMarkdown>{result.fontesEvidencia}</ReactMarkdown>
+                                    <ReactMarkdown>{cleanContent(result.fontesEvidencia)}</ReactMarkdown>
                                 </div>
                             </div>
                         )}
