@@ -1,12 +1,11 @@
 /**
  * Round 1: Thesis (v7.3.1)
- * Parallel analysis by 6 specialized personas
  */
 
 import { RoundResult, PersonaResponse } from '../types';
-import OpenAI from 'openai';
 import { getSystemPrompt } from '../prompts';
 import { CouncilIAEvent } from '@/types/councilia-universal';
+import { callLLM } from '../provider';
 
 const PERSONAS = [
   { id: 'visionary', name: 'Visionário / Inovação', emoji: '💡', embrapa: 'Visionário Embrapa' },
@@ -23,27 +22,19 @@ export async function executeRound1(
   isEmbrapa: boolean = false,
   onEvent?: (event: CouncilIAEvent) => Promise<void>
 ): Promise<RoundResult> {
-  const openai = new OpenAI();
-  
   const responses: PersonaResponse[] = await Promise.all(PERSONAS.map(async (p) => {
     const systemPrompt = getSystemPrompt(1, p.id, isEmbrapa);
     const userPrompt = `PROPOSTA PARA ANÁLISE: ${proposal}\n\nCONTEXTO RAG: ${JSON.stringify(docs)}`;
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0.4
-    });
+    const text = await callLLM([
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ], { temperature: 0.4 });
 
-    const text = response.choices[0].message.content || 'Erro na deliberação.';
     const scoreMatch = text.match(/Score:?\s*\[?(\d{1,3})\]?/i) || text.match(/(\d{1,3})\/100/);
     const score = scoreMatch ? parseInt(scoreMatch[1], 10) : 50;
     const pName = isEmbrapa ? p.embrapa : p.name;
 
-    // --- TELEMETRY EMISSION ---
     if (onEvent) {
       await onEvent({
         type: 'model_msg',

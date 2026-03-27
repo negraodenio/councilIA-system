@@ -1,12 +1,11 @@
 /**
  * Round 2: Antithesis (v7.3.1)
- * Adversarial cross-examination
  */
 
 import { RoundResult, PersonaResponse } from '../types';
-import OpenAI from 'openai';
 import { getSystemPrompt } from '../prompts';
 import { CouncilIAEvent } from '@/types/councilia-universal';
+import { callLLM } from '../provider';
 
 const PERSONAS = [
   { id: 'visionary', name: 'Visionário / Inovação', emoji: '💡', embrapa: 'Visionário Embrapa' },
@@ -24,26 +23,19 @@ export async function executeRound2(
   isEmbrapa: boolean = false,
   onEvent?: (event: CouncilIAEvent) => Promise<void>
 ): Promise<RoundResult> {
-  const openai = new OpenAI();
   const transcript = prevRound.responses.map(r => `[${r.persona}]: ${r.analysis}`).join('\n\n');
   
   const responses: PersonaResponse[] = await Promise.all(PERSONAS.map(async (p) => {
     const systemPrompt = getSystemPrompt(2, p.id, isEmbrapa);
     const userPrompt = `PROPOSTA: ${proposal}\n\nRESULTADOS DA RODADA 1:\n${transcript}`;
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0.5
-    });
+    const text = await callLLM([
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ], { temperature: 0.5 });
 
-    const text = response.choices[0].message.content || 'Erro na deliberação.';
     const pName = isEmbrapa ? p.embrapa : p.name;
 
-    // --- TELEMETRY EMISSION ---
     if (onEvent) {
       await onEvent({
         type: 'model_msg',

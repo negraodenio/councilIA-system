@@ -4,6 +4,7 @@ import { addEvent } from '@/lib/council/events';
 import { redactPII } from '@/lib/privacy/redact';
 import { apiOk, apiError } from '@/lib/api/error';
 import OpenAI from "openai";
+import { CouncilIAEngine } from '@/services/councilia/engine';
 import { PERSONA_PROMPTS_V3_0, CONFLICT_MATRIX_V3_0 } from './prompts_v3_0';
 import { PERSONA_PROMPTS_EMBRAPA, EMBRAPA_CONFLICT_MATRIX, PERSONA_NAMES_EMBRAPA, EMBRAPA_GLOBAL_LAYER, EMBRAPA_ROUNDS, EMBRAPA_JUDGE_PROTOCOL, EMBRAPA_NARRATIVE } from './prompts_embrapa';
 
@@ -321,8 +322,10 @@ export async function POST(req: Request) {
         const config = getCouncilConfig(region, sensitivity);
         const personas = Object.values(councilConfig.personas);
 
+        await addEvent(supabase, runId, 'system', null, { msg: '🔄 CouncilIA v7.3.1 Engine Initializing...' });
+
         // --- NEW v7.3.1 ENGINE EXECUTION ---
-        const engine = new (await import('@/services/councilia/engine')).CouncilIAEngine();
+        const engine = new CouncilIAEngine();
         
         const input: any = {
             proposal: ideaRedacted,
