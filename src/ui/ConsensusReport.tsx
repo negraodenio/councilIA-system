@@ -4,6 +4,8 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { resolveUILang, type UILang } from '@/lib/i18n/ui-strings';
 import Link from 'next/link';
+import { exportToPDF } from '@/lib/pdf-utils';
+import PDFReportTemplate from './PDFReportTemplate';
 
 // ─── UTILS: v9 Styles ──────────────────────────
 const PERSONA_META: Record<string, { color: string; gradient: string; emoji: string }> = {
@@ -29,6 +31,18 @@ function getMeta(id: string) {
 export default function ConsensusReport({ validation }: { validation: any }) {
     const [activeTab, setActiveTab] = useState<'intelligence' | 'deliberation' | 'audit'>('intelligence');
     const [selectedRound, setSelectedRound] = useState(3);
+    const [isExporting, setIsExporting] = useState(false);
+
+    const handleExportPDF = async () => {
+        setIsExporting(true);
+        try {
+            await exportToPDF('pdf-report-v9', `CouncilIA_Relatorio_${validation.id?.substring(0, 8)}.pdf`);
+        } catch (err) {
+            alert('Falha na geração do PDF. Tente novamente.');
+        } finally {
+            setIsExporting(false);
+        }
+    };
 
     const result = validation.full_result || validation || {};
     const ev = result.executiveVerdict || {};
@@ -73,8 +87,12 @@ export default function ConsensusReport({ validation }: { validation: any }) {
                     <button className="px-5 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all font-mono text-[9px] font-black uppercase tracking-widest">
                         Metadata Audit
                     </button>
-                    <button className="px-6 py-2 rounded-full bg-neon-cyan text-[#050810] font-mono text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)]">
-                        Strategic Export
+                    <button 
+                        onClick={handleExportPDF}
+                        disabled={isExporting}
+                        className="px-6 py-2 rounded-full bg-neon-cyan text-[#050810] font-mono text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)] disabled:opacity-50 disabled:cursor-wait"
+                    >
+                        {isExporting ? 'Exporting...' : 'Strategic Export'}
                     </button>
                 </div>
             </header>
@@ -321,6 +339,11 @@ export default function ConsensusReport({ validation }: { validation: any }) {
                 <button className="text-[9px] font-black uppercase tracking-widest text-[#ff00e5] animate-pulse">
                     Training Future Weights...
                 </button>
+            </div>
+
+            {/* 📄 HIDDEN PDF TEMPLATE (Off-screen) */}
+            <div className="fixed -left-[2000px] top-0 pointer-events-none">
+                <PDFReportTemplate validation={validation} />
             </div>
 
             <style jsx>{`
