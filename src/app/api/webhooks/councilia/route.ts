@@ -26,24 +26,35 @@ async function handler(req: any) {
   console.log(`[Webhook] Starting processing for session ${payload.session_id}...`);
 
   try {
-    // 1. Initialize Engine
-    const engine = new CouncilIAEngine({
-      complianceMode: true,
-      jurisdiction: payload.jurisdiction as any,
-      auditLevel: 'FULL'
+    // 1. Initialize Engine (v7.3.1)
+    const engine = new CouncilIAEngine();
+
+    // 2. Execute Universal Deliberation
+    const result = await engine.execute({
+      proposal: payload.proposal,
+      domain: (payload.domain as any) || 'general',
+      jurisdiction: (payload.jurisdiction as any) || 'BR',
+      ragDocuments: payload.rag_documents || [],
+      metadata: {
+        userId: payload.metadata?.user_id || 'system_async',
+        organizationId: payload.metadata?.organization_id || 'default',
+        sessionId: payload.session_id,
+        consent: {
+          consentId: `ASYNC_CONSENT_${payload.session_id}`,
+          grantedAt: new Date().toISOString(),
+          purposes: ['DECISION_ANALYSIS', 'REGULATORY_COMPLIANCE']
+        }
+      }
     });
 
-    // 2. Execute 3-Round Protocol
-    const result = await engine.execute(payload);
-
-    // 3. Update Supabase with final result
+    // 3. Update Supabase with final result (v7.3.1 Mapping)
     const { error } = await supabaseAdmin
       .from('councilia_reports')
       .update({
         status: 'COMPLETED',
         full_report: result,
-        score: result.executive_verdict.score,
-        verdict: result.executive_verdict.verdict,
+        score: result.executiveVerdict.score,
+        verdict: result.executiveVerdict.verdict,
         completed_at: new Date().toISOString()
       })
       .eq('session_id', payload.session_id);

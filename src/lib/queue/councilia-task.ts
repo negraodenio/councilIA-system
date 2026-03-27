@@ -15,7 +15,7 @@ const qstashClient = new Client({
 export interface CouncilIATaskPayload {
   session_id: string;
   proposal: string;
-  context: string;
+  domain: string;
   jurisdiction: string;
   metadata: any;
   rag_documents: any[];

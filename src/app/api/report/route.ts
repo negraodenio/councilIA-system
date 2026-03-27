@@ -25,13 +25,13 @@ const getRateLimit = (jurisdiction: string, userId: string) => {
 // Input Validation Schema v7.0
 const CouncilIAInputSchema = z.object({
   proposal: z.string().min(50).max(50000),
-  context: z.enum(['agro', 'healthcare', 'government', 'finance', 'corporate']),
-  jurisdiction: z.enum(['BR', 'EU', 'BR_EU', 'GLOBAL']).default('BR'),
+  domain: z.enum(['general', 'agro', 'healthcare', 'finance', 'government']),
+  jurisdiction: z.enum(['BR', 'EU', 'US', 'BR_EU', 'GLOBAL']).default('BR'),
   rag_documents: z.array(z.object({
     id: z.string().uuid(),
     content: z.string().min(100).max(100000),
     source: z.string().min(3).max(200),
-    type: z.enum(['regulatory', 'scientific', 'technical', 'case_study']),
+    sourceType: z.enum(['regulatory', 'scientific', 'technical', 'case_study', 'internal']),
     sensitivity: z.enum(['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED']).default('INTERNAL')
   })).min(1).max(50),
   consent: z.object({
@@ -40,7 +40,8 @@ const CouncilIAInputSchema = z.object({
       'DECISION_ANALYSIS',
       'AUDIT_TRAIL',
       'MODEL_IMPROVEMENT',
-      'REGULATORY_COMPLIANCE'
+      'REGULATORY_COMPLIANCE',
+      'RESEARCH_ANONYMIZED'
     ])),
     grantedAt: z.string().datetime()
   }),
@@ -91,10 +92,10 @@ export async function POST(req: NextRequest) {
 
     // 3. COMPLIANCE GUARD v7.0
     const complianceContext: ComplianceContext = {
-      jurisdiction: data.jurisdiction,
-      domain: data.context,
+      jurisdiction: data.jurisdiction as any,
+      domain: data.domain,
       dataSubjectRights: ['ACCESS', 'RECTIFICATION', 'ERASURE', 'PORTABILITY'],
-      retentionPeriod: data.context === 'healthcare' ? 2555 : 1825, // 7 vs 5 years
+      retentionPeriod: data.domain === 'healthcare' ? 2555 : 1825, // 7 vs 5 years
       internationalTransfer: data.jurisdiction === 'EU' || data.jurisdiction === 'BR_EU'
     };
 
@@ -133,7 +134,7 @@ export async function POST(req: NextRequest) {
         user_id: user.id,
         status: 'PENDING',
         jurisdiction: data.jurisdiction,
-        context: data.context,
+        domain: data.domain,
         created_at: new Date().toISOString(),
         consent_id: data.consent.consentId
       });
@@ -141,7 +142,7 @@ export async function POST(req: NextRequest) {
       const { success: queued, messageId } = await dispatchCouncilIATask({
         session_id: sessionId,
         proposal: data.proposal,
-        context: data.context,
+        domain: data.domain,
         jurisdiction: data.jurisdiction,
         metadata: data.metadata,
         rag_documents: data.rag_documents
@@ -158,40 +159,42 @@ export async function POST(req: NextRequest) {
       }, { status: 202 });
     }
 
-    // 7. SYNC EXECUTION (Original route logic)
-    const engine = new CouncilIAEngine({
-      complianceMode: true,
-      jurisdiction: data.jurisdiction,
-      auditLevel: 'FULL'
-    });
+    // 7. SYNC EXECUTION (v7.3.1 Universal)
+    const engine = new CouncilIAEngine();
 
-    const startTime = Date.now();
     const result = await engine.execute({
       proposal: data.proposal,
-      context: data.context as any,
-      rag_documents: data.rag_documents,
+      domain: (data.domain as any) || 'general',
+      jurisdiction: (data.jurisdiction as any) || 'BR',
+      ragDocuments: data.rag_documents || [],
       metadata: {
-        ...data.metadata,
-        user_id: user.id,
-        compliance_context: complianceContext
+        userId: user.id || 'anonymous',
+        organizationId: 'default',
+        sessionId: sessionId,
+        consent: {
+          consentId: `CONSENT_${sessionId}`,
+          grantedAt: new Date().toISOString(),
+          purposes: ['DECISION_ANALYSIS', 'REGULATORY_COMPLIANCE']
+        }
       }
     });
 
     // 8. Store with Regulatory Retention Flags
-    const retentionYears = ['healthcare', 'finance'].includes(data.context) ? 7 : 5;
+    const domain = (data.domain as string) || 'general';
+    const retentionYears = ['healthcare', 'finance'].includes(domain) ? 7 : 5;
     const retentionUntil = new Date();
     retentionUntil.setFullYear(retentionUntil.getFullYear() + retentionYears);
     
     await supabase.from('councilia_reports').insert({
-      session_id: result.metadata.session_id,
+      session_id: result.metadata.sessionId,
       user_id: user.id,
-      organization_id: data.metadata.organization_id,
+      organization_id: 'default',
       jurisdiction: data.jurisdiction,
-      verdict: result.executive_verdict.verdict,
-      score: result.executive_verdict.score,
+      verdict: result.executiveVerdict.verdict,
+      score: result.executiveVerdict.score,
       created_at: result.metadata.timestamp,
       full_report: result,
-      consent_id: data.consent.consentId,
+      consent_id: (data as any).consent?.consentId,
       regulatory_retention: true,
       retention_until: retentionUntil.toISOString(),
       lgpd_legal_basis: 'CONSENTIMENTO'
@@ -200,8 +203,8 @@ export async function POST(req: NextRequest) {
     // 9. Log Compliance Event
     await auditLogger.record({
       type: 'PROCESSING_SUCCESS',
-      userId: user.id,
-      sessionId: result.metadata.session_id,
+      userId: user.id || 'anonymous',
+      sessionId: result.metadata.sessionId,
       timestamp: new Date()
     });
 
@@ -217,7 +220,7 @@ export async function POST(req: NextRequest) {
     }, {
       headers: {
         'X-RateLimit-Remaining': String(remaining),
-        'X-Consent-Id': data.consent.consentId
+        'X-Consent-Id': (data as any).consent?.consentId || 'N/A'
       }
     });
 

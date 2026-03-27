@@ -37,10 +37,17 @@ function gp(name: string, lang: UILang | string) {
 }
 
 export default function PDFReportTemplate({ validation, lang }: PDFReportTemplateProps) {
-    const score = Math.round(validation.consensus_score || 0);
+    const r = validation.full_result || {};
+    // v6.1 PRO Override: Use pre-calculated values from result.executive_verdict
+    const score = Math.round(r.executive_verdict?.score || validation.consensus_score || 0);
+    const realConsensus = r.executive_verdict?.consensus || score;
+    const realDissent = r.executive_verdict?.dissent || (100 - realConsensus);
+    const varValue = r.executive_verdict?.var?.percentage || 0;
+    const varDisplay = `${varValue}%`;
+    const isValidOutput = r.is_valid !== false;
+
     const dateStr = new Date(validation.created_at).toLocaleDateString();
 
-    const r = validation.full_result || {};
     const judgeText = r.judge || '';
     const round3 = (r.round3 || []) as any[];
     const round1 = (r.round1 || []) as any[];
@@ -117,8 +124,20 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                     </div>
                 </div>
 
-                <div className="mb-12 relative z-10">
+                <div className="mb-8 relative z-10">
                     <h1 className="text-4xl mb-6 leading-tight max-w-[90%]">{isEmbrapa ? 'Relatório Executivo de Consenso' : 'Executive Briefing Consensus'}</h1>
+                    
+                    {/* 🚨 v6.1 PRO INCONSISTENCY ALERT */}
+                    {!isValidOutput && (
+                        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
+                            <span className="text-xl">⚠️</span>
+                            <div>
+                                <p className="text-red-400 font-bold uppercase tracking-widest text-[8px]">Metrological Inconsistency Detected</p>
+                                <p className="text-slate-400 text-[10px] italic">{r.audit_warnings?.join(' | ') || 'Logical contradiction flagged by Judge v6.1 PRO.'}</p>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="p-6 glass italic text-slate-400 text-sm leading-relaxed border-l-2 border-cyan-500/50">
                         &quot;{validation.idea.substring(0, 300)}{validation.idea.length > 300 ? '...' : ''}&quot;
                     </div>
@@ -126,9 +145,9 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
 
                 <div className="grid grid-cols-2 gap-8 mb-12 relative z-10">
                     <div className="p-8 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center">
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6 font-mono">{isEmbrapa ? 'Pontuação de Consenso' : 'Consensus Score'}</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-6 font-mono">{isEmbrapa ? 'Consenso Decisório' : 'Decision Consensus'}</p>
                         <div className="relative flex items-center justify-center">
-                            <div className="text-7xl font-black">{score}</div>
+                            <div className="text-7xl font-black">{realConsensus}</div>
                             <div className="absolute -inset-8 bg-cyan-400/10 blur-xl rounded-full"></div>
                         </div>
                         <div className="flex gap-2 mt-4 mb-6">
@@ -136,28 +155,28 @@ export default function PDFReportTemplate({ validation, lang }: PDFReportTemplat
                              <div className={`size-2.5 rounded-full ${score >= 40 && score < 70 ? 'bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)]' : 'bg-white/10'}`}></div>
                              <div className={`size-2.5 rounded-full ${score < 40 ? 'bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.5)]' : 'bg-white/10'}`}></div>
                         </div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 font-mono">STATUS: {score >= 70 ? (isEmbrapa ? 'VIÁVEL' : 'VIABLE') : score >= 40 ? (isEmbrapa ? 'CAUTELA' : 'CAUTION') : (isEmbrapa ? 'ALTO RISCO' : 'HIGH RISK')}</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 font-mono">SCORE: {score}/100</p>
                     </div>
 
                     <div className="p-8 glass flex flex-col justify-center">
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-8 text-center font-mono">{isEmbrapa ? 'Diagnósticos' : 'Diagnostics'}</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-8 text-center font-mono">{isEmbrapa ? 'Diagnósticos Metrológicos' : 'Metrological Diagnostics'}</p>
                         <div className="space-y-6">
                             <div>
                                 <div className="flex justify-between text-[10px] font-black mb-2 tracking-widest font-mono">
-                                    <span className="text-slate-400">{isEmbrapa ? 'CONFIANÇA DA MISSÃO' : 'MISSION CONFIDENCE'}</span>
-                                    <span className="text-cyan-400">{score}%</span>
+                                    <span className="text-slate-400">{isEmbrapa ? 'ALINHAMENTO NEURAL' : 'NEURAL ALIGNMENT'}</span>
+                                    <span className="text-cyan-400">{realConsensus}%</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-cyan-500" style={{ width: `${score}%` }}></div>
+                                    <div className="h-full bg-cyan-500" style={{ width: `${realConsensus}%` }}></div>
                                 </div>
                             </div>
                             <div>
                                 <div className="flex justify-between text-[10px] font-black mb-2 tracking-widest font-mono">
                                     <span className="text-slate-400">VALUE AT RISK (VaR)</span>
-                                    <span className="text-red-500">{calculateVaR(score)}</span>
+                                    <span className="text-red-500">{varDisplay}</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-red-500" style={{ width: `${100 - score}%` }}></div>
+                                    <div className="h-full bg-red-500" style={{ width: `${varValue}%` }}></div>
                                 </div>
                             </div>
                         </div>
