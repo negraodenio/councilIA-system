@@ -30,11 +30,19 @@ export class CouncilIAEngine {
     const r3 = await executeRound3(input.proposal, r2, input.ragDocuments, isEmbrapa, onEvent);
 
     // --- FINAL JUDGE: VERDICT & TRUTH SYNTHESIS ---
+    if (onEvent) {
+      await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '⚖️ Juiz v7.3.1 Iniciando Veredito Final...' } });
+    }
+    
     const finalVerdict = await this.judge.execute(
       [r1, r2, r3], 
       input,
       onEvent
     );
+
+    if (onEvent) {
+      await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '✅ Veredito Concluído. Gerando Relatório...' } });
+    }
 
     // Ensure metadata is correctly passed for UI validation (Truth-First)
     finalVerdict.metadata = {

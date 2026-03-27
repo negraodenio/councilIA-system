@@ -4,6 +4,7 @@ import { addEvent } from '@/lib/council/events';
 import { redactPII } from '@/lib/privacy/redact';
 import { apiOk, apiError } from '@/lib/api/error';
 import OpenAI from "openai";
+import { embedMistralCached } from '@/lib/embeddings/mistral';
 import { CouncilIAEngine } from '@/services/councilia/engine';
 import { PERSONA_PROMPTS_V3_0, CONFLICT_MATRIX_V3_0 } from './prompts_v3_0';
 import { PERSONA_PROMPTS_EMBRAPA, EMBRAPA_CONFLICT_MATRIX, PERSONA_NAMES_EMBRAPA, EMBRAPA_GLOBAL_LAYER, EMBRAPA_ROUNDS, EMBRAPA_JUDGE_PROTOCOL, EMBRAPA_NARRATIVE } from './prompts_embrapa';
@@ -322,6 +323,30 @@ export async function POST(req: Request) {
         const config = getCouncilConfig(region, sensitivity);
         const personas = Object.values(councilConfig.personas);
 
+        // --- RAG RETRIEVAL (v7.3.1) ---
+        let ragDocs: any[] = [];
+        try {
+            await addEvent(supabase, runId, 'system', null, { msg: '🔍 Recuperando Contexto Científico (RAG)...' });
+            const [embedding] = await embedMistralCached([ideaRedacted || '']);
+            const { data: matches, error: rpcError } = await supabase.rpc('match_code_chunks', {
+                repo_filter: isEmbrapa ? 'embrapa_poc_2026' : 'general',
+                query_embedding: embedding,
+                match_threshold: 0.3,
+                match_count: 5
+            });
+
+            if (!rpcError && matches) {
+                ragDocs = matches.map((m: any) => ({
+                    id: crypto.randomUUID(),
+                    content: m.content || m.code || '',
+                    source: m.file_path || m.source || 'Conhecimento Embrapa',
+                    sourceType: 'scientific',
+                    confidence: 'high'
+                }));
+                console.log(`[Worker] RAG retrieved ${ragDocs.length} documents.`);
+            }
+        } catch (err) { console.error('[Worker] RAG error:', err); }
+
         await addEvent(supabase, runId, 'system', null, { msg: '🔄 CouncilIA v7.3.1 Engine Initializing...' });
 
         // --- NEW v7.3.1 ENGINE EXECUTION ---
@@ -331,7 +356,7 @@ export async function POST(req: Request) {
             proposal: ideaRedacted,
             domain: isEmbrapa ? 'agro' : 'general',
             jurisdiction: 'BR',
-            ragDocuments: [], 
+            ragDocuments: ragDocs, 
             metadata: {
                 userId: user_id,
                 organizationId: tenant_id,
