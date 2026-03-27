@@ -169,12 +169,14 @@ export class JudgeService {
 
   private generateMetadata(input: CouncilIAInput, duration: number): any {
     return {
-      sessionId: crypto.randomUUID(),
+      sessionId: input.metadata?.sessionId || crypto.randomUUID(),
       timestamp: new Date().toISOString(),
       protocolVersion: '7.3.1',
       executionTimeMs: duration,
       complianceFlags: [input.jurisdiction === 'BR' ? 'LGPD_CONSENT_VALID' : 'GDPR_LAWFUL_BASIS'],
-      retentionUntil: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString()
+      retentionUntil: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+      domain: input.domain,
+      is_embrapa: input.domain === 'agro' || (input as any).is_embrapa
     };
   }
 
@@ -182,7 +184,10 @@ export class JudgeService {
     return {
       round1: rounds[0] || {},
       round2: rounds[1] || {},
-      round3: rounds[2] || {}
+      round3: rounds[2] || {},
+      round4: rounds[3] || undefined,
+      round5: rounds[4] || undefined,
+      round6: rounds[5] || undefined,
     };
   }
 }

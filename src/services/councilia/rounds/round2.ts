@@ -1,32 +1,52 @@
 /**
- * Round 2: Antithesis
- * Fixed-pair adversarial attack protocol
+ * Round 2: Antithesis (v7.3.1)
+ * Adversarial cross-examination
  */
 
 import { RoundResult, PersonaResponse } from '../types';
+import OpenAI from 'openai';
+import { getSystemPrompt } from '../prompts';
 
-export async function executeRound2(proposal: string, r1: RoundResult, docs: any[]): Promise<RoundResult> {
-  const responses: PersonaResponse[] = [];
+const PERSONAS = [
+  { id: 'visionary', name: 'Visionário / Inovação' },
+  { id: 'technologist', name: 'Especialista Técnico / Cientista' },
+  { id: 'devil', name: 'Auditor de Riscos / Crítico' },
+  { id: 'marketeer', name: 'Adoção de Mercado / Operador' },
+  { id: 'ethicist', name: 'Estrategista Regulatório / Ética' },
+  { id: 'financier', name: 'Analista Financeiro / ROI' }
+];
 
-  // Logic: Pair 1: Technical Architect (r1[0]) vs Field Operator (r1[3])
-  // Logic: Pair 2: Regulatory (r1[1]) vs Economic (r1[2])
+export async function executeRound2(
+  proposal: string, 
+  prevRound: RoundResult,
+  docs: any[], 
+  isEmbrapa: boolean = false
+): Promise<RoundResult> {
+  const openai = new OpenAI();
+  const transcript = prevRound.responses.map(r => `[${r.persona}]: ${r.analysis}`).join('\n\n');
   
-  // Here we simulate the adversarial logic where agents challenge each other's points
-  const attackerPairs = [
-    { attacker: 'Technical Architect', target: 'Practicality', focus: 'Technical limitations causing field failure' },
-    { attacker: 'Field Operator', target: 'Technical', focus: 'Complexity causing user abandonment' },
-    { attacker: 'Regulatory Specialist', target: 'Economic', focus: 'Fines and non-compliance destroying ROI' }
-  ];
+  const responses: PersonaResponse[] = await Promise.all(PERSONAS.map(async (p) => {
+    const systemPrompt = getSystemPrompt(2, p.id, isEmbrapa);
+    const userPrompt = `PROPOSTA: ${proposal}\n\nRESULTADOS DA RODADA 1:\n${transcript}`;
 
-  for (const p of attackerPairs) {
-    responses.push({
-      persona: p.attacker,
-      analysis: `Adversarial attack on ${p.target}: ${p.focus}...`,
-      score: 75,
-      unrefuted_risks: [`High risk of ${p.target} failure identified during attack`],
-      kill_condition_triggered: false
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      temperature: 0.5
     });
-  }
+
+    const text = response.choices[0].message.content || 'Erro na deliberação.';
+    return {
+      persona: p.name,
+      analysis: text,
+      score: 50, // Scores are refined in Round 3
+      unrefuted_risks: [],
+      kill_condition_triggered: false
+    };
+  }));
 
   return { round: 2, responses };
 }

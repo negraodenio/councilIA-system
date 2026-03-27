@@ -321,95 +321,44 @@ export async function POST(req: Request) {
         const config = getCouncilConfig(region, sensitivity);
         const personas = Object.values(councilConfig.personas);
 
-        // Round 1
-        const round1Results = await Promise.all(personas.map(async (p) => {
-            const assigned = config.assign[p.id as keyof typeof config.assign];
-            const out = await callModel(assigned, [{ role: 'system', content: buildRound1Prompt(p, lang, ideaRedacted, isEmbrapa) }, { role: 'user', content: ideaRedacted }], { zdr: config.judge.zdr });
-            const text = extractText(out, '');
-            const pName = isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
-            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r1', round: 1, persona: pName, emoji: p.emoji });
-            return { id: p.id, emoji: p.emoji, name: pName, text };
-        }));
+        // --- NEW v7.3.1 ENGINE EXECUTION ---
+        const engine = new (await import('@/services/councilia/engine')).CouncilIAEngine();
+        
+        const input: any = {
+            proposal: ideaRedacted,
+            domain: isEmbrapa ? 'agro' : 'general',
+            jurisdiction: 'BR',
+            ragDocuments: [], 
+            metadata: {
+                userId: user_id,
+                organizationId: tenant_id,
+                sessionId: runId,
+                consent: {
+                    consentId: 'LGPD-AUTO-POC',
+                    purposes: ['DECISION_ANALYSIS', 'AUDIT_TRAIL'] as any[],
+                    grantedAt: new Date().toISOString()
+                }
+            }
+        };
 
-        // Round 2
-        const transcriptR1 = round1Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n');
-        const round2Results = await Promise.all(personas.map(async (p) => {
-            const assigned = config.assign[p.id as keyof typeof config.assign];
-            const out = await callModel(assigned, [{ role: 'system', content: buildRound2AttackPrompt(p, lang, ideaRedacted, isEmbrapa) }, { role: 'user', content: transcriptR1 }], { zdr: config.judge.zdr });
-            const text = extractText(out, '');
-            const pName = isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
-            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r2', round: 2, persona: pName, emoji: p.emoji });
-            return { id: p.id, emoji: p.emoji, name: pName, text };
-        }));
+        const result = await engine.execute(input);
 
-        // Round 3
-        const transcriptR2 = round2Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n');
-        const round3Results = await Promise.all(personas.map(async (p) => {
-            const assigned = config.assign[p.id as keyof typeof config.assign];
-            const out = await callModel(assigned, [{ role: 'system', content: buildRound3DefensePrompt(p, lang, ideaRedacted, isEmbrapa) }, { role: 'user', content: transcriptR2 }], { zdr: config.judge.zdr });
-            const text = extractText(out, '');
-            const pName = isEmbrapa ? PERSONA_NAMES_EMBRAPA[p.id] : p.name;
-            await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r3', round: 3, persona: pName, emoji: p.emoji });
-            return { id: p.id, emoji: p.emoji, name: pName, text };
-        }));
-
-        // Extra Rounds
-        let transcriptExtra = "";
-        let round4Results: any[] = [];
-        let round5Results: any[] = [];
-        let round6Results: any[] = [];
-
-        if (isEmbrapa) {
-            const transcriptR3 = round3Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n');
-            round4Results = await Promise.all(personas.map(async (p) => {
-                const out = await callModel(config.assign[p.id as keyof typeof config.assign], [{ role: 'system', content: buildRound4ConsensusPrompt(p, lang, true) }, { role: 'user', content: transcriptR3 }], { zdr: config.judge.zdr });
-                const text = extractText(out, '');
-                await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r4', round: 4, persona: PERSONA_NAMES_EMBRAPA[p.id], emoji: p.emoji });
-                return { id: p.id, name: PERSONA_NAMES_EMBRAPA[p.id], emoji: p.emoji, text };
-            }));
-            const transcriptR4 = round4Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n');
-            round5Results = await Promise.all(personas.map(async (p) => {
-                const out = await callModel(config.assign[p.id as keyof typeof config.assign], [{ role: 'system', content: buildRound5ScenarioPrompt(p, lang, true) }, { role: 'user', content: transcriptR4 }], { zdr: config.judge.zdr });
-                const text = extractText(out, '');
-                await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r5', round: 5, persona: PERSONA_NAMES_EMBRAPA[p.id], emoji: p.emoji });
-                return { id: p.id, name: PERSONA_NAMES_EMBRAPA[p.id], emoji: p.emoji, text };
-            }));
-            const transcriptR5 = round5Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n');
-            round6Results = await Promise.all(personas.map(async (p) => {
-                const out = await callModel(config.assign[p.id as keyof typeof config.assign], [{ role: 'system', content: buildRound6ExecutionPrompt(p, lang, true) }, { role: 'user', content: transcriptR5 }], { zdr: config.judge.zdr });
-                const text = extractText(out, '');
-                await addEvent(supabase, runId, 'model_msg', p.id, { text, phase: 'r6', round: 6, persona: PERSONA_NAMES_EMBRAPA[p.id], emoji: p.emoji });
-                return { id: p.id, name: PERSONA_NAMES_EMBRAPA[p.id], emoji: p.emoji, text };
-            }));
-            transcriptExtra = `\n\n=== R4-R6 EXECUTION ===\n${round6Results.map(r => `[${r.name}]: ${r.text}`).join('\n')}`;
-        }
-
-        // Judge
-        const fullTranscript = `=== Swarm Deliberation ===\n${transcriptR1}\n\n${transcriptR2}\n\n${round3Results.map(r => `[${r.name}]: ${r.text}`).join('\n\n')}${transcriptExtra}`;
-        const judgeOut = await callModel({ provider: 'openrouter', model: config.judge.primary }, [{ role: 'system', content: buildJudgePrompt(lang, ideaRedacted, isEmbrapa) }, { role: 'user', content: fullTranscript }], { zdr: config.judge.zdr, maxTokens: 2000, temperature: 0.2 });
-        const judgeText = extractText(judgeOut, 'Judge error');
-        const scoreString = judgeText.match(/(\d{1,3})\/100/)?.[1];
-        const score = scoreString ? Number(scoreString) : extractScoresFromResults(round3Results);
-
-        await addEvent(supabase, runId, 'judge_note', 'Auditores Embrapa', { text: judgeText, type: 'final_verdict' });
+        // --- PERSISTENCE (v7.3.1 Compatible) ---
         await supabase.from('validations').update({ 
             status: 'complete', 
-            consensus_score: Number(score), 
-            full_result: { 
-                lang, 
-                protocol: isEmbrapa ? 'v5.0_ELITE' : 'v3.0', 
-                judge: judgeText, 
-                round1: round1Results, 
-                round2: round2Results, 
-                round3: round3Results,
-                round4: round4Results,
-                round5: round5Results,
-                round6: round6Results,
-                is_embrapa: isEmbrapa 
-            } 
+            consensus_score: result.executiveVerdict.score, 
+            full_result: {
+                ...result,
+                is_embrapa: isEmbrapa,
+                protocol: 'v7.3.1'
+            }
         }).eq('id', validationId);
+
         await supabase.from('debate_runs').update({ status: 'complete' }).eq('id', runId);
 
-        return apiOk({ runId, validationId, score });
-    } catch (error: any) { console.error('[Worker] Fatal:', error); return apiError(error.message, 500); }
+        return apiOk({ runId, validationId, score: result.executiveVerdict.score });
+    } catch (error: any) { 
+        console.error('[Worker] Fatal v7.3.1:', error); 
+        return apiError(error.message, 500);
+    }
 }

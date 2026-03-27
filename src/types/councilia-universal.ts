@@ -192,6 +192,8 @@ export interface OutputMetadata {
   executionTimeMs: number;
   complianceFlags: string[];
   retentionUntil: string;
+  domain?: CouncilDomain;
+  is_embrapa?: boolean;
 }
 
 export interface ExecutiveVerdict {
@@ -295,4 +297,7 @@ export interface RoundTranscript {
   round1: any;
   round2: any;
   round3: any;
+  round4?: any;
+  round5?: any;
+  round6?: any;
 }
