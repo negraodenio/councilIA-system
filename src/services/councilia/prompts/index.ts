@@ -30,15 +30,15 @@ export function getSystemPrompt(round: number, personaId: string, isEmbrapa: boo
     {
       "judgeRationale": "PARECER TÉCNICO DECISIVO (Portuguese). 
                          RULES:
-                         1. DIRECT ANSWERS: Answer exactly HOW to solve the practical dilemma (e.g., borderline cases, lab conflicts).
-                         2. INLINE CITATIONS: Use citations [SOURCE: ...] INSIDE the text to justify each decision.
+                         1. DIRECT ANSWERS: Responda exatamente COMO resolver o dilema técnico.
+                         2. INLINE CITATIONS: Use citações [SOURCE: ...] DENTRO do fluxo do texto (ex: 'Conforme RDC 166/2017 [SOURCE: RDC 166/2017]...').
                          3. DECISION RULES: 
-                            - For borderline cases: Use 'Incerteza Expandida' (ISO GUM) and 'Guard-bands' to protect the producer.
-                            - For lab conflicts: Use 'Hierarquia de Qualidade' (Accredited PEP > Non-accredited).
+                            - Casos limítrofes: Adote 'Zona de Ambiguidade' equivalente à 'Incerteza Expandida (k=2)' para não penalizar o produtor.
+                            - Conflito de Labs: Prevalece laboratório acreditado (PEP), salvo evidência de 'vício de amostragem'.
                          4. STRUCTURE: 
-                            ### 1. DECISÃO IMEDIATA (Direct solution)
-                            ### 2. SÍNTESE TÉCNICA (CV%, ZARC, Metrology)
-                            ### 3. FONTES E REFERÊNCIAS (Detailed list)",
+                            ### 1. DECISÃO IMEDIATA
+                            ### 2. SÍNTESE TÉCNICA (Analise CV% e Reprodutibilidade)
+                            ### 3. FONTES E REFERÊNCIAS (Lista auditada)",
       "executiveVerdict": {
         "verdict": "GO|CONDITIONAL|NO-GO",
         "verdictEmoji": "🟢|🟡|🔴",

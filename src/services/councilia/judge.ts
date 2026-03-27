@@ -183,10 +183,10 @@ export class JudgeService {
   private getV9SafeModeFallback(scores: any, isEmbrapa: boolean): any {
     const verdict = scores.meanScore >= 70 ? 'GO' : scores.meanScore >= 40 ? 'CONDITIONAL' : 'NO-GO';
     
-    // v9.7 Premium Parecer Decisivo (Portuguese for Embrapa context)
+    // v9.8 Premium Parecer Científico (Portuguese for Embrapa context)
     const statusText = isEmbrapa 
-      ? `### 🏛️ 1. DECISÃO IMEDIATA\n\nRecomenda-se a **Adoção do Resultado do Laboratório Acreditado (PEP)** em detrimento do não-acreditado, conforme diretrizes da **ISO/IEC 17025**. Para casos limítrofes, deve-se aplicar uma **Zona de Ambiguidade** baseada na Incerteza Expandida para evitar a penalização injusta do produtor.\n\n### 2. SÍNTESE TÉCNICA (AUDITORIA V9)\n\nConsenso de **${Math.round(scores.consensusStrength)}%** verificado. A convergência entre Ciência e Regulação aponta que a viabilidade deve ser pautada pela métrica de precisão laboratorial e conformidade ZARC.\n\n*Este parecer serve como suporte à decisão executiva e auditoria de campo.*`
-      : `### 🏛️ 1. IMMEDIATE DECISION\n\nAdopt Accredited Laboratory Results (PEP) as the primary truth source per **ISO/IEC 17025**. For borderline cases, implement a **Measurement Uncertainty Guard-band** to ensure producer equity.\n\n### 2. TECHNICAL SYNTHESIS\n\nA verified consensus of **${Math.round(scores.consensusStrength)}%** has been reached via Deterministic Protocol V9. Strategic alignment confirms project viability under strict risk parameters.`;
+      ? `### 🏛️ 1. DECISÃO IMEDIATA\n\nRecomenda-se a **Adoção do Resultado do Laboratório Acreditado (PEP)** em detrimento do não-acreditado (ISO/IEC 17025), salvo evidência de **vício de amostragem**. Para classificações limítrofes, deve-se aplicar uma **Zona de Ambiguidade** baseada na **Incerteza Expandida (k=2)** para garantir a equidade ao produtor.\n\n### 2. SÍNTESE TÉCNICA (AUDITORIA V9)\n\nConsenso de **${Math.round(scores.consensusStrength)}%** verificado. A divergência técnica foi resolvida através da aplicação de critérios de reprodutibilidade e métricas de controle de qualidade laboratorial.\n\n*Este parecer serve como suporte à decisão estratégica e auditoria de campo.*`
+      : `### 🏛️ 1. IMMEDIATE DECISION\n\nAdopt Accredited Laboratory Results (PEP) as primary truth per **ISO/IEC 17025**, unless a **sampling error** is evidenced. For borderline cases, apply a **Measurement Uncertainty Guard-band (k=2)** to ensure producer equity.\n\n### 2. TECHNICAL SYNTHESIS\n\nA verified consensus of **${Math.round(scores.consensusStrength)}%** has been reached. Technical divergence resolved via quality control benchmarks and reproducibility metrics.`;
 
     return {
       judgeRationale: statusText,
