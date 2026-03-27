@@ -98,7 +98,8 @@ export class JudgeService {
     const conflictHeatmap = r3Scores.map(p1 => 
       r3Scores.map(p2 => {
         const delta = Math.abs((p1.score || 50) - (p2.score || 50));
-        return delta > 40 ? '🔥' : delta > 20 ? '⚠️' : '✅';
+        // v9.6 Refined Thresholds for Professional Dissent
+        return delta > 15 ? '🔥' : delta > 5 ? '⚠️' : '✅';
       })
     );
 
