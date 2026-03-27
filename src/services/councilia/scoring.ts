@@ -1,45 +1,51 @@
 /**
- * Deterministic Scoring Engine v7.3.1
- * Mathematical layer for Swarm Consensus and Risk Analysis
+ * Deterministic Scoring Engine v12.0.0 (Elite Metrology)
+ * Mathematical layer for Swarm Consensus and Risk Analysis.
  */
 
 import { ScoringInput, ScoringOutput } from '@/types/councilia-universal';
 
 export function calculateAllScores(input: ScoringInput): ScoringOutput {
-  const { personaScores, evidenceDensity, unresolvedRisks } = input;
+  const { personaScores, personaIds, evidenceDensity, unresolvedRisks } = input;
   const n = personaScores.length;
+
+  // 1. Defining Persona Weights (v12.0.0 Protocol)
+  const getWeight = (id: string) => {
+    const technicalRoles = ['technologist', 'auditor', 'cientista', 'cientista_embrapa', 'especialista'];
+    return technicalRoles.some(role => id.toLowerCase().includes(role)) ? 1.5 : 1.0;
+  };
+
+  const weights = personaIds.map(id => getWeight(id));
+  const sumWeights = weights.reduce((a, b) => a + b, 0);
   
-  // 1. Mean Score (Weighted by domain)
-  const meanScore = personaScores.reduce((a, b) => a + b, 0) / n;
+  // 2. Weighted Mean Score (Elite Synthesis)
+  const weightedMean = personaScores.reduce((sum, score, i) => sum + (score * weights[i]), 0) / sumWeights;
   
-  // 2. Standard Deviation (Consensus Baseline)
-  const stdDev = Math.sqrt(
-    personaScores.reduce((sq, x) => sq + Math.pow(x - meanScore, 2), 0) / n
-  );
+  // 3. Weighted Standard Deviation (Consensus Baseline)
+  const variance = personaScores.reduce((sum, x, i) => sum + (weights[i] * Math.pow(x - weightedMean, 2)), 0) / sumWeights;
+  const stdDev = Math.sqrt(variance);
   
-  // 3. Consensus Strength (Theta)
-  // Penalty function on variance
-  const consensusStrength = Math.max(0, 100 - (stdDev * 3));
+  // 4. Consensus Strength (Theta) - Pure inverse of variability
+  const consensusStrength = Math.max(0, 100 - (stdDev * 2.8)); // Standardized for A4 range
   
-  // 4. Value at Risk (VaR)
-  // Factors: Dissent + Evidence Gap + Unresolved Risks
-  const dissentPenalty = (100 - consensusStrength) * 0.5;
-  const evidencePenalty = evidenceDensity === 'low' ? 20 : evidenceDensity === 'moderate' ? 10 : 0;
-  const riskPenalty = unresolvedRisks * 5;
+  // 5. Value at Risk (VaR)
+  const dissentPenalty = (100 - consensusStrength) * 0.4;
+  const evidencePenalty = evidenceDensity === 'low' ? 25 : evidenceDensity === 'moderate' ? 12 : 0;
+  const riskPenalty = unresolvedRisks * 6;
   
   const totalVaR = Math.min(100, dissentPenalty + evidencePenalty + riskPenalty);
   
-  // 5. Confidence Level
+  // 6. Confidence Level
   let confidence: 'HIGH' | 'MEDIUM' | 'LOW' = 'MEDIUM';
-  if (evidenceDensity === 'high' && consensusStrength > 70) confidence = 'HIGH';
+  if (evidenceDensity === 'high' && consensusStrength > 75) confidence = 'HIGH';
   if (evidenceDensity === 'low' || consensusStrength < 40) confidence = 'LOW';
 
   return {
-    consensusStrength,
+    consensusStrength: Math.round(consensusStrength),
     dissentRange: Math.max(...personaScores) - Math.min(...personaScores),
-    var: totalVaR,
+    var: Math.round(totalVaR),
     confidence,
-    meanScore,
-    stdDev
+    meanScore: Math.round(weightedMean),
+    stdDev: parseFloat(stdDev.toFixed(2))
   };
 }

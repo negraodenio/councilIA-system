@@ -119,6 +119,7 @@ export interface PersonaConfig {
 
 export interface ScoringInput {
   personaScores: number[];
+  personaIds: string[];
   evidenceDensity: EvidenceLevel;
   unresolvedRisks: number;
   validationStatus: ValidationStatus;

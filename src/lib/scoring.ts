@@ -1,5 +1,5 @@
 /**
- * CouncilIA v7.3.1 — Scoring Engine
+ * CouncilIA v12.0.0 — Scoring Engine (Elite Metrology)
  * Deterministic mathematics for consensus, dissent, and Value at Risk (VaR).
  */
 
@@ -16,211 +16,77 @@ import type {
 // CONSTANTS
 // ============================================
 
-const MAX_STDDEV = 50;                // Theoretical max (e.g., 3x0, 3x100)
-const PERSONA_COUNT = 6;              // Always 6 personas for valid deliberation
-
-// Domain-specific viability boosts (conservative thresholds)
-const DOMAIN_VIABILITY_BOOST: Record<CouncilDomain, number> = {
-  'general': 1.0,
-  'agro': 0.95,       // Conservative (climate risk)
-  'healthcare': 0.85, // Very conservative (lives at stake)
-  'finance': 0.90,    // Conservative (financial system)
-  'government': 0.95
-};
+const MAX_STDDEV = 50;
+const PERSONA_COUNT = 6;
 
 // ============================================
-// CONSENSUS CALCULATION
+// WEIGHTING ENGINE
 // ============================================
 
-/**
- * Calculates consensus strength based on:
- * 1. Uniformity (low standard deviation)
- * 2. Mean viability (higher scores = more valuable alignment)
- * 
- * GUARD: Never 100% if mean < 70 (agreement on rejection).
- */
-export function calculateConsensus(input: {
-  scores: number[];
-  domain: CouncilDomain;
-}): number {
-  validateScores(input.scores);
-  
-  const mean = calculateMean(input.scores);
-  const stdDev = calculateStdDev(input.scores, mean);
-  
-  // Normalization: 0 = all identical, 1 = maximum dispersion
-  const normalizedStd = Math.min(stdDev / MAX_STDDEV, 1);
-  
-  // Uniformity: inverse of deviation
-  const uniformity = 1 - normalizedStd;
-  
-  // Viability: boost for high means, penalty for low ones
-  const viabilityBoost = calculateViabilityBoost(mean, input.domain);
-  
-  // Base calculation
-  let consensus = uniformity * 100 * viabilityBoost;
-  
-  // ANTI-FALSE-POSITIVE GUARD
-  // If everyone agrees on rejection (mean < 70), cap consensus at 80%
-  if (mean < 70 && consensus > 80) {
-    consensus = 80;
-  }
-  
-  // If dispersion is extremely high, consensus is capped at 60%
-  if (normalizedStd > 0.5 && consensus > 60) {
-    consensus = 60;
-  }
-  
-  return Math.round(consensus);
-}
-
-/**
- * Dissent Range: difference between highest and lowest score
- */
-export function calculateDissent(scores: number[]): number {
-  validateScores(scores);
-  return Math.max(...scores) - Math.min(...scores);
+function getPersonaWeight(id: string): number {
+  const technicalRoles = ['technologist', 'auditor', 'cientista', 'cientista_embrapa', 'especialista', 'researcher'];
+  const isTechnical = technicalRoles.some(role => id.toLowerCase().includes(role));
+  return isTechnical ? 1.5 : 1.0;
 }
 
 // ============================================
-// VALUE AT RISK (VaR)
-// ============================================
-
-/**
- * Calculates critical failure probability based on:
- * - Expert dissent (misalignment)
- * - Unresolved critical risks (exposure)
- * - Evidence density (uncertainty)
- */
-export function calculateVaR(input: {
-  dissent: number;           // 0-100
-  unresolvedRisks: number;   // 0-3
-  evidenceDensity: EvidenceLevel;
-  domain?: CouncilDomain;
-}): number {
-  // Map evidence density to risk weight (less evidence = more risk)
-  const evidenceWeight = {
-    'high': 0.2,      // 20% of component
-    'moderate': 0.5,  // 50% of component
-    'low': 0.8        // 80% of component
-  }[input.evidenceDensity];
-  
-  // Component 1: Dissent risk (max 40%)
-  const dissentComponent = (input.dissent / 100) * 40;
-  
-  // Component 2: Unresolved risks (max 40%)
-  const riskComponent = (input.unresolvedRisks / 3) * 40;
-  
-  // Component 3: Evidence uncertainty (max 20%)
-  const evidenceComponent = evidenceWeight * 20;
-  
-  let varScore = dissentComponent + riskComponent + evidenceComponent;
-  
-  // Sensitivity adjustment for high-stakes domains
-  if (input.domain === 'healthcare' || input.domain === 'finance') {
-    varScore = Math.min(100, varScore * 1.15); // +15% sensitivity
-  }
-  
-  return Math.min(100, Math.round(varScore));
-}
-
-// ============================================
-// CONFIDENCE LEVEL
-// ============================================
-
-export function calculateConfidence(input: {
-  evidenceDensity: EvidenceLevel;
-  validationStatus: ValidationStatus;
-  unresolvedRisks: number;
-  consensusStrength: number;
-}): ConfidenceLevel {
-  // HIGH: Optimal conditions
-  if (
-    input.evidenceDensity === 'high' &&
-    input.validationStatus === 'complete' &&
-    input.unresolvedRisks === 0 &&
-    input.consensusStrength >= 80
-  ) {
-    return 'HIGH';
-  }
-  
-  // LOW: Critical gaps
-  if (
-    input.evidenceDensity === 'low' ||
-    input.validationStatus === 'none' ||
-    input.unresolvedRisks >= 2 ||
-    input.consensusStrength < 40
-  ) {
-    return 'LOW';
-  }
-  
-  return 'MEDIUM';
-}
-
-// ============================================
-// ORCHESTRATOR
+// CORE METRICS
 // ============================================
 
 export function calculateAllScores(input: ScoringInput): ScoringOutput {
-  const mean = calculateMean(input.personaScores);
-  const stdDev = calculateStdDev(input.personaScores, mean);
+  const { personaScores, personaIds, evidenceDensity, unresolvedRisks, domain } = input;
   
-  const consensusStrength = calculateConsensus({
-    scores: input.personaScores,
-    domain: input.domain
-  });
+  if (personaScores.length !== personaIds.length) {
+    throw new Error('Mismatched scores and persona IDs');
+  }
+
+  const weights = personaIds.map(id => getPersonaWeight(id));
+  const sumWeights = weights.reduce((a, b) => a + b, 0);
+
+  // 1. Weighted Mean
+  const weightedMean = personaScores.reduce((sum, score, i) => sum + (score * weights[i]), 0) / sumWeights;
+
+  // 2. Weighted Standard Deviation
+  const variance = personaScores.reduce((sum, x, i) => sum + (weights[i] * Math.pow(x - weightedMean, 2)), 0) / sumWeights;
+  const stdDev = Math.sqrt(variance);
+
+  // 3. Consensus Strength (Theta)
+  // Inverse of variability, calibrated for v12.0
+  const normalizedStd = Math.min(stdDev / MAX_STDDEV, 1);
+  const uniformity = 1 - normalizedStd;
   
-  const dissentRange = calculateDissent(input.personaScores);
-  
-  const varScore = calculateVaR({
-    dissent: dissentRange,
-    unresolvedRisks: input.unresolvedRisks,
-    evidenceDensity: input.evidenceDensity,
-    domain: input.domain
-  });
-  
-  const confidence = calculateConfidence({
-    evidenceDensity: input.evidenceDensity,
-    validationStatus: input.validationStatus,
-    unresolvedRisks: input.unresolvedRisks,
-    consensusStrength
-  });
-  
+  // Viability boost based on domain and mean quality
+  const viabilityMultiplier = 0.5 + (0.5 * (weightedMean / 100));
+  let consensusStrength = uniformity * 100 * viabilityMultiplier;
+
+  // Guard: Agreement on low quality is capped
+  if (weightedMean < 65 && consensusStrength > 75) {
+    consensusStrength = 75;
+  }
+
+  // 4. Value at Risk (VaR)
+  const dissentRange = Math.max(...personaScores) - Math.min(...personaScores);
+  const dissentPenalty = (dissentRange / 100) * 45;
+  const riskPenalty = (unresolvedRisks / 3) * 40;
+  const evidencePenalty = { 'high': 0, 'moderate': 10, 'low': 25 }[evidenceDensity];
+
+  let varScore = dissentPenalty + riskPenalty + evidencePenalty;
+  if (domain === 'agro') varScore *= 1.1; // Agro-specific sensitivity
+
+  // 5. Confidence Level
+  let confidence: ConfidenceLevel = 'MEDIUM';
+  if (evidenceDensity === 'high' && consensusStrength >= 75 && unresolvedRisks === 0) {
+    confidence = 'HIGH';
+  } else if (evidenceDensity === 'low' || consensusStrength < 45 || unresolvedRisks >= 2) {
+    confidence = 'LOW';
+  }
+
   return {
-    consensusStrength,
-    dissentRange,
-    var: varScore,
+    consensusStrength: Math.round(consensusStrength),
+    dissentRange: Math.round(dissentRange),
+    var: Math.min(100, Math.round(varScore)),
     confidence,
-    meanScore: Math.round(mean),
-    stdDev: Math.round(stdDev * 100) / 100
+    meanScore: Math.round(weightedMean),
+    stdDev: parseFloat(stdDev.toFixed(2))
   };
-}
-
-// ============================================
-// HELPERS
-// ============================================
-
-function validateScores(scores: number[]): void {
-  if (scores.length !== PERSONA_COUNT) {
-    throw new Error(`Exactly ${PERSONA_COUNT} persona scores required, got ${scores.length}`);
-  }
-  
-  if (scores.some(s => s < 0 || s > 100 || !Number.isFinite(s))) {
-    throw new Error('All scores must be between 0 and 100');
-  }
-}
-
-function calculateMean(scores: number[]): number {
-  return scores.reduce((a, b) => a + b, 0) / scores.length;
-}
-
-function calculateStdDev(scores: number[], mean: number): number {
-  const variance = scores.reduce((sum, s) => sum + Math.pow(s - mean, 2), 0) / scores.length;
-  return Math.sqrt(variance);
-}
-
-function calculateViabilityBoost(mean: number, domain: CouncilDomain): number {
-  const baseBoost = 0.5 + (0.5 * (mean / 100));
-  const domainMultiplier = DOMAIN_VIABILITY_BOOST[domain] || 1.0;
-  return baseBoost * domainMultiplier;
 }

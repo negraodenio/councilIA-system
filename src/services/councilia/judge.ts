@@ -34,6 +34,7 @@ export class JudgeService {
     // 2. Perform deterministic Scoring
     const scoringInput: ScoringInput = {
       personaScores: extraction.scores,
+      personaIds: extraction.personaIds,
       evidenceDensity: extraction.evidenceDensity,
       unresolvedRisks: extraction.unresolvedRisks,
       validationStatus: extraction.validationStatus,
