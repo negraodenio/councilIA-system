@@ -24,6 +24,6 @@ export default async function Page({ params }: { params: Promise<{ validationId:
         .eq('validation_id', validationId)
         .order('created_at', { ascending: false });
 
-    // 3) Passar para componente client
-    return <ConsensusReport validation={validation} patches={patches || []} />;
+    // 3) Pass para componente client
+    return <ConsensusReport validation={validation} />;
 }

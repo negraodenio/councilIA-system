@@ -1,3 +1,0 @@
-export type Database = any;
-export type Tables<T> = any;
-export type Enums<T> = any;

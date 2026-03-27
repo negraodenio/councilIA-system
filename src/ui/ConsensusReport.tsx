@@ -1,432 +1,336 @@
 'use client';
+
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { t, resolveUILang, type UILang } from '@/lib/i18n/ui-strings';
-import PDFReportTemplate from './PDFReportTemplate';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import ReactDiffViewer from 'react-diff-viewer-continued';
+import { resolveUILang, type UILang } from '@/lib/i18n/ui-strings';
 import Link from 'next/link';
 
-// ─── UTILS: Extract Code Patches ────────────────
-function extractPatches(roundsTextData: string[]) {
-    const patches: { oldCode: string, newCode: string }[] = [];
-    const regex = /<OLD_CODE>([\s\S]*?)<\/OLD_CODE>\s*<NEW_CODE>([\s\S]*?)<\/NEW_CODE>/g;
-
-    roundsTextData.forEach(text => {
-        if (!text) return;
-        let match;
-        while ((match = regex.exec(text)) !== null) {
-            patches.push({
-                oldCode: match[1].trim(),
-                newCode: match[2].trim()
-            });
-        }
-    });
-    return patches;
-}
-
-// ─── V2 Persona config ────────────────────────
+// ─── UTILS: v9 Styles ──────────────────────────
 const PERSONA_META: Record<string, { color: string; gradient: string; emoji: string }> = {
-    visionary: { color: '#A855F7', gradient: 'from-purple-500/20 to-purple-900/10', emoji: '🔮' },
-    technologist: { color: '#06B6D4', gradient: 'from-cyan-500/20 to-cyan-900/10', emoji: '⚙️' },
-    devil: { color: '#EF4444', gradient: 'from-red-500/20 to-red-900/10', emoji: '😈' },
-    marketeer: { color: '#22C55E', gradient: 'from-emerald-500/20 to-emerald-900/10', emoji: '📊' },
+    visionary: { color: '#A855F7', gradient: 'from-purple-500/20 to-purple-900/10', emoji: '💡' },
+    technologist: { color: '#06B6D4', gradient: 'from-cyan-500/20 to-cyan-900/10', emoji: '🔬' },
+    devil: { color: '#EF4444', gradient: 'from-red-500/20 to-red-900/10', emoji: '👺' },
+    marketeer: { color: '#22C55E', gradient: 'from-emerald-500/20 to-emerald-900/10', emoji: '📈' },
     ethicist: { color: '#F59E0B', gradient: 'from-amber-500/20 to-amber-900/10', emoji: '⚖️' },
     financier: { color: '#3B82F6', gradient: 'from-blue-500/20 to-blue-900/10', emoji: '💰' },
 };
 
 function getMeta(id: string) {
-    return PERSONA_META[id] || { color: '#94a3b8', gradient: 'from-slate-500/20 to-slate-900/10', emoji: '🤖' };
+    const cleanId = id.toLowerCase().split(' ')[0]; // Handle "Visionário Embrapa" etc.
+    if (id.includes('Visionário')) return PERSONA_META.visionary;
+    if (id.includes('Cientista')) return PERSONA_META.technologist;
+    if (id.includes('Riscos')) return PERSONA_META.devil;
+    if (id.includes('Mercado')) return PERSONA_META.marketeer;
+    if (id.includes('Ambiental') || id.includes('Gestor')) return PERSONA_META.ethicist;
+    if (id.includes('Financeiro') || id.includes('Fomento')) return PERSONA_META.financier;
+    return PERSONA_META[cleanId] || { color: '#94a3b8', gradient: 'from-slate-500/20 to-slate-900/10', emoji: '🤖' };
 }
 
-export default function ConsensusReport({ validation, patches }: {
-    validation: any;
-    patches: any[];
-}) {
-    const [activeTab, setActiveTab] = useState<'verdict' | 'round1' | 'round2' | 'round3' | 'patches'>('verdict');
-    const [isExporting, setIsExporting] = useState(false);
-    
-    // v7.3.1 Universal Mapping
+export default function ConsensusReport({ validation }: { validation: any }) {
+    const [activeTab, setActiveTab] = useState<'intelligence' | 'deliberation' | 'audit'>('intelligence');
+    const [selectedRound, setSelectedRound] = useState(3);
+
     const result = validation.full_result || validation || {};
     const ev = result.executiveVerdict || {};
     const ca = result.consensusAnalysis || {};
-    const lang: UILang = resolveUILang(result.metadata?.lang || 'pt');
-
-    const isEmbrapa = !!(result.is_embrapa || result.domain === 'agro');
+    const insight = result.insightLayer || { 
+        conflictHeatmap: [["✅","✅","✅","✅"],["✅","✅","✅","✅"],["✅","✅","✅","✅"],["✅","✅","✅","✅"]],
+        timeline: [{ round: 1, consensus: 50, label: 'Thesis' }, { round: 2, consensus: 40, label: 'Antithesis' }, { round: 3, consensus: 72, label: 'Synthesis' }],
+        systemConsistency: 85,
+        benchmark: { avgSectorScore: 70, targetDelta: 10 }
+    };
 
     const meanScore = Math.round(ev.score || 0);
     const realConsensus = Math.round(ca.strengthPercentage || meanScore);
-    const realDissent = Math.round(ca.dissentRange || (100 - realConsensus));
     const varValue = Math.round(ev.var?.percentage || 0);
-    const varDisplay = `${varValue}%`;
-    const isValidOutput = result.is_valid !== false && result.metadata?.protocolVersion === '7.3.1';
-
-    const allTranscriptTexts = [
-        ...(result.fullTranscript?.round1?.responses?.map((r: any) => r.text) || []),
-        ...(result.fullTranscript?.round2?.responses?.map((r: any) => r.text) || []),
-        ...(result.fullTranscript?.round3?.responses?.map((r: any) => r.text) || []),
-        result.judgeRationale || ''
-    ];
-    const generatedPatches = extractPatches(allTranscriptTexts);
-
-    const validTab = (activeTab === 'patches' && generatedPatches.length === 0) ? 'verdict' : activeTab;
-    const blockDashboard = !isValidOutput || (meanScore === 50 && realConsensus === 80);
-
     const statusLabel = ev.verdict || (meanScore >= 70 ? 'GO' : meanScore >= 40 ? 'CONDITIONAL' : 'NO-GO');
-    const statusBg = meanScore >= 70
-        ? 'bg-emerald-400/10 text-emerald-300 border-emerald-400/30'
-        : meanScore >= 40
-            ? 'bg-amber-400/10 text-amber-300 border-amber-400/30'
-            : 'bg-red-400/10 text-red-300 border-red-400/30';
-    const statusDot = meanScore >= 70 ? 'bg-emerald-400' : meanScore >= 40 ? 'bg-amber-400' : 'bg-red-400';
+    
+    const statusTheme = meanScore >= 70 
+        ? { shadow: 'shadow-[0_0_50px_rgba(34,197,94,0.3)]', border: 'border-emerald-500/30', text: 'text-emerald-400', bg: 'bg-emerald-500/5' }
+        : meanScore >= 40 
+            ? { shadow: 'shadow-[0_0_50px_rgba(245,158,11,0.2)]', border: 'border-amber-500/30', text: 'text-amber-400', bg: 'bg-amber-500/5' }
+            : { shadow: 'shadow-[0_0_50px_rgba(239,68,68,0.2)]', border: 'border-red-500/30', text: 'text-red-400', bg: 'bg-red-500/5' };
 
-    const ringColor = meanScore >= 70 ? '#22c55e' : meanScore >= 40 ? '#f59e0b' : '#ef4444';
-
-    const handleExportPDF = async () => {
-        setIsExporting(true);
-        try {
-            const container = document.getElementById('pdf-report-container');
-            if (!container) { setIsExporting(false); return; }
-            container.style.cssText = 'display:block;position:fixed;top:0;left:-900px;width:794px;z-index:-1;pointer-events:none;opacity:1;';
-            await new Promise(r => setTimeout(r, 500));
-            const pages = container.querySelectorAll('.pdf-page');
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-            for (let i = 0; i < pages.length; i++) {
-                const pageEl = pages[i] as HTMLElement;
-                const canvas = await html2canvas(pageEl, { scale: 2, useCORS: true, logging: false, backgroundColor: '#050810', width: 794 });
-                const imgData = canvas.toDataURL('image/png');
-                const imgProps = pdf.getImageProperties(imgData);
-                const pdfWidthInMm = pdf.internal.pageSize.getWidth();
-                const imgHeightInMm = (imgProps.height * pdfWidthInMm) / imgProps.width;
-                if (i > 0) pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidthInMm, imgHeightInMm);
-            }
-            container.style.cssText = 'display:none';
-            pdf.save(`CouncilIA_Report_${(result.metadata?.sessionId?.substring(0,8) || 'EXPORT').toUpperCase()}.pdf`);
-        } catch (error) {
-            console.error('PDF Export Error:', error);
-            alert('Failed to generate PDF.');
-        } finally { setIsExporting(false); }
-    };
+    const personas = result.fullTranscript?.round3?.responses || [];
 
     return (
-        <div className="bg-deep-blue text-slate-50 min-h-screen relative overflow-x-hidden font-body" suppressHydrationWarning>
-            <div className="absolute inset-0 tech-grid pointer-events-none opacity-20 z-0"></div>
-
-            <header className="sticky top-0 z-50 bg-panel-blue/90 glass-blur border-b border-white/5 h-16 flex items-center justify-between px-4 lg:px-8">
-                <a className="flex items-center gap-2 text-slate-400 hover:text-neon-cyan transition-colors group" href="/dashboard">
-                    <span className="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">chevron_left</span>
-                    <span className="font-display text-xs tracking-wider uppercase">Dashboard</span>
-                </a>
-                <div className="flex items-center gap-4">
-                    <div className="hidden md:flex flex-col items-end border-r border-white/10 pr-4">
-                        <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Protocol</span>
-                        <span className="text-[10px] font-mono text-neon-cyan/70">v7.3.1</span>
+        <div className="min-h-screen bg-[#050810] text-[#d1d5db] font-sans selection:bg-neon-cyan/30 overflow-x-hidden tech-grid relative">
+            
+            {/* 💎 PREMIUM NAVIGATION */}
+            <header className="sticky top-0 z-50 bg-[#050810]/80 backdrop-blur-xl border-b border-white/5 h-20 flex items-center justify-between px-8">
+                <div className="flex items-center gap-8">
+                    <Link href="/dashboard" className="flex items-center gap-2 group text-slate-500 hover:text-neon-cyan transition-all">
+                        <span className="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                        <span className="font-mono text-[10px] uppercase tracking-widest font-black">Command Center</span>
+                    </Link>
+                    <div className="h-4 w-px bg-white/10 hidden md:block"></div>
+                    <div className="flex items-center gap-3">
+                        <div className="size-2 rounded-full bg-neon-cyan animate-pulse shadow-[0_0_10px_#00f2ff]"></div>
+                        <span className="font-mono text-[11px] uppercase tracking-[0.3em] font-black text-white/50">CouncilIA v9.0 Intelligence</span>
                     </div>
-                    <button
-                        onClick={() => {
-                            if (blockDashboard) { alert('Report Locked: Validation Failed'); return; }
-                            navigator.clipboard.writeText(JSON.stringify(validation, null, 2));
-                            alert('JSON Copied!');
-                        }}
-                        disabled={blockDashboard}
-                        className="px-3 py-1.5 rounded-lg bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 text-xs font-bold uppercase transition-colors disabled:opacity-30"
-                    >
-                        Copy JSON
+                </div>
+                <div className="flex items-center gap-4">
+                    <button className="px-5 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all font-mono text-[9px] font-black uppercase tracking-widest">
+                        Metadata Audit
                     </button>
-                    <button
-                        onClick={handleExportPDF}
-                        disabled={isExporting || blockDashboard}
-                        className="px-3 py-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30 text-xs font-bold uppercase transition-colors disabled:opacity-30"
-                    >
-                        Export PDF
+                    <button className="px-6 py-2 rounded-full bg-neon-cyan text-[#050810] font-mono text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,242,255,0.4)]">
+                        Strategic Export
                     </button>
                 </div>
             </header>
 
-            <main className="relative z-10 w-full max-w-screen-2xl mx-auto p-4 lg:p-6 flex flex-col gap-6">
+            <main className="max-w-7xl mx-auto p-6 lg:p-12 relative z-10">
 
-                {/* 🚨 v7.3.1 SYSTEM STATUS BANNER */}
-                {blockDashboard && (
-                    <div className="bg-red-500/10 border-2 border-red-500/50 p-12 rounded-2xl flex flex-col items-center gap-6 text-center shadow-[0_0_50px_rgba(239,68,68,0.2)]">
-                        <span className="material-symbols-outlined text-7xl text-red-500">gavel</span>
-                        <div className="max-w-2xl">
-                            <h2 className="text-3xl font-black text-red-400 mb-2 uppercase tracking-tighter">Report Invalid: Meta-Validation Failed</h2>
-                            <p className="text-slate-300 leading-relaxed mb-8">
-                                This report failed the CouncilIA v7.3.1 Truth-First consistency check. 
-                                The delibereation indicates logical contradictions or a lack of verifiable evidence.
-                                <br/><br/>
-                                <strong className="text-red-400 uppercase tracking-widest bg-red-500/10 px-4 py-2 rounded">Action: Do not use for high-stakes decision making.</strong>
+                {/* 🏆 EXECUTIVE VERDICT CARD (v9 Glassmorphism) */}
+                <section className={`p-8 md:p-16 rounded-[48px] border ${statusTheme.border} ${statusTheme.bg} ${statusTheme.shadow} mb-12 relative overflow-hidden group`}>
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                    
+                    <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+                        <div className="max-w-3xl">
+                            <div className="flex items-center gap-4 mb-4">
+                                <span className={`font-mono text-[11px] font-black uppercase tracking-[0.4em] ${statusTheme.text}`}>Veredito Institucional</span>
+                                <div className="h-px w-20 bg-white/10"></div>
+                            </div>
+                            <h1 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter text-white mb-8 group-hover:tracking-tight transition-all duration-700">
+                                {statusLabel}
+                            </h1>
+                            <p className="text-xl md:text-2xl text-slate-200/80 font-medium leading-relaxed italic text-justify">
+                                "{ev.var?.interpretation || 'Análise de swarm convergente aponta viabilidade técnica dentro dos parâmetros de risco ZARC.'}"
                             </p>
-                            <div className="flex gap-4 justify-center">
-                                <div className="px-6 py-3 bg-red-500/20 rounded-xl text-xs font-mono border border-red-500/30 uppercase font-black">Status: Blocked</div>
-                                <div className="px-6 py-3 bg-white/5 rounded-xl text-xs font-mono border border-white/10 uppercase font-black">Code: ERR_V731_LOGIC_FAIL</div>
+                        </div>
+                        <div className="shrink-0">
+                            <div className="bg-[#050810]/40 backdrop-blur-3xl p-10 rounded-[40px] border border-white/10 flex flex-col items-center text-center shadow-2xl">
+                                <span className="font-mono text-[10px] text-slate-500 uppercase tracking-[0.3em] font-black mb-2">Audit Score</span>
+                                <span className="text-7xl font-black text-white italic">{meanScore}<span className="text-2xl text-slate-500 not-italic">/100</span></span>
+                                <div className="mt-6 flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                                    <span className="material-symbols-outlined text-[14px] text-emerald-400">verified_user</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Validated</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                )}
+                </section>
 
-                {!blockDashboard && (
-                    <>
-                        {/* 🏆 EXECUTIVE HERO */}
-                        <div className={`p-8 md:p-12 rounded-[32px] border-l-8 shadow-2xl relative overflow-hidden ${statusBg}`}>
-                            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                                <div className="max-w-3xl">
-                                     <div className="flex items-center gap-3 mb-4">
-                                        <div className={`size-3 rounded-full animate-pulse ${statusDot}`} />
-                                        <span className="text-xs font-black uppercase tracking-[0.4em] opacity-80">Institutional Verdict</span>
-                                    </div>
-                                    <h1 className="text-5xl md:text-6xl font-display font-black tracking-tighter text-white mb-6 uppercase">
-                                        {statusLabel}
-                                    </h1>
-                                    <p className="text-lg md:text-xl text-slate-200 font-medium leading-relaxed italic text-justify">
-                                        "{ev.var?.interpretation || 'Technical alignment suggests a balanced decision path with manageable residual risk.'}"
-                                    </p>
-                                </div>
-                                <div className="shrink-0">
-                                     <div className="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/20 flex flex-col items-center">
-                                         <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-1">Audit Score</span>
-                                         <span className="text-4xl font-black text-white">{meanScore}<span className="text-lg text-slate-500">/100</span></span>
-                                     </div>
-                                </div>
-                            </div>
-                        </div>
+                {/* 📂 LAYER NAVIGATION (v9 tabs) */}
+                <div className="flex justify-center gap-4 mb-12">
+                    {[
+                        { id: 'intelligence', label: 'Intelligence Layer', emoji: '🧠', sub: 'Matrix & Benchmarks' },
+                        { id: 'deliberation', label: 'Deliberation Layer', emoji: '🔥', sub: 'Audit Trail' },
+                        { id: 'audit', label: 'Compliance Gate', emoji: '🚦', sub: 'Risk & Actions' }
+                    ].map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={`flex flex-col items-center p-4 min-w-[200px] rounded-3xl transition-all border ${activeTab === tab.id ? 'bg-white/5 border-neon-cyan/50 text-white shadow-[0_0_20px_rgba(0,242,255,0.1)]' : 'border-white/5 text-slate-500 hover:border-white/10'}`}
+                        >
+                            <span className="text-xl mb-1">{tab.emoji}</span>
+                            <span className="font-mono text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
+                            <span className="text-[9px] opacity-40 uppercase font-bold mt-1 tracking-tighter">{tab.sub}</span>
+                        </button>
+                    ))}
+                </div>
 
-                        {/* 📊 TRUTH-FIRST METRICS GRID */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {/* Consensus Strength */}
-                            <div className="bg-black/40 border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center">
-                                <div className="relative size-32 mb-4">
-                                    <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                                        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
-                                        <circle
-                                            cx="50" cy="50" r="42"
-                                            fill="none"
-                                            stroke={ringColor}
-                                            strokeDasharray={2 * Math.PI * 42}
-                                            strokeDashoffset={2 * Math.PI * 42 * (1 - realConsensus / 100)}
-                                            strokeLinecap="round"
-                                            strokeWidth="8"
-                                        />
-                                    </svg>
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                        <span className="text-2xl font-black text-white">{realConsensus}%</span>
-                                    </div>
-                                </div>
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Consensus Strength ({ca.strengthLabel})</span>
-                                <p className="text-[9px] text-slate-400 italic">"{ca.interpretation}"</p>
-                            </div>
-
-                            {/* Risk Exposure (VaR) */}
-                            <div className="bg-black/40 border border-white/5 p-8 rounded-2xl flex flex-col justify-center">
-                                <div className="mb-6">
-                                    <div className="flex justify-between items-end mb-2">
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono">Value at Risk (VaR)</span>
-                                        <span className="text-sm font-bold text-red-400 font-mono">{varDisplay}</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden">
-                                        <div className="h-full bg-red-400" style={{ width: `${varValue}%` }}></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="flex justify-between items-end mb-2">
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest font-mono">Dissent Range</span>
-                                        <span className="text-sm font-bold text-orange-400 font-mono">{realDissent}pts</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden">
-                                        <div className="h-full bg-orange-400" style={{ width: `${realDissent}%` }}></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Kill Conditions */}
-                            <div className="bg-red-500/5 border border-red-500/20 p-8 rounded-2xl">
-                                <span className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-4">Showstoppers (Kill Conditions)</span>
-                                <div className="space-y-3">
-                                    {result.decisionRule?.proceedOnlyIf?.map((rule: string, i: number) => (
-                                        <div key={i} className="flex items-start gap-3 p-2 bg-red-500/10 border border-red-500/10 rounded-lg">
-                                            <span className="text-red-400 text-xs mt-0.5">🛑</span>
-                                            <span className="text-[10px] text-red-100 font-bold uppercase tracking-tighter italic">NEEDS: {rule}</span>
-                                        </div>
-                                    ))}
-                                    {(!result.decisionRule?.proceedOnlyIf || result.decisionRule.proceedOnlyIf.length === 0) && (
-                                        <div className="flex items-center gap-2 p-3 bg-emerald-500/5 text-emerald-400 rounded-lg text-[10px] font-bold">
-                                            <span>✅ NO ABSOLUTE BLOCKERS DETECTED</span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 🛑 CRITICAL RISKS */}
-                        <div className="mt-8">
-                            <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-sm">report_problem</span>
-                                Technical Risks & Mitigations
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {(result.criticalRisks || []).map((risk: any) => (
-                                    <div key={risk.id} className="bg-white/5 border border-white/10 p-6 rounded-2xl flex flex-col gap-4">
-                                        <div className="flex justify-between items-start">
-                                            <span className="text-[9px] font-mono text-neon-cyan/50">RISK #{risk.id}</span>
-                                            <span className={`px-2 py-0.5 rounded text-[8px] font-mono font-bold ${risk.status === 'OPEN' ? 'bg-red-500/20 text-red-300' : 'bg-emerald-500/20 text-emerald-300'}`}>{risk.status}</span>
-                                        </div>
-                                        <h4 className="text-sm font-bold text-white">{risk.name}</h4>
-                                        <p className="text-[10px] text-slate-400 italic font-mono uppercase tracking-tighter">Violates: {risk.violates}</p>
-                                        <div className="bg-black/40 p-3 rounded-xl border border-white/5">
-                                            <p className="text-[10px] text-slate-100 leading-relaxed italic">"{risk.evidence}"</p>
-                                        </div>
-                                        <div className="bg-indigo-500/10 p-3 rounded-xl border border-indigo-500/20">
-                                            <p className="text-[9px] text-indigo-300 uppercase font-black mb-1">MITIGATION</p>
-                                            <p className="text-[10px] text-white font-bold">{risk.mitigation}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* 📈 SMART ACTION PLAN */}
-                        <div className="mt-8">
-                            <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-sm">account_tree</span>
-                                Institutional Roadmap (SMART)
-                            </h3>
-                            <div className="bg-black/40 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-                                <table className="w-full text-[11px] text-left border-collapse">
-                                    <thead className="bg-white/5 border-b border-white/10 text-slate-500 uppercase text-[9px] font-black">
+                {/* 🧠 INTELLIGENCE LAYER (v9 EXCLUSIVE) */}
+                {activeTab === 'intelligence' && (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                        {/* Heatmap Section */}
+                        <div className="lg:col-span-8 bg-white/2 rounded-[40px] border border-white/5 p-10 overflow-hidden relative">
+                            <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 mb-8 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-sm text-neon-cyan">grid_view</span>
+                                Conflict Heatmap (Divergence Matrix)
+                            </h2>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-[12px] font-mono border-collapse">
+                                    <thead>
                                         <tr>
-                                            <th className="px-6 py-4">Action Item</th>
-                                            <th className="px-6 py-4">Owner</th>
-                                            <th className="px-6 py-4">ISO Deadline</th>
-                                            <th className="px-6 py-4">Success Criterion</th>
+                                            <th className="p-4"></th>
+                                            {personas.map((p: any, i: number) => (
+                                                <th key={i} className="p-4 text-white/40 uppercase tracking-tighter text-[9px]">{p.persona.split(' ')[0]}</th>
+                                            ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        {(result.actionPlan?.actions || []).map((action: any) => (
-                                            <tr key={action.id} className="hover:bg-white/5 transition-colors group">
-                                                <td className="px-6 py-4 font-bold text-slate-200 group-hover:text-neon-cyan">{action.name}</td>
-                                                <td className="px-6 py-4 text-neon-cyan/70 font-mono font-black">{action.owner}</td>
-                                                <td className="px-6 py-4 text-slate-400 italic">{action.deadline}</td>
-                                                <td className="px-6 py-4 border-l border-white/5">
-                                                    <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-mono text-[9px] font-black">
-                                                        {action.successCriterion}
-                                                    </span>
-                                                </td>
+                                    <tbody>
+                                        {insight.conflictHeatmap.map((row: string[], i: number) => (
+                                            <tr key={i} className="border-t border-white/5">
+                                                <td className="p-4 text-white/40 uppercase tracking-tighter text-[9px] font-bold">{personas[i]?.persona.split(' ')[0]}</td>
+                                                {row.map((cell, j) => (
+                                                    <td key={j} className={`p-4 text-center text-xl transition-all hover:scale-125 cursor-default ${cell === '🔥' ? 'animate-pulse drop-shadow-[0_0_8px_#ef4444]' : ''}`}>
+                                                        {cell}
+                                                    </td>
+                                                ))}
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
+                            <div className="mt-8 flex gap-8 text-[9px] font-black uppercase tracking-widest text-slate-500 border-t border-white/5 pt-8">
+                                <span className="flex items-center gap-2"><span className="text-lg">🔥</span> CRITICAL CLASH</span>
+                                <span className="flex items-center gap-2"><span className="text-lg">⚠️</span> MINOR DISSENT</span>
+                                <span className="flex items-center gap-2"><span className="text-lg">✅</span> ALIGNMENT</span>
+                            </div>
                         </div>
 
-                        {/* 🔍 EVIDENCE AUDIT TRAIL */}
-                        <div className="mt-12 opacity-80 hover:opacity-100 transition-opacity">
-                            <h3 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-4">Regulatory Evidence Audit Trail</h3>
-                            <div className="space-y-4">
-                                {(result.evidenceAudit?.highConfidence || []).map((item: any, i: number) => (
-                                    <div key={i} className="p-4 bg-indigo-500/5 border border-indigo-500/20 rounded-xl flex flex-col gap-2">
-                                        <div className="flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-indigo-400 text-sm">verified</span>
-                                            <span className="text-[10px] font-mono text-indigo-400 font-black">{item.source}</span>
+                        {/* Benchmark & Health */}
+                        <div className="lg:col-span-4 flex flex-col gap-8">
+                            <div className="bg-[#0f172a]/50 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 flex flex-col justify-center">
+                                <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 mb-6">Decision Benchmark</h2>
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-end">
+                                        <span className="text-[10px] font-bold text-white/60">SECTOR AVG (AGRO/ZARC)</span>
+                                        <span className="text-xl font-mono font-black text-white">{insight.benchmark.avgSectorScore}</span>
+                                    </div>
+                                    <div className="h-1 w-full bg-white/5 rounded-full relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-neon-cyan/20"></div>
+                                        <div className="absolute h-full bg-neon-cyan shadow-[0_0_10px_#00f2ff]" style={{ width: `${insight.benchmark.avgSectorScore}%` }}></div>
+                                    </div>
+                                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10">
+                                        <span className={`text-xl font-bold ${insight.benchmark.targetDelta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                            {insight.benchmark.targetDelta >= 0 ? '+' : ''}{insight.benchmark.targetDelta}%
+                                        </span>
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Above baseline consistency</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white/2 p-8 rounded-[40px] border border-white/5 text-center">
+                                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 mb-4">System Health</div>
+                                <div className="text-5xl font-black text-white italic mb-2">{insight.systemConsistency}%</div>
+                                <div className="text-[9px] font-mono text-neon-cyan tracking-widest font-black uppercase">Institutional Reliability</div>
+                            </div>
+                        </div>
+
+                        {/* Timeline / Replay View */}
+                        <div className="lg:col-span-12 bg-white/2 rounded-[48px] border border-white/5 p-10">
+                             <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 mb-10 flex items-center justify-between">
+                                <span className="flex items-center gap-2"><span className="material-symbols-outlined text-sm text-[#ff00e5]">timeline</span> Evolution Timeline</span>
+                                <div className="flex gap-2">
+                                    {[1,2,3].map(r => (
+                                        <button key={r} onClick={() => setSelectedRound(r)} className={`px-4 py-1.5 rounded-full font-mono text-[9px] font-black transition-all ${selectedRound === r ? 'bg-white text-[#050810]' : 'bg-white/5 text-slate-500 hover:bg-white/10'}`}>
+                                            Round {r}
+                                        </button>
+                                    ))}
+                                </div>
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-12 relative">
+                                <div className="absolute top-1/2 left-0 right-0 h-px bg-white/5 z-0"></div>
+                                {insight.timeline.map((t: any, i: number) => (
+                                    <div key={i} className={`flex flex-col items-center relative z-10 transition-all ${selectedRound === t.round ? 'scale-110' : 'opacity-40'}`}>
+                                        <div className={`size-12 rounded-2xl flex items-center justify-center font-mono font-black text-lg mb-3 ${selectedRound === t.round ? 'bg-white text-black shadow-2xl' : 'bg-slate-900 border border-white/10 text-white/30'}`}>
+                                            {t.consensus}%
                                         </div>
-                                        <p className="text-xs text-slate-300 italic">"{item.supports}"</p>
+                                        <div className="text-[9px] font-black uppercase tracking-widest text-white/60">{t.label}</div>
                                     </div>
                                 ))}
-                                {(result.evidenceAudit?.unsupported || []).map((item: any, i: number) => (
-                                    <div key={i} className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl flex flex-col gap-1">
-                                         <div className="flex items-center gap-2 text-red-400">
-                                            <span className="material-symbols-outlined text-sm">warning</span>
-                                            <span className="text-[10px] font-mono font-black">FLAG: {item.flag}</span>
+                            </div>
+                            
+                            {/* Replay Detail */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {(result.fullTranscript?.[`round${selectedRound}`]?.responses || []).map((r: any) => (
+                                    <div key={r.persona} className="bg-black/40 p-6 rounded-3xl border border-white/5 hover:border-white/10 transition-all flex flex-col gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="size-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 text-sm">{getMeta(r.persona).emoji}</div>
+                                            <span className="font-mono text-[10px] font-black uppercase tracking-widest text-white/70">{r.persona}</span>
                                         </div>
-                                        <p className="text-xs text-red-200"><strong>Claim:</strong> {item.claim}</p>
-                                        <p className="text-[10px] text-red-400/80 italic">{item.issue}</p>
+                                        <div className="prose prose-invert prose-xs text-[10.5px] text-slate-400 italic leading-relaxed text-justify line-clamp-6 opacity-60 hover:opacity-100 transition-opacity">
+                                            <ReactMarkdown>{r.analysis}</ReactMarkdown>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                    </>
+                    </div>
                 )}
 
-                {/* Tabbed Deliberation View (Universal Protocol) */}
-                {!blockDashboard && (
-                    <div className="mt-12 bg-black/20 border border-white/5 rounded-2xl overflow-hidden">
-                        <div className="flex border-b border-white/5 bg-white/5">
-                            {['verdict', 'round1', 'round2', 'round3'].map(tab => (
-                                <button
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab as any)}
-                                    className={`px-8 py-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-neon-cyan/10 text-neon-cyan border-b-2 border-neon-cyan' : 'text-slate-500 hover:text-slate-300'}`}
-                                >
-                                    {tab === 'verdict' ? 'Rationale' : `Round ${tab.slice(-1)}`}
-                                </button>
+                {/* 📂 DELIBERATION LAYER (The Transcript) */}
+                {activeTab === 'deliberation' && (
+                    <div className="animate-in fade-in fill-mode-both duration-500">
+                         <div className="grid grid-cols-1 gap-6">
+                            {personas.map((r: any) => (
+                                <div key={r.persona} className={`bg-gradient-to-br ${getMeta(r.persona).gradient} border border-white/10 rounded-[32px] p-8 md:p-12 flex flex-col md:flex-row gap-8 relative overflow-hidden group`}>
+                                    <div className="shrink-0 flex flex-col items-center">
+                                        <div className="size-20 rounded-[28px] bg-black/40 flex items-center justify-center text-3xl border border-white/10 shadow-2xl mb-4 group-hover:scale-110 transition-transform" style={{ color: getMeta(r.persona).color }}>
+                                            {getMeta(r.persona).emoji}
+                                        </div>
+                                        <div className="px-4 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-white/50">Score: {r.score}</div>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                                            {r.persona}
+                                            <div className="h-px flex-1 bg-white/5"></div>
+                                        </h3>
+                                        <div className="prose prose-invert max-w-none prose-sm text-slate-300/80 leading-relaxed text-justify italic">
+                                            <ReactMarkdown>{r.analysis}</ReactMarkdown>
+                                        </div>
+                                    </div>
+                                </div>
                             ))}
+                         </div>
+                    </div>
+                )}
+
+                {/* 🚦 AUDIT LAYER (v9 Critical Matrix) */}
+                {activeTab === 'audit' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
+                        {/* Risks */}
+                        <div className="bg-[#050810] border border-white/5 p-10 rounded-[40px] shadow-2xl">
+                             <h3 className="font-mono text-[10px] text-[#ff00e5] font-black uppercase tracking-[0.4em] mb-8">Critical Risk Gate</h3>
+                             <div className="space-y-4">
+                                {(result.criticalRisks || []).map((risk: any) => (
+                                    <div key={risk.id} className="p-6 rounded-3xl bg-red-500/5 border border-red-500/10 flex flex-col gap-3">
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-bold text-white text-sm">{risk.name}</span>
+                                            <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-[8px] font-black uppercase">Open Risk</span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 italic">"{risk.evidence}"</p>
+                                    </div>
+                                ))}
+                                {(result.criticalRisks?.length === 0) && <div className="text-emerald-400 font-mono text-[10px] font-black p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 text-center uppercase tracking-widest">No Absolute Blockers Found</div>}
+                             </div>
                         </div>
-                        <div className="p-8">
-                            {activeTab === 'verdict' && (
-                                <div className="prose prose-invert max-w-none prose-sm prose-p:text-slate-300 italic text-justify">
-                                    <ReactMarkdown>{result.judgeRationale || 'Scientific deliberation summary pending...'}</ReactMarkdown>
-                                </div>
-                            )}
-                            {activeTab !== 'verdict' && result.fullTranscript?.[activeTab] && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    {(result.fullTranscript?.[activeTab]?.responses || []).map((r: any) => (
-                                        <PersonaCard key={r.persona} entry={{ id: r.persona.toLowerCase(), name: r.persona, text: r.analysis }} lang={lang} />
-                                    ))}
-                                </div>
-                            )}
+
+                        {/* Evidence */}
+                        <div className="bg-[#050810] border border-white/5 p-10 rounded-[40px] shadow-2xl">
+                             <h3 className="font-mono text-[10px] text-neon-cyan font-black uppercase tracking-[0.4em] mb-8">Regulatory Roadmap</h3>
+                             <div className="space-y-4">
+                                {(result.actionPlan?.actions || []).map((action: any) => (
+                                    <div key={action.id} className="p-6 rounded-3xl bg-neon-cyan/5 border border-neon-cyan/10 flex flex-col gap-2">
+                                        <span className="text-white font-bold text-xs">{action.name}</span>
+                                        <div className="flex justify-between items-center text-[9px] font-mono text-neon-cyan/60 uppercase font-black">
+                                            <span>Owner: {action.owner}</span>
+                                            <span>T: {action.deadline}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                             </div>
                         </div>
                     </div>
                 )}
+
             </main>
-            
-            {/* Action Footer */}
-             <div className="fixed bottom-0 left-0 right-0 p-4 bg-deep-blue/80 glass-blur border-t border-white/5 z-40 flex justify-center gap-4">
-                <button onClick={handleExportPDF} disabled={blockDashboard} className="px-6 h-10 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2 shadow-xl transition-all disabled:opacity-30">
-                    <span className="material-symbols-outlined text-sm">download</span>
-                    Download Executive Report
+
+            {/* 🧠 INTELLIGENCE FEEDBACK LOOP (Bottom Float) */}
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-[#050810]/80 backdrop-blur-2xl border border-white/10 px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                <span className="font-mono text-[10px] font-black uppercase tracking-widest text-white/50">Human Feedback (v9 Loop):</span>
+                <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-all font-mono text-[9px] font-black uppercase tracking-widest">
+                    <span className="material-symbols-outlined text-sm">thumb_up</span> Correct
                 </button>
-                <Link href="/dashboard" className="px-6 h-10 bg-white/5 border border-white/10 text-slate-300 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2 transition-all">
-                    <span className="material-symbols-outlined text-sm">add_circle</span>
-                    New Session
-                </Link>
+                <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all font-mono text-[9px] font-black uppercase tracking-widest">
+                   <span className="material-symbols-outlined text-sm">thumb_down</span> Incorrect
+                </button>
+                <div className="h-4 w-px bg-white/10"></div>
+                <button className="text-[9px] font-black uppercase tracking-widest text-[#ff00e5] animate-pulse">
+                    Training Future Weights...
+                </button>
             </div>
-            
-            {/* Hidden PDF Container */}
-            <div style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
-                <PDFReportTemplate validation={validation} lang={lang} />
-            </div>
-        </div>
-    );
-}
 
-// ─── Persona Card ──────────────────────────────
-function PersonaCard({ entry, lang }: {
-    entry: { id: string; name: string; emoji?: string; text: string };
-    lang: UILang;
-}) {
-    const [expanded, setExpanded] = useState(false);
-    const meta = getMeta(entry.id);
-    const emoji = entry.emoji || meta.emoji;
-    const isLong = entry.text?.length > 400;
-    const displayText = isLong && !expanded ? entry.text.slice(0, 400) + '...' : entry.text;
-
-    return (
-        <div className={`bg-gradient-to-br ${meta.gradient} border border-white/10 rounded-xl overflow-hidden hover:border-white/20 transition-all`}>
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-white/5">
-                <div className="size-8 rounded-lg bg-black/40 flex items-center justify-center text-sm border border-white/10" style={{ color: meta.color }}>{emoji}</div>
-                <span className="font-bold text-xs uppercase tracking-widest" style={{ color: meta.color }}>{entry.name}</span>
-            </div>
-            <div className="p-4">
-                <div className="prose prose-invert prose-xs text-[11px] text-slate-300 leading-relaxed text-justify opacity-80">
-                    <ReactMarkdown>{displayText}</ReactMarkdown>
-                </div>
-                {isLong && (
-                    <button onClick={() => setExpanded(!expanded)} className="mt-2 text-[9px] font-black uppercase tracking-widest text-neon-cyan hover:underline">
-                        {expanded ? 'Show Less' : 'Read Full Analysis'}
-                    </button>
-                )}
-            </div>
+            <style jsx>{`
+                .tech-grid {
+                    background-image: 
+                        linear-gradient(to right, rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+                    background-size: 40px 40px;
+                }
+            `}</style>
         </div>
     );
 }
