@@ -32,6 +32,24 @@ export default function ConsensusReport({ validation }: { validation: any }) {
     const [activeTab, setActiveTab] = useState<'intelligence' | 'deliberation' | 'audit'>('intelligence');
     const [selectedRound, setSelectedRound] = useState(3);
     const [isExporting, setIsExporting] = useState(false);
+    const [feedbackSent, setFeedbackSent] = useState(false);
+
+    const handleFeedback = async (isCorrect: boolean) => {
+        setFeedbackSent(true);
+        try {
+            const { createClient } = await import('@/lib/supabase/client');
+            const supabase = createClient();
+            await supabase.from('validations').update({ 
+                full_result: { 
+                    ...(validation.full_result || validation || {}), 
+                    human_feedback: isCorrect ? 'correct' : 'incorrect',
+                    feedback_at: new Date().toISOString()
+                } 
+            }).eq('id', validation.id);
+        } catch (err) {
+            console.error('Feedback error:', err);
+        }
+    };
 
     const handleExportPDF = async () => {
         setIsExporting(true);
@@ -326,22 +344,79 @@ export default function ConsensusReport({ validation }: { validation: any }) {
                     </div>
                 )}
 
+                {/* 📜 HISTÓRICO COMPLETO DA DELIBERAÇÃO (Rounds Restored) */}
+                <section className="mt-24 border-t border-white/5 pt-16">
+                    <div className="flex items-center gap-4 mb-12">
+                        <div className="h-px w-12 bg-[#ff00e5]"></div>
+                        <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white">Deliberation History</h2>
+                        <span className="font-mono text-[10px] text-slate-500 uppercase tracking-widest px-3 py-1 bg-white/5 rounded-full">Full Audit Trail</span>
+                    </div>
+
+                    {[1, 2, 3].map((roundNum) => {
+                        const roundKey = `round${roundNum}`;
+                        const responses = result.fullTranscript?.[roundKey]?.responses || [];
+                        if (responses.length === 0) return null;
+
+                        return (
+                            <div key={roundKey} className="mb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                                <div className="flex items-center gap-4 mb-8">
+                                    <span className="text-4xl font-black text-white/10 italic">#0{roundNum}</span>
+                                    <h3 className="text-sm font-black uppercase tracking-[0.5em] text-white/40">Round Phase {roundNum}</h3>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {responses.map((r: any, idx: number) => (
+                                        <div key={idx} className="bg-[#050810] border border-white/5 rounded-[32px] p-8 hover:border-white/20 transition-all group relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity text-2xl">
+                                                {getMeta(r.persona).emoji}
+                                            </div>
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="size-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 text-sm shadow-inner">
+                                                    {getMeta(r.persona).emoji}
+                                                </div>
+                                                <span className="font-mono text-[10px] font-black uppercase tracking-widest text-white/80">{r.persona}</span>
+                                            </div>
+                                            <div className="prose prose-invert prose-xs text-[11px] text-slate-400 italic leading-relaxed text-left line-clamp-6 group-hover:line-clamp-none transition-all">
+                                                <ReactMarkdown>{r.analysis}</ReactMarkdown>
+                                            </div>
+                                            <div className="mt-6 flex justify-between items-center opacity-40 group-hover:opacity-100">
+                                                <div className="h-px flex-1 bg-white/5 mr-4"></div>
+                                                <span className="text-[9px] font-mono font-black text-neon-cyan uppercase tracking-widest">Confidence: {r.score}%</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </section>
+
             </main>
 
             {/* 🧠 INTELLIGENCE FEEDBACK LOOP (Bottom Float) */}
-            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-[#050810]/80 backdrop-blur-2xl border border-white/10 px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                <span className="font-mono text-[10px] font-black uppercase tracking-widest text-white/50">Human Feedback (v9 Loop):</span>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-all font-mono text-[9px] font-black uppercase tracking-widest">
-                    <span className="material-symbols-outlined text-sm">thumb_up</span> Correct
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all font-mono text-[9px] font-black uppercase tracking-widest">
-                   <span className="material-symbols-outlined text-sm">thumb_down</span> Incorrect
-                </button>
-                <div className="h-4 w-px bg-white/10"></div>
-                <button className="text-[9px] font-black uppercase tracking-widest text-[#ff00e5] animate-pulse">
-                    Training Future Weights...
-                </button>
-            </div>
+            {!feedbackSent && (
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-[#050810]/80 backdrop-blur-2xl border border-white/10 px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom-10 duration-700">
+                    <span className="font-mono text-[10px] font-black uppercase tracking-widest text-white/50">Human Feedback (v9 Loop):</span>
+                    <button 
+                        onClick={() => handleFeedback(true)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 hover:scale-105 active:scale-95 transition-all font-mono text-[9px] font-black uppercase tracking-widest"
+                    >
+                        <span className="material-symbols-outlined text-sm">thumb_up</span> Correct
+                    </button>
+                    <button 
+                        onClick={() => handleFeedback(false)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/30 hover:scale-105 active:scale-95 transition-all font-mono text-[9px] font-black uppercase tracking-widest"
+                    >
+                        <span className="material-symbols-outlined text-sm">thumb_down</span> Incorrect
+                    </button>
+                    <div className="h-4 w-px bg-white/10"></div>
+                    <div className="flex flex-col">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-[#ff00e5] animate-pulse">
+                            Training Future Weights...
+                        </span>
+                        <span className="text-[7px] font-mono text-slate-500 uppercase tracking-tighter">Deterministic Fine-tuning</span>
+                    </div>
+                </div>
+            )}
 
             {/* 📄 HIDDEN PDF TEMPLATE (Off-screen) */}
             <div className="fixed -left-[2000px] top-0 pointer-events-none">
