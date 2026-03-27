@@ -1,4 +1,4 @@
-import { CouncilIAInput, CouncilIAOutput, CouncilIAEvent } from '@/types/councilia-universal';
+import { CouncilIAInput, CouncilIAOutput, CouncilIAEvent, RoundResult } from '@/types/councilia-universal';
 import { executeRound1 } from './rounds/round1';
 import { executeRound2 } from './rounds/round2';
 import { executeRound3 } from './rounds/round3';

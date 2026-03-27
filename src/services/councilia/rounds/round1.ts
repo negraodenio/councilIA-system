@@ -2,9 +2,8 @@
  * Round 1: Thesis (v7.3.1)
  */
 
-import { RoundResult, PersonaResponse } from '../types';
+import { CouncilIAEvent, PersonaResponse, RoundResult } from '@/types/councilia-universal';
 import { getSystemPrompt } from '../prompts';
-import { CouncilIAEvent } from '@/types/councilia-universal';
 import { callLLM } from '../provider';
 
 const PERSONAS = [

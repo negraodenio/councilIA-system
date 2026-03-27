@@ -138,6 +138,19 @@ export interface ScoringOutput {
   stdDev: number;
 }
 
+export interface PersonaResponse {
+  persona: string;
+  analysis: string;
+  score: number;
+  unrefuted_risks: string[];
+  kill_condition_triggered: boolean;
+}
+
+export interface RoundResult {
+  round: number;
+  responses: PersonaResponse[];
+}
+
 // ============================================
 // STRUCTURED OUTPUT (v7.3.1 Schema)
 // ============================================
