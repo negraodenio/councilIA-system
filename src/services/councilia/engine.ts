@@ -3,6 +3,7 @@ import { executeRound1 } from './rounds/round1';
 import { executeRound2 } from './rounds/round2';
 import { executeRound3 } from './rounds/round3';
 import { JudgeService } from './judge';
+import { verifyAuditHash } from '@/lib/security/audit';
 
 export class CouncilIAEngine {
   private judge: JudgeService;
