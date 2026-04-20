@@ -5,8 +5,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  // @ts-expect-error: Custom Clover API version is not yet in the official Stripe SDK types
-  apiVersion: '2026-01-28.clover',
+  apiVersion: '2024-06-20',
   appInfo: {
     name: 'CouncilIA',
     version: '12.0.0',
