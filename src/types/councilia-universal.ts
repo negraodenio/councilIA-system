@@ -73,6 +73,7 @@ export interface SessionMetadata {
   sessionId?: string;
   department?: string;
   previousSession?: string;
+  previousHash?: string;
   tags?: string[];
   consent: {
     consentId: string;
