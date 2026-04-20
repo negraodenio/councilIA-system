@@ -31,7 +31,7 @@ function getPersonaWeight(id: string): number {
 // ============================================
 
 export function calculateAllScores(input: ScoringInput): ScoringOutput {
-  const { personaScores, personaIds, evidenceDensity, unresolvedRisks, previousMeanScore, _domain } = input;
+  const { personaScores, personaIds, evidenceDensity, unresolvedRisks, previousMeanScore, domain } = input;
   
   if (personaScores.length !== personaIds.length) {
     throw new Error('Mismatched scores and persona IDs');
