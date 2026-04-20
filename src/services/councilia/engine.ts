@@ -58,7 +58,7 @@ export class CouncilIAEngine {
 
       // v14 Audit Verification: Verify signature integrity
       await verifyAuditHash(
-        finalVerdict.metadata.auditSignature,
+        finalVerdict.metadata.auditSignature || '',
         { decision: finalVerdict.decisaoImediata, score: finalVerdict.executiveVerdict?.score, metrics: finalVerdict.scientificAudit },
         input.metadata?.previousHash || ''
       );
