@@ -55,11 +55,18 @@ export class CouncilIAEngine {
         await new Promise(r => setTimeout(r, 1500));
       }
 
+      // v14 Audit Verification: Verify signature integrity
+      await verifyAuditHash(
+        finalVerdict.metadata.auditSignature,
+        { decision: finalVerdict.decisaoImediata, score: finalVerdict.executiveVerdict?.score, metrics: finalVerdict.scientificAudit },
+        input.metadata?.previousHash || ''
+      );
+
       // Ensure metadata is correctly passed for UI validation
       finalVerdict.metadata = {
         ...finalVerdict.metadata,
         sessionId,
-        protocolVersion: '12.0.0',
+        protocolVersion: '14.0.0',
         domain: input.domain
       };
 

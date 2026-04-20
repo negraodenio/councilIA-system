@@ -101,7 +101,7 @@ export class JudgeService {
     );
 
     // v14 Audit Verification: Verify signature integrity
-    const isValid = await verifyAuditHash(
+    await verifyAuditHash(
         output.metadata.auditSignature,
         { decision: output.decisaoImediata, score: output.executiveVerdict?.score, metrics: output.scientificAudit },
         input.metadata?.previousHash || ''
