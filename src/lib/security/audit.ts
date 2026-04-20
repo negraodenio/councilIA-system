@@ -1,7 +1,7 @@
 /**
  * 🛡️ COUNCILIA v14 — AUDIT SECURITY LAYER (Edge Compatible)
  * Implements HMAC-SHA256 Signed Hash Chaining for Tamper-Proof Audit Trails.
- * Uses Web Crypto API for cross-runtime compatibility (Node.js & Edge).
+ * Uses the Global Web Crypto API for cross-runtime compatibility (Node.js & Edge).
  */
 
 /**
@@ -12,14 +12,19 @@ export async function generateSignedHash(payload: any, prevHash: string = ''): P
     const secret = process.env.AUDIT_SECRET || 'councilia_hardened_fallback_key_2026';
     const data = JSON.stringify(payload) + prevHash;
     
+    // Using globalThis.crypto which is available in Node 17+, Edge, and Browsers.
+    // This avoids using Node-specific 'crypto' module which breaks Edge builds.
+    const webCrypto = globalThis.crypto;
+    
+    if (!webCrypto || !webCrypto.subtle) {
+        throw new Error('Web Crypto API (subtle) is not available in this environment.');
+    }
+
     const encoder = new TextEncoder();
     const keyData = encoder.encode(secret);
     const msgData = encoder.encode(data);
 
-    // subtle is global in modern runtimes (Node 16+, Edge, Browser)
-    const cryptoInstance = typeof crypto !== 'undefined' ? crypto : (await import('node:crypto')).webcrypto;
-
-    const key = await cryptoInstance.subtle.importKey(
+    const key = await webCrypto.subtle.importKey(
         'raw', 
         keyData, 
         { name: 'HMAC', hash: 'SHA-256' }, 
@@ -27,7 +32,7 @@ export async function generateSignedHash(payload: any, prevHash: string = ''): P
         ['sign']
     );
 
-    const signature = await cryptoInstance.subtle.sign('HMAC', key, msgData);
+    const signature = await webCrypto.subtle.sign('HMAC', key, msgData);
     
     // Hash to Hex
     return Array.from(new Uint8Array(signature))
