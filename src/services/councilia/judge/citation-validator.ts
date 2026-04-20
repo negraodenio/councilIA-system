@@ -25,7 +25,7 @@ export class CitationValidator {
     const citedIndices = new Set(matches.map(m => parseInt(m[1], 10)));
     
     matched_indices:
-    for (const index of citedIndices) {
+    for (const index of Array.from(citedIndices)) {
       const docIndex = index - 1; // 1-based to 0-based
       const doc = docs[docIndex];
 
