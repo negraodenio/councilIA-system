@@ -59,7 +59,7 @@ export class LGPDComplianceManager {
    */
   validateLegalBasis(
     basis: LGPDLegalBasis,
-    context: 'agro' | 'healthcare' | 'finance' | 'general'
+    context: 'healthcare' | 'finance' | 'general'
   ): boolean {
     // Health data = requires consent or explicit legal obligation
     if (context === 'healthcare' && basis !== 'CONSENTIMENTO' && basis !== 'OBRIGACAO_LEGAL') {
@@ -85,7 +85,7 @@ export class LGPDComplianceManager {
       .digest('hex');
   }
 
-  async verifyConsent(consentId: string, userId: string, purposes: string[]): Promise<boolean> {
+  async verifyConsent(consentId: string, userId: string, _purposes: string[]): Promise<boolean> {
     // In production, check the database for this consentId and userId
     // For now, returning true to allow flow test
     return !!consentId && !!userId;

@@ -62,7 +62,7 @@ export class AnvisaComplianceManager {
    */
   generateValidationProtocol(
     methodName: string,
-    matrix: 'FOOD' | 'DRUG' | 'COSMETIC' | 'ENVIRONMENTAL'
+    _matrix: 'FOOD' | 'DRUG' | 'COSMETIC' | 'ENVIRONMENTAL'
   ): AnvisaValidationProtocol {
     return {
       protocolNumber: `VAL-${Date.now()}`,

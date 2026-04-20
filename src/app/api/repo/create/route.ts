@@ -1,19 +1,25 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { requireAuthContext, forbid } from '@/lib/security/auth-context';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
     try {
+        const auth = await requireAuthContext();
+        if (!auth.ok) return auth.response;
+
+        if (auth.ctx.tenantId !== auth.ctx.user.id && auth.ctx.role !== 'admin') return forbid();
+
         const supabase = createAdminClient();
         const body = await req.json();
-        const { tenant_id, user_id, repo_url, repo_name } = body;
+        const { repo_url, repo_name } = body;
 
         // Strict validation for production
-        if (!tenant_id || !user_id || !repo_url) {
+        if (!repo_url) {
             return NextResponse.json(
-                { error: 'Missing required fields: tenant_id, user_id, and repo_url are mandatory.' },
+                { error: 'Missing required fields: repo_url is mandatory.' },
                 { status: 400 }
             );
         }
@@ -28,8 +34,8 @@ export async function POST(req: Request) {
         const { data, error } = await supabase
             .from('repositories')
             .insert({
-                tenant_id,
-                user_id,
+                tenant_id: auth.ctx.tenantId,
+                user_id: auth.ctx.user.id,
                 repo_url,
                 repo_name: repo_name || repo_url.split('/').pop()?.replace('.git', '') || 'unnamed-repo',
                 default_branch: 'main',

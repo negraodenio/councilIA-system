@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dispatchRepoIndexTask } from "@/lib/queue/indexer";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAuthContext } from "@/lib/security/auth-context";
 
 export async function POST(req: NextRequest) {
     try {
-        const { name, content, uId } = await req.json();
+        const auth = await requireAuthContext();
+        if (!auth.ok) return auth.response;
 
-        if (!name || !content || !uId) {
+        const { name, content } = await req.json();
+        const uId = auth.ctx.user.id;
+
+        if (!name || !content) {
             return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
         }
 

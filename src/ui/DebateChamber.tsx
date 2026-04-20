@@ -42,7 +42,7 @@ const PERSONAS: Record<string, { lbl: string; pt: string; em: string; c: string 
     marketeer: { lbl: 'Market Analyst', pt: 'Transferência de Tec.', em: '📊', c: '#22C55E' },
     ethicist: { lbl: 'Ethics and Risk', pt: 'Estrategista Regulatório', em: '⚖️', c: '#F59E0B' },
     financier: { lbl: 'Financial', pt: 'Analista Financeiro', em: '💰', c: '#3B82F6' },
-    judge: { lbl: 'Judge', pt: 'Conselho Embrapa', em: '🏛️', c: '#FFD700' },
+    judge: { lbl: 'Judge', pt: 'Juiz Institucional', em: '🏛️', c: '#FFD700' },
 };
 
 function gp(name: string, lang: UILang) {

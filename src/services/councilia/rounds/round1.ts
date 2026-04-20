@@ -1,5 +1,5 @@
 /**
- * Round 1: Thesis (v7.3.2 - High Availability)
+ * Round 1: Thesis (v12.0.0 - Scientific Authority)
  */
 
 import { CouncilIAEvent, PersonaResponse, RoundResult } from '@/types/councilia-universal';
@@ -8,12 +8,12 @@ import { callLLM } from '../provider';
 import { executeWithTimeout } from '../utils';
 
 const PERSONAS = [
-  { id: 'visionary', name: 'Visionário / Inovação', emoji: '💡', embrapa: 'Visionário Embrapa' },
-  { id: 'technologist', name: 'Especialista Técnico / Cientista', emoji: '🔬', embrapa: 'Cientista Analítico' },
-  { id: 'devil', name: 'Auditor de Riscos / Crítico', emoji: '👺', embrapa: 'Auditor de Riscos ZARC' },
-  { id: 'marketeer', name: 'Adoção de Mercado / Operador', emoji: '📈', embrapa: 'Analista de Mercado/Safra' },
-  { id: 'ethicist', name: 'Estrategista Regulatório / Ética', emoji: '⚖️', embrapa: 'Gestor Ambiental/Ético' },
-  { id: 'financier', name: 'Analista Financeiro / ROI', emoji: '💰', embrapa: 'Analista de Fomento (BNDES)' }
+  { id: 'visionary', name: 'Visionário / Inovação', emoji: '💡' },
+  { id: 'technologist', name: 'Especialista Técnico / Cientista', emoji: '🔬' },
+  { id: 'devil', name: 'Auditor de Riscos / Crítico', emoji: '👺' },
+  { id: 'marketeer', name: 'Adoção de Mercado / Operador', emoji: '📈' },
+  { id: 'ethicist', name: 'Estrategista Regulatório / Ética', emoji: '⚖️' },
+  { id: 'financier', name: 'Analista Financeiro / ROI', emoji: '💰' }
 ];
 
 const PERSONA_TIMEOUT = 35000;
@@ -21,20 +21,19 @@ const PERSONA_TIMEOUT = 35000;
 export async function executeRound1(
   proposal: string, 
   docs: any[], 
-  isEmbrapa: boolean = false,
   onEvent?: (event: CouncilIAEvent) => Promise<void>
 ): Promise<RoundResult> {
   const personaResults = await Promise.allSettled(PERSONAS.map(async (p) => {
-    const pName = isEmbrapa ? p.embrapa : p.name;
+    const pName = p.name;
     try {
-      const systemPrompt = getSystemPrompt(1, p.id, isEmbrapa);
+      const systemPrompt = getSystemPrompt(1, p.id);
       const userPrompt = `PROPOSTA PARA ANÁLISE: ${proposal}\n\nCONTEXTO RAG: ${JSON.stringify(docs)}`;
 
       const text = await executeWithTimeout(
         callLLM([
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
-        ], { temperature: 0.4, model: 'openai/gpt-4o-mini' }),
+        ]),
         PERSONA_TIMEOUT
       );
 
@@ -82,7 +81,7 @@ export async function executeRound1(
     if (r.status === 'fulfilled') return r.value;
     const p = PERSONAS[i];
     return {
-      persona: isEmbrapa ? p.embrapa : p.name,
+      persona: p.name,
       analysis: 'Erro crítico de execução na persona. Fallback de emergência aplicado.',
       score: 50,
       unrefuted_risks: [],

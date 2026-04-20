@@ -1,15 +1,13 @@
 /**
- * CouncilIA v12.0.0 — Scoring Engine (Elite Metrology)
+ * 🛡️ SHIELDED PROTOCOL v12.0.0 — Scoring Engine (Elite Metrology)
  * Deterministic mathematics for consensus, dissent, and Value at Risk (VaR).
+ * LOCKED: Do not modify without formal Change Request (CR).
  */
 
 import type { 
   ScoringInput, 
   ScoringOutput, 
-  EvidenceLevel,
-  ValidationStatus,
-  ConfidenceLevel,
-  CouncilDomain 
+  ConfidenceLevel 
 } from '@/types/councilia-universal';
 
 // ============================================
@@ -17,14 +15,13 @@ import type {
 // ============================================
 
 const MAX_STDDEV = 50;
-const PERSONA_COUNT = 6;
 
 // ============================================
 // WEIGHTING ENGINE
 // ============================================
 
 function getPersonaWeight(id: string): number {
-  const technicalRoles = ['technologist', 'auditor', 'cientista', 'cientista_embrapa', 'especialista', 'researcher'];
+  const technicalRoles = ['technologist', 'auditor', 'cientista', 'especialista', 'researcher'];
   const isTechnical = technicalRoles.some(role => id.toLowerCase().includes(role));
   return isTechnical ? 1.5 : 1.0;
 }
@@ -34,7 +31,7 @@ function getPersonaWeight(id: string): number {
 // ============================================
 
 export function calculateAllScores(input: ScoringInput): ScoringOutput {
-  const { personaScores, personaIds, evidenceDensity, unresolvedRisks, domain } = input;
+  const { personaScores, personaIds, evidenceDensity, unresolvedRisks, previousMeanScore, _domain } = input;
   
   if (personaScores.length !== personaIds.length) {
     throw new Error('Mismatched scores and persona IDs');
@@ -71,7 +68,6 @@ export function calculateAllScores(input: ScoringInput): ScoringOutput {
   const evidencePenalty = { 'high': 0, 'moderate': 10, 'low': 25 }[evidenceDensity];
 
   let varScore = dissentPenalty + riskPenalty + evidencePenalty;
-  if (domain === 'agro') varScore *= 1.1; // Agro-specific sensitivity
 
   // 5. Confidence Level
   let confidence: ConfidenceLevel = 'MEDIUM';
@@ -87,6 +83,12 @@ export function calculateAllScores(input: ScoringInput): ScoringOutput {
     var: Math.min(100, Math.round(varScore)),
     confidence,
     meanScore: Math.round(weightedMean),
-    stdDev: parseFloat(stdDev.toFixed(2))
+    stdDev: parseFloat(stdDev.toFixed(2)),
+    consensusStability: previousMeanScore !== undefined 
+      ? parseFloat((1 - Math.abs(weightedMean - previousMeanScore) / 100).toFixed(2))
+      : 1.0,
+    scientificVariance: weightedMean > 0 
+      ? parseFloat((stdDev / weightedMean).toFixed(4))
+      : 0
   };
 }

@@ -6,6 +6,7 @@ import { chunkByLines } from '@/lib/repo/chunk';
 import { gh, parseGitHubRepo, getBlobText } from '@/lib/github/client';
 import { compareCommits } from '@/lib/github/compare';
 import { apiError, apiOk } from '@/lib/api/error';
+import { requireAuthContext, forbid } from '@/lib/security/auth-context';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,11 +23,18 @@ async function listTree(owner: string, repo: string, sha: string) {
 
 export async function POST(req: Request) {
     try {
-        const { tenant_id, user_id, repo_url, repo_name, default_branch, force_full } = await req.json();
+        const auth = await requireAuthContext();
+        if (!auth.ok) return auth.response;
+
+        const { repo_url, repo_name, default_branch, force_full } = await req.json();
+        const tenant_id = auth.ctx.tenantId;
+        const user_id = auth.ctx.user.id;
         const supabase = createAdminClient();
 
         if (!process.env.GITHUB_TOKEN) return apiError('Missing GITHUB_TOKEN', 400);
         if (!repo_url) return apiError('repo_url is required', 400);
+
+        if (tenant_id !== user_id && auth.ctx.role !== 'admin') return forbid();
 
         const { owner, repo } = parseGitHubRepo(repo_url);
         const repoMeta = await getRepo(owner, repo);

@@ -119,7 +119,7 @@ export default function LandingPageV6() {
           <h2 className="text-3xl font-bold text-white mb-8 border-l-4 border-cyan-500 pl-6">The Cost of "Expert Opinion" Is Rising</h2>
           
           <p className="text-lg text-slate-400 mb-12 leading-relaxed">
-            In regulated industries — agro, health, government — critical decisions must now be <strong>Explainable</strong>, <strong>Auditable</strong>, and <strong>Defensible</strong>. 
+            In regulated industries — healthcare, finance, government — critical decisions must now be <strong>Explainable</strong>, <strong>Auditable</strong>, and <strong>Defensible</strong>. 
             Traditional committees and individual expertise cannot scale with complexity, and the cost of being wrong has never been higher.
           </p>
           
@@ -275,9 +275,9 @@ export default function LandingPageV6() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-white mb-6 leading-tight">Live Example: R$50M Agro Innovation</h2>
+              <h2 className="text-4xl font-bold text-white mb-6 leading-tight">Live Example: Strategic Enterprise Expansion</h2>
               <p className="text-lg text-slate-400 mb-8 leading-relaxed">
-                See how CouncilIA evaluated a complex proposal to deploy AI-based soil analysis across 200 labs. 
+                See how CouncilIA evaluated a complex proposal to deploy a global AI-driven operational framework across multiple regions. 
               </p>
               
               <div className="space-y-4 mb-8">
@@ -327,7 +327,7 @@ export default function LandingPageV6() {
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-2 underline decoration-yellow-500/50 underline-offset-8">🟡 CONDITIONAL</h3>
                   <p className="text-xs text-slate-500 max-w-xs leading-relaxed mt-4">
-                    High Confidence: Technical Moat verified via RDC 166. Mitigation required for inter-lab reproducibility before full rollout.
+                    High Confidence: Technical Moat verified via industry standards. Mitigation required for operational consistency before full rollout.
                   </p>
                 </div>
               </div>

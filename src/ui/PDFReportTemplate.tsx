@@ -8,19 +8,16 @@ interface PDFReportTemplateProps {
 }
 
 /**
- * PDF Strategic Report Template v9.2
- * Optimized for Executive Decision Support & Embrapa POC.
+ * PDF Strategic Report Template v12.0.0 (Elite)
+ * Optimized for Executive Decision Support.
  */
 export default function PDFReportTemplate({ validation }: PDFReportTemplateProps) {
     const result = validation.full_result || validation || {};
     const ev = result.executiveVerdict || {};
-    const ca = result.consensusAnalysis || {};
     const insight = result.insightLayer || {};
     
     const meanScore = Math.round(ev.score || 0);
     const dateStr = new Date().toLocaleDateString('pt-BR');
-    const isEmbrapa = validation.domain === 'agro' || result.metadata?.domain === 'agro';
-
     const personas = result.fullTranscript?.round3?.responses || [];
 
     const cleanContent = (text: string): string => {
@@ -31,10 +28,10 @@ export default function PDFReportTemplate({ validation }: PDFReportTemplateProps
     };
 
     return (
-        <div id="pdf-report-v9" className="bg-[#050810] text-[#d1d5db] font-sans w-[210mm] min-h-[297mm] p-12 overflow-hidden relative">
+        <div id="pdf-report-v12" className="bg-[#050810] text-[#d1d5db] font-sans w-[210mm] min-h-[297mm] p-12 overflow-hidden relative">
             <style dangerouslySetInnerHTML={{
                 __html: `
-                #pdf-report-v9 { font-family: 'Inter', sans-serif; letter-spacing: -0.01em; }
+                #pdf-report-v12 { font-family: 'Inter', sans-serif; letter-spacing: -0.01em; }
                 .pdf-section { margin-bottom: 2rem; page-break-inside: avoid; }
                 .tech-border { border: 1px solid rgba(0, 242, 255, 0.1); border-radius: 24px; padding: 2rem; background: rgba(255, 255, 255, 0.02); }
                 .glow-text { text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
@@ -138,16 +135,6 @@ export default function PDFReportTemplate({ validation }: PDFReportTemplateProps
                 </div>
             </div>
 
-            {/* 🧭 DOMAIN-SPECIFIC FOOTER */}
-            {isEmbrapa && (
-                <div className="mt-auto pt-8 border-t border-white/5 opacity-50">
-                    <div className="text-[8px] font-black uppercase tracking-[0.2em] text-[#00f2ff] mb-2">Protocolo agro-embrapa v12.0.0</div>
-                    <p className="text-[8px] leading-relaxed text-slate-500 italic">
-                        Este parecer técnico foi gerado através de uma arquitetura de Swarm Intelligence otimizada para riscos agronômicos e conformidade ZARC. 
-                        A validação cruzada entre especialistas em ciência, mercado e regulação garante uma margem de confiança institucional superior a 90%.
-                    </p>
-                </div>
-            )}
         </div>
     );
 }

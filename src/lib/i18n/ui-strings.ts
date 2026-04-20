@@ -575,7 +575,7 @@ const strings: Record<UILang, Record<string, string>> = {
 // ─── Helper to resolve language ───────────────
 
 /** Map browser locale or detectLanguage() output to a UILang */
-export function resolveUILang(input?: string | null): UILang {
+export function resolveUILang(_input?: string | null): UILang {
     // Force English UI for US/EU Market as requested by the user
     return 'English';
 }

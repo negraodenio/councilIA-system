@@ -26,7 +26,7 @@ export class AuditLogger {
     }, null, 2));
   }
 
-  async getProcessingRecords(userId: string): Promise<any[]> {
+  async getProcessingRecords(_userId: string): Promise<any[]> {
     // Return records for the "Right to Information" under LGPD/GDPR
     return [];
   }

@@ -6,7 +6,7 @@ import { getLimitForPlan } from '@/config/limits';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: Request) {
+export async function GET(_req: Request) {
     const supabase = await createClient();
     const adminSupabase = createAdminClient();
 
@@ -48,8 +48,7 @@ export async function GET(req: Request) {
             usage: currentUsage,
             limit,
             plan: subscription?.plan || 'free',
-            userName: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Council Member',
-            isEmbrapa: user.email === 'embrapa@embrapa.com'
+            userName: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Council Member'
         });
     } catch (e) {
         console.error('[Usage API Error]', e);
@@ -57,8 +56,7 @@ export async function GET(req: Request) {
             usage: 0,
             limit: 2,
             plan: 'free',
-            userName: user.email?.split('@')[0] || 'Council Member',
-            isEmbrapa: user.email === 'embrapa@embrapa.com'
+            userName: user.email?.split('@')[0] || 'Council Member'
         });
     }
 }

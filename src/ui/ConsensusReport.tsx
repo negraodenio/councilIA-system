@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { resolveUILang, type UILang } from '@/lib/i18n/ui-strings';
+
 import Link from 'next/link';
 import { exportToPDF } from '@/lib/pdf-utils';
 import PDFReportTemplate from './PDFReportTemplate';
 
-// ─── UTILS: v9 Styles ──────────────────────────
+// ─── UTILS: v12.0.0 Scientific Authority ──────────
 const PERSONA_META: Record<string, { color: string; gradient: string; emoji: string }> = {
     visionary: { color: '#A855F7', gradient: 'from-purple-500/20 to-purple-900/10', emoji: '💡' },
     technologist: { color: '#06B6D4', gradient: 'from-cyan-500/20 to-cyan-900/10', emoji: '🔬' },
@@ -18,7 +18,7 @@ const PERSONA_META: Record<string, { color: string; gradient: string; emoji: str
 };
 
 function getMeta(id: string) {
-    const cleanId = id.toLowerCase().split(' ')[0]; // Handle "Visionário Embrapa" etc.
+    const cleanId = id.toLowerCase().split(' ')[0];
     if (id.includes('Visionário')) return PERSONA_META.visionary;
     if (id.includes('Cientista')) return PERSONA_META.technologist;
     if (id.includes('Riscos')) return PERSONA_META.devil;
@@ -54,10 +54,10 @@ export default function ConsensusReport({ validation }: { validation: any }) {
     const handleExportPDF = async () => {
         setIsExporting(true);
         try {
-            await exportToPDF('pdf-report-v9', { 
+            await exportToPDF('pdf-report-v12', { 
                 filename: `CouncilIA_Relatorio_${validation.id?.substring(0, 8)}.pdf` 
             });
-        } catch (err) {
+        } catch (_err) {
             alert('Falha na geração do PDF. Tente novamente.');
         } finally {
             setIsExporting(false);
@@ -73,7 +73,6 @@ export default function ConsensusReport({ validation }: { validation: any }) {
 
     const result = validation.full_result || validation || {};
     const ev = result.executiveVerdict || {};
-    const ca = result.consensusAnalysis || {};
     const insight = result.insightLayer || { 
         conflictHeatmap: [["✅","✅","✅","✅"],["✅","✅","✅","✅"],["✅","✅","✅","✅"],["✅","✅","✅","✅"]],
         timeline: [{ round: 1, consensus: 50, label: 'Thesis' }, { round: 2, consensus: 40, label: 'Antithesis' }, { round: 3, consensus: 72, label: 'Synthesis' }],
@@ -82,8 +81,6 @@ export default function ConsensusReport({ validation }: { validation: any }) {
     };
 
     const meanScore = Math.round(ev.score || 0);
-    const realConsensus = Math.round(ca.strengthPercentage || meanScore);
-    const varValue = Math.round(ev.var?.percentage || 0);
     const statusLabel = ev.verdict || (meanScore >= 70 ? 'GO' : meanScore >= 40 ? 'CONDITIONAL' : 'NO-GO');
     
     const statusTheme = meanScore >= 70 
@@ -248,7 +245,7 @@ export default function ConsensusReport({ validation }: { validation: any }) {
                                 <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 mb-6">Decision Benchmark</h2>
                                 <div className="space-y-6">
                                     <div className="flex justify-between items-end">
-                                        <span className="text-[10px] font-bold text-white/60">SECTOR AVG (AGRO/ZARC)</span>
+                                        <span className="text-[10px] font-bold text-white/60">SECTOR AVG</span>
                                         <span className="text-xl font-mono font-black text-white">{insight.benchmark.avgSectorScore}</span>
                                     </div>
                                     <div className="h-1 w-full bg-white/5 rounded-full relative overflow-hidden">

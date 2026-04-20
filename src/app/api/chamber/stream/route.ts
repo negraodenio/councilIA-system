@@ -1,4 +1,6 @@
 ﻿import { createAdminClient } from '@/lib/supabase/admin';
+import { requireAuthContext, forbid, notFound } from '@/lib/security/auth-context';
+import { hasTenantOrUserAccess } from '@/lib/security/ownership';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -10,6 +12,18 @@ export async function GET(req: Request) {
     if (!runId) {
         return new Response('Missing runId', { status: 400 });
     }
+
+    const auth = await requireAuthContext();
+    if (!auth.ok) return auth.response;
+
+    const { data: run } = await auth.admin
+        .from('debate_runs')
+        .select('*')
+        .eq('id', runId)
+        .maybeSingle();
+
+    if (!run) return notFound();
+    if (!hasTenantOrUserAccess(run, { tenantId: auth.ctx.tenantId, userId: auth.ctx.user.id })) return forbid();
 
     const encoder = new TextEncoder();
     let closed = false;

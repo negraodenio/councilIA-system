@@ -1,9 +1,12 @@
 export const dynamic = 'force-dynamic';
 
-import { createClient } from '@supabase/supabase-js';
 import { apiError, apiOk } from '@/lib/api/error';
 import { gh } from '@/lib/github/client';
 import { triggerWebhook } from '@/lib/webhooks/send';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { requireAuthContext } from '@/lib/security/auth-context';
+import { hasTenantOrUserAccess } from '@/lib/security/ownership';
+import { isInternalRequest } from '@/lib/security/internal-auth';
 
 function parseGitHubRepo(url: string) {
     const cleaned = url.replace('https://github.com/', '').replace(/^\/+/, '').replace(/\/+$/, '');
@@ -12,14 +15,21 @@ function parseGitHubRepo(url: string) {
 }
 
 export async function POST(req: Request) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-        return apiError('Supabase configuration missing', 500);
+    // High-risk endpoint: disabled unless explicitly enabled, and requires internal auth.
+    if (process.env.ENABLE_GITHUB_PR_WRITE !== 'true') {
+        return apiError('Not found', 404);
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    if (!isInternalRequest(req.headers)) {
+        return apiError('Forbidden', 403);
+    }
+
+    const auth = await requireAuthContext();
+    if (!auth.ok) return auth.response;
+
+    if (auth.ctx.tenantId !== auth.ctx.user.id && auth.ctx.role !== 'admin') return apiError('Forbidden', 403);
+
+    const supabase = createAdminClient();
 
     try {
         const { patch_id, title, body: prBody } = await req.json();
@@ -33,8 +43,11 @@ export async function POST(req: Request) {
             .single();
 
         if (patchErr || !patch) return apiError('Patch not found', 404);
+        if (!hasTenantOrUserAccess(patch, { tenantId: auth.ctx.tenantId, userId: auth.ctx.user.id })) return apiError('Forbidden', 403);
 
         const repo = patch.repositories;
+        if (!repo) return apiError('Not found', 404);
+        if (!hasTenantOrUserAccess(repo, { tenantId: auth.ctx.tenantId, userId: auth.ctx.user.id })) return apiError('Forbidden', 403);
         const { owner, repo: repoName } = parseGitHubRepo(repo.repo_url);
         const branchName = `councilia/patch-${Math.random().toString(36).substring(7)}`;
 

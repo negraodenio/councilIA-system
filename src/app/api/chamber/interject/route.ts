@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getCouncilConfig } from '@/config/council';
+import { isInternalRequest } from '@/lib/security/internal-auth';
 
 async function addEvent(supabase: any, run_id: string, event_type: string, model: string | null, payload: any) {
     await supabase.from('debate_events').insert({ run_id, event_type, model, payload });
@@ -36,6 +37,14 @@ async function callJudge(messages: any[], zdr: boolean) {
 }
 
 export async function POST(req: Request) {
+    // Legacy endpoint: keep disabled in production by default.
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_DEBUG_ENDPOINTS !== 'true') {
+        return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+    if (!isInternalRequest(req.headers)) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 

@@ -1,6 +1,7 @@
 /**
- * CouncilIA v12.0.0 — Validation Engine (Scientific Authority)
+ * 🛡️ SHIELDED PROTOCOL v12.0.0 — Validation Engine (Scientific Authority)
  * 5 Inconsistency Guards + Automated Safe Mode Fallback.
+ * LOCKED: Do not modify without formal Change Request (CR).
  */
 
 import type { 
@@ -200,7 +201,7 @@ function determineResult(
   output: CouncilIAOutput,
   errors: ValidationError[],
   warnings: ValidationWarning[],
-  strategy: ValidationStrategy
+  _strategy: ValidationStrategy
 ): ValidationResult {
   const criticalErrors = errors.filter(e => e.severity === 'CRITICAL');
   

@@ -7,11 +7,10 @@ import { ScoringInput, ScoringOutput } from '@/types/councilia-universal';
 
 export function calculateAllScores(input: ScoringInput): ScoringOutput {
   const { personaScores, personaIds, evidenceDensity, unresolvedRisks } = input;
-  const n = personaScores.length;
 
   // 1. Defining Persona Weights (v12.0.0 Protocol)
   const getWeight = (id: string) => {
-    const technicalRoles = ['technologist', 'auditor', 'cientista', 'cientista_embrapa', 'especialista'];
+    const technicalRoles = ['technologist', 'auditor', 'cientista', 'especialista'];
     return technicalRoles.some(role => id.toLowerCase().includes(role)) ? 1.5 : 1.0;
   };
 

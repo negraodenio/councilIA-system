@@ -37,13 +37,13 @@ export default function Home() {
                         BUILT FOR THE YC &apos;26 AI-NATIVE AGENCY THESIS
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black leading-[1] mb-8 tracking-tighter font-display uppercase">
-                        Make the Right Strategic<br />
+                        Peer-Reviewed Decision<br />
                         <span className="bg-gradient-to-r from-neon-cyan via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">
-                            Move in 15 Minutes.
+                            Intelligence in 15m.
                         </span>
                     </h1>
                     <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-                        Get a board-level decision in 15 minutes — not 3 weeks of meetings. Our Adversarial Consensus Engine (ACE) uses peer-reviewed science from Johns Hopkins & Stanford to eliminate bias and find the truth.
+                        Get board-level auditability in 15 minutes — not 3 weeks of meetings. Our Adversarial Consensus Engine (ACE v12.4) uses peer-reviewed science to eliminate bias, measure stability, and fundable strategic truth.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 font-display">
                         <a href="/login" role="button" aria-label="Start Free Session" className="w-full sm:w-auto px-8 py-4 bg-neon-cyan text-black rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-all text-center">
@@ -101,16 +101,16 @@ export default function Home() {
                     <p className="text-center text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-10">Validated by 5 Scientific Foundations</p>
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
                         <a href="https://doi.org/10.1371/journal.pdig.0000721" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">97% Accuracy</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Shaikh et al. (PLOS 2025)</p>
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Audit Hardened</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Scientific Integrity v12.4.0</p>
                         </a>
                         <a href="https://doi.org/10.1073/pnas.1913936117" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Bias Erased</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Ellemers et al. (PNAS 2020)</p>
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Sci-Var &lt; 15%</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Weighted Dissent Metrology</p>
                         </a>
                         <a href="https://arxiv.org/abs/2501.08263" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Rational Equilibrium</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">MpFL (NeurIPS 2025)</p>
+                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Consensus Stability</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">R1 &rarr; R3 Delta Analysis</p>
                         </a>
                         <div className="text-center space-y-2 group">
                             <h3 className="text-xl font-black text-white font-display tracking-tighter">3-Round Protocol</h3>
@@ -207,12 +207,12 @@ export default function Home() {
                                     <span className="text-4xl font-black font-display text-neon-lime tracking-tighter">72</span>
                                     <div className="text-[8px] text-[#00f0ff]/70 font-mono tracking-widest mt-1 uppercase flex flex-col items-center">
                                         <span>Consensus Score</span>
-                                        <span className="text-[6px] opacity-70 border-t border-neon-cyan/20 pt-1 mt-1 max-w-[120px]">Science-Grade Synthesis v5.0</span>
+                                        <span className="text-[6px] opacity-70 border-t border-neon-cyan/20 pt-1 mt-1 max-w-[120px]">Sci-Audit v12.4.0 Elite</span>
                                     </div>
                                 </div>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Veredict: <span className="text-neon-lime">Strategic Approval</span></h3>
-                            <p className="text-[10px] font-mono text-slate-500 uppercase mb-4 tracking-tighter">Arbitrator Protocol: 3-Layer Synthesis</p>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Verdict: <span className="text-neon-lime">Audit Approved</span></h3>
+                            <p className="text-[10px] font-mono text-slate-500 uppercase mb-4 tracking-tighter">Stability Index: 0.88 | Sci-Var: 11.4%</p>
                             <ul className="text-sm text-[#c4c4ff] leading-relaxed mb-6 text-left space-y-2 list-disc list-inside bg-space-black/40 p-4 rounded-xl border border-[rgba(0,240,255,0.1)] shadow-inner">
                                 <li><strong>Advantage:</strong> Defensive moat against vertical competitors.</li>
                                 <li><strong>Mitigation:</strong> 20% holdback for churn protection.</li>
@@ -250,8 +250,8 @@ export default function Home() {
                     <p className="text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-4">Proof of Work</p>
                     <h2 className="text-4xl font-black mb-4 uppercase tracking-tight font-display">Outcome Gallery</h2>
                     <p className="text-[#c4c4ff] max-w-2xl mx-auto">
-                        We don&apos;t sell chat interfaces. We sell answers. Here is the final output our 
-                        clients actually receive—scientifically validated executive audits.
+                        We don&apos;t sell basic chat logs. We sell verifiable decision intelligence. Here is the final output our 
+                        clients actually receive—scientifically validated Decision Lineage.
                     </p>
                 </div>
 
@@ -276,7 +276,7 @@ export default function Home() {
                                 Validated the $2M expansion layout and strategic positioning in Sao Paulo vs. local competition. 
                             </p>
                             <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-neon-cyan">
-                                <span>See Report</span>
+                                <span>View Audit Trail</span>
                                 <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                             </div>
                         </div>
@@ -302,7 +302,7 @@ export default function Home() {
                                 Forensic audit on the acquisition target&apos;s tech debt. Avoided a $12M overpayment.
                             </p>
                             <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-amber-400">
-                                <span>See Report</span>
+                                <span>View Decision Lineage</span>
                                 <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                             </div>
                         </div>
@@ -325,7 +325,7 @@ export default function Home() {
                         </div>
                         <div className="p-6">
                             <p className="text-xs text-[#c4c4ff] mb-4 line-clamp-2 leading-relaxed">
-                                Stress-tested the pivot from 3PL to internal warehousing. Math didn&apos;t scale. Plan aborted.
+                                Stress-tested the pivot from 3PL to internal warehousing. Hallucination shield detected logic gaps. Plan aborted.
                             </p>
                             <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-red-400">
                                 <span>See Report</span>
@@ -342,8 +342,8 @@ export default function Home() {
                     <div className="glass-card p-10 rounded-3xl border border-white/5 bg-panel-blue/10">
                         <h3 className="text-2xl font-black mb-6 font-display uppercase tracking-tight text-neon-cyan">The Consensus Score</h3>
                         <p className="text-[#c4c4ff] leading-relaxed mb-8">
-                            Unlike simple averages, a CouncilIA Score (0-100) represents <strong>Argument Density</strong>. 
-                            It measures how many strategic assumptions survived under adversarial pressure after 3 rounds of filtering.
+                            Unlike simple averages, a CouncilIA Score represents <strong>Consensus Stability</strong>. 
+                            It measures how many strategic assumptions survived under adversarial pressure across our 3-round protocol.
                         </p>
                         <div className="space-y-4">
                             <div className="flex gap-4 p-4 rounded-xl bg-black/40 border border-white/5">
@@ -404,8 +404,8 @@ export default function Home() {
                             <div className="size-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6">
                                 <span className="material-symbols-outlined text-neon-cyan">fact_check</span>
                             </div>
-                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Recursive Synthesis</h3>
-                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Only arguments that survived R1/R2 are synthesized by the Arbitrator into the final executive verdict and score.</p>
+                            <h3 className="text-xl font-bold mb-4 font-display uppercase tracking-tight">Recursive Audit</h3>
+                            <p className="text-[#c4c4ff] text-sm leading-relaxed font-body">Only arguments that survived R1/R2 are synthesized by the Arbitrator into the final executive audit and decision lineage.</p>
                         </div>
                     </div>
                 </div>
@@ -797,7 +797,7 @@ export default function Home() {
                     <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 flex flex-col">
                         <h3 className="font-bold text-lg mb-2 font-display">Starter</h3>
                         <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-black font-display text-white">$49</span>
+                            <span className="text-4xl font-black font-display text-white">€29</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
                         <ul className="space-y-4 mb-8 flex-grow">
@@ -819,9 +819,9 @@ export default function Home() {
                     {/* Professional */}
                     <div className="p-8 rounded-2xl border-2 border-neon-cyan/50 bg-panel-blue/20 flex flex-col relative shadow-[0_0_30px_rgba(0,240,255,0.1)]">
                         <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-neon-cyan text-black text-[10px] font-black uppercase rounded-full tracking-widest">Enterprise Ready</div>
-                        <h3 className="font-bold text-lg mb-2 text-neon-cyan font-display">Professional</h3>
+                        <h3 className="font-bold text-lg mb-2 text-neon-cyan font-display">Pro Decisionist</h3>
                         <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-black font-display text-white">$197</span>
+                            <span className="text-4xl font-black font-display text-white">€199</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
                         <ul className="space-y-4 mb-8 flex-grow">
@@ -848,8 +848,8 @@ export default function Home() {
                     <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-purple-500/5 flex flex-col">
                         <h3 className="font-bold text-lg mb-2 font-display uppercase tracking-tight text-purple-300">Enterprise</h3>
                         <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-black font-display text-white">$997</span>
-                            <span className="text-slate-500 text-sm">/mo</span>
+                            <span className="text-4xl font-black font-display text-white">€5.000</span>
+                            <span className="text-slate-500 text-sm">/yr</span>
                         </div>
                         <ul className="space-y-4 mb-8 flex-grow">
                             <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
@@ -878,7 +878,7 @@ export default function Home() {
             <section className="py-24 px-6 relative overflow-hidden">
                 <div className="absolute inset-0 bg-neon-cyan/5 blur-[120px] rounded-full -translate-y-1/2"></div>
                 <div className="max-w-4xl mx-auto text-center relative z-10">
-                    <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-neon-cyan/60 mb-4">Consultants charge $50,000. We charge $49.</p>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-neon-cyan/60 mb-4">Consultants charge €50,000. CouncilIA Elite costs €29.</p>
                     <h2 className="text-4xl md:text-6xl font-black mb-6 font-display uppercase leading-tight">
                         Your Board of Directors<br />
                         <span className="text-neon-cyan">starts now.</span>

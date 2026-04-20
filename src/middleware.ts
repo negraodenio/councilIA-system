@@ -46,7 +46,21 @@ export async function middleware(req: NextRequest) {
     }
 
     // 3) Route Protection
-    const protectedPaths = ['/chamber', '/report', '/api/session', '/api/patch', '/api/repo', '/api/rag', '/dashboard', '/new'];
+    const protectedPaths = [
+        '/chamber',
+        '/report',
+        '/api/chamber',
+        '/api/session',
+        '/api/patch',
+        '/api/repo',
+        '/api/rag',
+        '/api/stripe',
+        '/api/admin',
+        '/api/audit',
+        '/api/debug',
+        '/dashboard',
+        '/new'
+    ];
     const isProtected = protectedPaths.some(p => req.nextUrl.pathname.startsWith(p));
 
     // Allow internal worker calls to bypass auth

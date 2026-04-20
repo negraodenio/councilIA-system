@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { isInternalRequest } from '@/lib/security/internal-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
+  if (process.env.NODE_ENV === 'production' || process.env.ENABLE_DEBUG_ENDPOINTS !== 'true') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
+  if (!isInternalRequest(req.headers)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   const url = new URL(req.url);
   const runId = url.searchParams.get('runId');
   

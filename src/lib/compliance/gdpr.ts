@@ -35,7 +35,7 @@ export class GDPRComplianceManager {
    * Determines AI Act risk classification
    */
   classifyAIRisk(
-    domain: 'agro' | 'healthcare' | 'government' | 'finance' | 'corporate' | 'general',
+    domain: 'healthcare' | 'government' | 'finance' | 'corporate' | 'general',
     autonomyLevel: 'ASSISTED' | 'AUTONOMOUS' | 'FULLY_AUTONOMOUS'
   ): AIActCompliance {
     // CouncilIA is "assisted" (human-in-the-loop)
@@ -118,7 +118,7 @@ DPO: ${this.dpoEmail}
   /**
    * Art. 17 - Right to erasure
    */
-  async handleErasureRequest(userId: string): Promise<{
+  async handleErasureRequest(_userId: string): Promise<{
     deleted: string[];
     retained: string[];
     reason: string;

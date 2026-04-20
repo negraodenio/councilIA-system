@@ -1,6 +1,6 @@
 /**
- * CouncilIA v7.3.1 — Universal Type System
- * Supports: General, Agro (Embrapa), Healthcare, Finance, Government
+ * CouncilIA v12.0.0 — Universal Type System
+ * Supports: General, Healthcare, Finance, Government
  */
 
 // ============================================
@@ -9,7 +9,6 @@
 
 export type CouncilDomain = 
   | 'general'      // General enterprise use
-  | 'agro'         // Embrapa, MAPA, agribusiness
   | 'healthcare'   // ANVISA, health, pharma
   | 'finance'      // BCB, banks, fintechs, insurance
   | 'government';  // Public policy, compliance
@@ -61,7 +60,7 @@ export interface DecisionConstraint {
 }
 
 export interface CouncilConfig {
-  personaSet?: PersonaSet;             // 'standard' | 'embrapa' | 'health' | 'finance'
+  personaSet?: PersonaSet;             // 'standard' | 'health' | 'finance'
   strictness?: 'strict' | 'balanced' | 'permissive';
   maxRounds?: number;
   enableFallback?: boolean;
@@ -102,7 +101,7 @@ export type PersonaArchetype =
   | 'ETHICIST'       // Ethics, compliance
   | 'FINANCIER';     // Economics, ROI
 
-export type PersonaSet = 'standard' | 'embrapa' | 'health' | 'finance';
+export type PersonaSet = 'standard' | 'health' | 'finance';
 
 export interface PersonaConfig {
   archetype: PersonaArchetype;
@@ -124,6 +123,7 @@ export interface ScoringInput {
   unresolvedRisks: number;
   validationStatus: ValidationStatus;
   domain: CouncilDomain;
+  previousMeanScore?: number; // Used for stability calibration
 }
 
 export type EvidenceLevel = 'high' | 'moderate' | 'low';
@@ -137,6 +137,8 @@ export interface ScoringOutput {
   confidence: ConfidenceLevel;
   meanScore: number;
   stdDev: number;
+  consensusStability?: number; // Delta between rounds
+  scientificVariance?: number; // Weighted variance for papers
 }
 
 export interface PersonaResponse {
@@ -168,6 +170,8 @@ export interface CouncilIAOutput {
   fontesEvidencia?: string; // v11.0 High-Authority
   actionPlan: ActionPlan;
   decisionRule: DecisionRule;
+  decisionLineage?: DecisionLineage; // Enterprise Lineage Trace
+  scientificAudit?: ScientificAudit; // ICLR-track metrics
   fullTranscript?: RoundTranscript;
 }
 
@@ -216,7 +220,7 @@ export interface OutputMetadata {
   complianceFlags: string[];
   retentionUntil: string;
   domain?: CouncilDomain;
-  is_embrapa?: boolean;
+  isAuditHardened?: boolean; // P0 Safety Verified flag
 }
 
 export interface ExecutiveVerdict {
@@ -321,6 +325,21 @@ export interface RoundTranscript {
   round2: any;
   round3: any;
   round4?: any;
-  round5?: any;
-  round6?: any;
+}
+
+// ============================================
+// EXCELLENCE & AUDIT TYPES (v12.4 Upgrade)
+// ============================================
+
+export interface DecisionLineage {
+  consensusPath: number[]; // Scores across rounds [R1, R2, R3]
+  stabilityIndex: number;  // 0-1 (normalized)
+  keyPivots: string[];     // Significant stance changes detected
+}
+
+export interface ScientificAudit {
+  accuracyEstimate: number; // 0-1 based on benchmark data
+  reproducibilityScore: number; // Based on variance
+  adversarialDensity: number; // 0-1 (R2 Dissent volume)
+  citationsVerified: boolean; // Semantical validation check status
 }

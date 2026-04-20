@@ -90,7 +90,6 @@ export function calculateNeuralConsistency(scores: number[]): { dissent: number;
 export function calculateVaR(score: number, dissent: number = 20): string {
     // Risk increases as score ↓ and dissent ↑
     const inverseScore = 100 - score;
-    const uncertaintyFactor = 1 + (dissent / 100);
     
     // Formula: (InverseScore * Uncertainty) scaled to 0-100
     const varValue = Math.min(99.9, (inverseScore * 0.8) + (dissent * 0.4));

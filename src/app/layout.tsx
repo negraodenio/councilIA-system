@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono, Inter, Public_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -33,11 +33,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <head>
-                <meta charSet="utf-8" />
-                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
-            </head>
-            <body className={`${spaceGrotesk.variable} ${jetBrainsMono.variable} ${inter.variable} ${publicSans.variable} font-body bg-deep-blue text-slate-100 selection:bg-neon-lime selection:text-black`}>{children}</body>
+            <body className={`${spaceGrotesk.variable} ${jetBrainsMono.variable} ${inter.variable} ${publicSans.variable} font-body bg-deep-blue text-slate-100 selection:bg-neon-lime selection:text-black`}>
+                {children}
+            </body>
         </html>
     );
 }

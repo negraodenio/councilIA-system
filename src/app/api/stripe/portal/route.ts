@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
+import { stripe, getAbsoluteUrl } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 
-export async function GET(req: NextRequest) {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-        apiVersion: "2026-01-28.clover" as any,
-    });
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
+export async function GET(req: NextRequest) {
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
@@ -25,11 +24,11 @@ export async function GET(req: NextRequest) {
             return NextResponse.redirect(new URL("/pricing", req.url));
         }
 
-        const origin = req.headers.get("origin") || "https://www.councilia.com";
+        const return_url = getAbsoluteUrl("/dashboard", req.headers.get("origin") || undefined);
 
         const session = await stripe.billingPortal.sessions.create({
             customer: profile.stripe_customer_id,
-            return_url: `${origin}/dashboard`,
+            return_url,
         });
 
         return NextResponse.redirect(session.url);

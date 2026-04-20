@@ -1,50 +1,26 @@
 import { NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/admin';
 import { nanoid } from 'nanoid';
 import { getLimitForPlan } from '@/config/limits';
+import { requireAuthContext } from '@/lib/security/auth-context';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
-    const supabase = createAdminClient();
-    const { idea, region, sensitivity, topic, tenant_id, user_id } = await req.json() || {};
+    const auth = await requireAuthContext();
+    if (!auth.ok) return auth.response;
+
+    const supabase = auth.admin;
+    const { idea, region, sensitivity, topic } = await req.json() || {};
 
     if (!idea) return NextResponse.json({ error: 'Missing idea' }, { status: 400 });
 
-    let t_id = tenant_id;
-    let u_id = user_id;
-
-    // 1. Resolve User ID from Auth if missing
-    if (!u_id || u_id === '00000000-0000-0000-0000-000000000000') {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) u_id = user.id;
-    }
-
-    if (!u_id) return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-
-    // 2. Resolve Tenant ID
-    // Robust check for "zero" or missing tenant
-    const isZero = (id: any) => !id || id === '00000000-0000-0000-0000-000000000000' || String(id).trim() === '';
-
-    if (isZero(t_id)) {
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('tenant_id')
-            .eq('id', u_id)
-            .maybeSingle();
-
-        // If profile has a real tenant, use it. Otherwise, isolate usage to the user's ID.
-        if (profile?.tenant_id && !isZero(profile.tenant_id)) {
-            t_id = profile.tenant_id;
-        } else {
-            t_id = u_id;
-        }
-    }
+    const u_id = auth.ctx.user.id;
+    const t_id = auth.ctx.tenantId;
 
     // SAFETY: Ensure tenant and profile records exist to avoid FK violations (validations_tenant_id_fkey)
     await supabase.from('tenants').upsert({ id: t_id, name: 'Personal Workspace' }, { onConflict: 'id' });
-    await supabase.from('profiles').upsert({ id: u_id, tenant_id: t_id, role: 'admin' }, { onConflict: 'id' });
+    await supabase.from('profiles').upsert({ id: u_id, tenant_id: t_id }, { onConflict: 'id' });
 
     // 3. Verify Usage & Subscription
     const now = new Date();

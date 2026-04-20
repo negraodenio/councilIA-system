@@ -4,14 +4,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { LGPDComplianceManager } from '@/lib/compliance/lgpd';
 import { GDPRComplianceManager } from '@/lib/compliance/gdpr';
 import { BCB4893Compliance } from '@/lib/compliance/bcb-4893';
 import { AnvisaComplianceManager } from '@/lib/compliance/anvisa';
 
 export interface ComplianceContext {
   jurisdiction: 'BR' | 'EU' | 'BR_EU' | 'GLOBAL';
-  domain: 'agro' | 'healthcare' | 'government' | 'finance' | 'corporate' | 'general';
+  domain: 'healthcare' | 'government' | 'finance' | 'corporate' | 'general';
   dataSubjectRights: string[];
   retentionPeriod: number; // days
   internationalTransfer: boolean;

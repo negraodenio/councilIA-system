@@ -6,7 +6,11 @@ export async function createClient() {
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!url || !key) {
-        console.warn('Supabase credentials missing in server client factory');
+        const msg = 'Supabase server credentials missing (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY)';
+        if (process.env.NODE_ENV === 'production') {
+            throw new Error(msg);
+        }
+        console.warn(msg);
     }
 
     const cookieStore = await cookies();

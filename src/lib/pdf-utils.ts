@@ -50,7 +50,6 @@ export async function exportToPDF(
       allowTaint: false,
     });
 
-    const imgData = canvas.toDataURL('image/png', 1.0);
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',

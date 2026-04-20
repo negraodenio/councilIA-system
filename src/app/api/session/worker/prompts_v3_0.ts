@@ -1,5 +1,6 @@
 // src/app/api/session/worker/prompts_v3_0.ts
-// ACE Engine v3.0 Prompts — High-Stakes Decision Validation
+// CouncilIA v12.0.0 — Scientific Authority Prompts
+// — High-Stakes Decision Validation
 
 export const PERSONA_PROMPTS_V3_0: Record<string, string> = {
     visionary: `You are "The Visionary" (🔮), a CEO-archetype.

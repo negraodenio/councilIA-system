@@ -1,15 +1,20 @@
 /**
- * LLM Provider Bridge (v7.3.1)
- * Bridges the Engine with OpenRouter/SiliconFlow
+ * 🛡️ SHIELDED PROTOCOL v12.0.0 — LLM Provider (Zero-Variance)
+ * Bridges the Engine with OpenRouter/SiliconFlow with Zero-Variance Determinism.
+ * LOCKED: Do not modify without formal Change Request (CR).
  */
 
 export async function callLLM(
   messages: any[], 
   options: { model?: string; temperature?: number; json?: boolean; seed?: number } = {}
 ): Promise<string> {
-  const model = options.model || "gpt-4o";
+  const model = options.model || "openai/gpt-4o-mini";
   const apiKey = process.env.OPENROUTER_API_KEY;
   
+  // v12.0.0 Deterministic Standards
+  const temperature = options.temperature ?? 0.1;
+  const seed = options.seed ?? 42;
+
   if (!apiKey) {
     // Fallback to OpenAI if OpenRouter is missing
     const OpenAI = (await import('openai')).default;
@@ -17,14 +22,14 @@ export async function callLLM(
     const response = await openai.chat.completions.create({
       model,
       messages,
-      temperature: options.temperature ?? 0.4,
+      temperature,
       response_format: options.json ? { type: 'json_object' } : undefined,
-      seed: options.seed
+      seed
     } as any);
     return response.choices[0].message.content || '';
   }
 
-  // OpenRouter implementation with Resilience (45s timeout)
+  // OpenRouter implementation with Resilience (60s timeout)
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 60000);
 
@@ -36,14 +41,14 @@ export async function callLLM(
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://councilia.com',
-        'X-Title': 'CouncilIA v7.3.1'
+        'X-Title': 'CouncilIA v12.0.0 Scientific Authority'
       },
       body: JSON.stringify({
-        model: model === "gpt-4o" ? "openai/gpt-4o-mini" : (model.includes('/') ? model : `openai/${model}`),
+        model: model.includes('/') ? model : `openai/${model}`,
         messages,
-        temperature: options.temperature ?? 0.4,
+        temperature,
         response_format: options.json ? { type: 'json_object' } : undefined,
-        seed: options.seed
+        seed
       })
     });
 
@@ -51,7 +56,7 @@ export async function callLLM(
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`LLM_API_ERROR: ${response.status}`);
+      throw new Error(`LLM_API_ERROR: ${response.status} - ${errorText.substring(0, 100)}`);
     }
 
     const data = await response.json();

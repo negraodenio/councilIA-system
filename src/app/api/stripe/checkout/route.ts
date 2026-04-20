@@ -1,11 +1,11 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
+import { NextRequest, NextResponse } from "next/server";
+import { stripe, getAbsoluteUrl } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-        apiVersion: "2026-01-28.clover" as any,
-    });
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
@@ -51,15 +51,15 @@ export async function POST(req: NextRequest) {
                 .eq("id", user.id);
         }
 
-        // Create checkout session
-        const origin = req.headers.get("origin") || "https://www.councilia.com";
+        const success_url = getAbsoluteUrl("/dashboard?checkout=success", req.headers.get("origin") || undefined);
+        const cancel_url = getAbsoluteUrl("/pricing?checkout=cancelled", req.headers.get("origin") || undefined);
 
         const session = await stripe.checkout.sessions.create({
             customer: customerId,
             mode: "subscription",
             line_items: [{ price: priceId, quantity: 1 }],
-            success_url: `${origin}/dashboard?checkout=success`,
-            cancel_url: `${origin}/pricing?checkout=cancelled`,
+            success_url,
+            cancel_url,
             metadata: {
                 supabase_user_id: user.id,
                 tenant_id: tenantId,

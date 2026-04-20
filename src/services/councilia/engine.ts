@@ -1,4 +1,4 @@
-import { CouncilIAInput, CouncilIAOutput, CouncilIAEvent, RoundResult } from '@/types/councilia-universal';
+import { CouncilIAInput, CouncilIAOutput, CouncilIAEvent } from '@/types/councilia-universal';
 import { executeRound1 } from './rounds/round1';
 import { executeRound2 } from './rounds/round2';
 import { executeRound3 } from './rounds/round3';
@@ -20,8 +20,7 @@ export class CouncilIAEngine {
     onEvent?: (event: CouncilIAEvent) => Promise<void>
   ): Promise<CouncilIAOutput> {
     const sessionId = input.metadata?.sessionId || `run_${Date.now()}`;
-    const isEmbrapa = input.domain === 'agro' || (input as any).is_embrapa;
-    
+
     // --- GLOBAL ENGINE WATCHDOG (Limit: 180s) ---
     const watchdog = setTimeout(() => {
       throw new Error('ENGINE_DEADLOCK: Deliberation exceeded 180s safety window.');
@@ -31,9 +30,9 @@ export class CouncilIAEngine {
       console.log(`[Engine] Processing Session ${sessionId} in ${input.domain} domain. protocol=v12.0.0`);
 
       // --- DELIBERATION PIPELINE (v7.3.1.8 - Anti-Deadlock) ---
-      const r1 = await executeRound1(input.proposal, input.ragDocuments, isEmbrapa, onEvent);
-      const r2 = await executeRound2(input.proposal, r1, input.ragDocuments, isEmbrapa, onEvent);
-      const r3 = await executeRound3(input.proposal, r2, input.ragDocuments, isEmbrapa, onEvent);
+      const r1 = await executeRound1(input.proposal, input.ragDocuments, onEvent);
+      const r2 = await executeRound2(input.proposal, r1, input.ragDocuments, onEvent);
+      const r3 = await executeRound3(input.proposal, r2, input.ragDocuments, onEvent);
 
       // --- FINAL JUDGE: VERDICT & TRUTH SYNTHESIS ---
       if (onEvent) {
@@ -61,8 +60,7 @@ export class CouncilIAEngine {
         ...finalVerdict.metadata,
         sessionId,
         protocolVersion: '12.0.0',
-        domain: input.domain,
-        is_embrapa: isEmbrapa
+        domain: input.domain
       };
 
       return finalVerdict;

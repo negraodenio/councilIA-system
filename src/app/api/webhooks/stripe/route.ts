@@ -1,19 +1,18 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { stripe } from '@/lib/stripe';
 import Stripe from 'stripe';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
-    const stripeKey = process.env.STRIPE_SECRET_KEY;
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-    if (!stripeKey || !webhookSecret) {
+    if (!webhookSecret) {
         return NextResponse.json({ error: 'Stripe configuration missing' }, { status: 500 });
     }
 
-    const stripe = new Stripe(stripeKey, { apiVersion: '2024-06-20' as any });
     const supabase = createAdminClient();
     const body = await req.text();
     const sig = req.headers.get('stripe-signature')!;

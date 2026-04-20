@@ -3,9 +3,18 @@ import { fetchGithubRepoTree } from "@/lib/repo/github";
 import { dispatchRepoIndexTask } from "@/lib/queue/indexer";
 // Uncomment and configure your supabase client when the types are generated properly
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isInternalRequest } from "@/lib/security/internal-auth";
 
 export async function POST(req: NextRequest) {
     try {
+        // Legacy ingestion endpoint: keep disabled in production by default.
+        if (process.env.NODE_ENV === 'production' || process.env.ENABLE_DEBUG_ENDPOINTS !== 'true') {
+            return NextResponse.json({ error: 'Not found' }, { status: 404 });
+        }
+        if (!isInternalRequest(req.headers)) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
         const { githubUrl, branch = 'main', uId } = await req.json();
 
         if (!githubUrl || !githubUrl.includes('github.com')) {

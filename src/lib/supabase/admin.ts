@@ -5,7 +5,11 @@ export function createAdminClient() {
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!url || !key) {
-        console.warn('Supabase admin credentials missing');
+        const msg = 'Supabase admin credentials missing (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)';
+        if (process.env.NODE_ENV === 'production') {
+            throw new Error(msg);
+        }
+        console.warn(msg);
     }
 
     return createSupabaseClient(

@@ -35,8 +35,7 @@
     "react-diff-viewer-continued": "^4.1.2",
     "react-dom": "^18",
     "react-markdown": "^10.1.0",
-    "stripe": "^20.3.1",
-    "xlsx": "^0.18.5"
+    "stripe": "^20.3.1"
   },
   "devDependencies": {
     "@langchain/textsplitters": "^1.0.1",
@@ -44,6 +43,8 @@
     "@types/pdf-parse": "^1.1.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.15",
     "pg": "^8.18.0",
     "postcss": "^8",
     "supabase": "^2.76.12",

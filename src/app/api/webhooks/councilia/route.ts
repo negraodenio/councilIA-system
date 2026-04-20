@@ -3,7 +3,7 @@
  * Asynchronously processes CouncilIA rounds and stores the final result.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { CouncilIAEngine } from '@/services/councilia/engine';
 import { createClient } from '@supabase/supabase-js';

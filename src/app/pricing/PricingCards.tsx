@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const plans = [
@@ -62,7 +62,7 @@ const plans = [
 
 export function PricingCards() {
     const [loading, setLoading] = useState<string | null>(null);
-    const [isAnnual, setIsAnnual] = useState(false);
+    const [isAnnual, _setIsAnnual] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -82,7 +82,7 @@ export function PricingCards() {
                 return () => clearTimeout(timer);
             }
         }
-    }, [searchParams]);
+    }, [searchParams, handleCheckout]);
 
     const activePlans = plans.map(plan => ({
         ...plan,
@@ -90,7 +90,7 @@ export function PricingCards() {
         period: isAnnual ? "/month (billed annually)" : "/month"
     }));
 
-    async function handleCheckout(priceId: string, planName: string) {
+    const handleCheckout = useCallback(async (priceId: string, planName: string) => {
         setLoading(planName);
         try {
             const res = await fetch("/api/stripe/checkout", {
@@ -116,7 +116,7 @@ export function PricingCards() {
         } finally {
             setLoading(null);
         }
-    }
+    }, [router]);
 
     return (
         <div className="space-y-12">

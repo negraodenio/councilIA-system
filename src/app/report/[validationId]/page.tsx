@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: Promise<{ validationId:
     }
 
     // 2) Buscar patches associados
-    const { data: patches } = await supabase
+    const { data: _patches } = await supabase
         .from('code_patches')
         .select('*')
         .eq('validation_id', validationId)

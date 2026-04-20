@@ -10,7 +10,7 @@ import { auditLogger } from '@/lib/compliance/audit-logger';
 import { CouncilIAEngine } from '@/services/councilia/engine';
 
 // Rate limiter helper (In production, use process.env.REDIS_URL)
-const getRateLimit = (jurisdiction: string, userId: string) => {
+const getRateLimit = (jurisdiction: string, _userId: string) => {
   // If no Redis, provide a mock
   if (!process.env.UPSTASH_REDIS_REST_URL) {
     return { limit: async () => ({ success: true, remaining: 5 }) };
@@ -25,7 +25,7 @@ const getRateLimit = (jurisdiction: string, userId: string) => {
 // Input Validation Schema v7.0
 const CouncilIAInputSchema = z.object({
   proposal: z.string().min(50).max(50000),
-  domain: z.enum(['general', 'agro', 'healthcare', 'finance', 'government']),
+  domain: z.enum(['general', 'healthcare', 'finance', 'government']),
   jurisdiction: z.enum(['BR', 'EU', 'US', 'BR_EU', 'GLOBAL']).default('BR'),
   rag_documents: z.array(z.object({
     id: z.string().uuid(),
@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
       }
     );
     const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // CouncilIA v12.0.0 Scientific Authority // v12.0.0 Elite
     
     if (authError || !user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });

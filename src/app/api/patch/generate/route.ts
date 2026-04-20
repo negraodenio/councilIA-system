@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { embedMistralCached } from '@/lib/embeddings/mistral';
 import crypto from 'crypto';
+import { requireAuthContext, forbid, notFound } from '@/lib/security/auth-context';
+import { hasTenantOrUserAccess } from '@/lib/security/ownership';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -31,12 +33,33 @@ async function callJudgeOpenRouter(messages: any[]) {
 export async function POST(req: Request) {
     console.log('--- PATCH GENERATE REQUEST RECEIVED ---');
     try {
-        const { tenant_id, validation_id, repo_id, objective } = await req.json();
-        if (!tenant_id || !validation_id || !repo_id || !objective) {
-            return NextResponse.json({ error: 'tenant_id, validation_id, repo_id, objective are required' }, { status: 400 });
+        const auth = await requireAuthContext();
+        if (!auth.ok) return auth.response;
+
+        const { validation_id, repo_id, objective } = await req.json();
+        if (!validation_id || !repo_id || !objective) {
+            return NextResponse.json({ error: 'validation_id, repo_id, objective are required' }, { status: 400 });
         }
 
         const supabase = createAdminClient();
+
+        const { data: validationRow } = await supabase
+            .from('validations')
+            .select('*')
+            .eq('id', validation_id)
+            .maybeSingle();
+
+        if (!validationRow) return notFound();
+        if (!hasTenantOrUserAccess(validationRow, { tenantId: auth.ctx.tenantId, userId: auth.ctx.user.id })) return forbid();
+
+        const { data: repo } = await supabase
+            .from('repositories')
+            .select('*')
+            .eq('id', repo_id)
+            .maybeSingle();
+
+        if (!repo) return notFound();
+        if (!hasTenantOrUserAccess(repo, { tenantId: auth.ctx.tenantId, userId: auth.ctx.user.id })) return forbid();
 
         // 1) RAG context
         console.log('Fetching RAG context...');
@@ -105,7 +128,7 @@ export async function POST(req: Request) {
             const { error } = await supabase.from('code_patches').insert({
                 id: `patch_${crypto.randomUUID()}`,
                 validation_id,
-                tenant_id,
+                tenant_id: auth.ctx.tenantId,
                 repo_id,
                 file_path: p.file_path,
                 diff: p.diff_unified,

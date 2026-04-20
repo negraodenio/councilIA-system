@@ -2,7 +2,7 @@
  * CouncilIA Core Type Definitions v7.1
  */
 
-export type CouncilIAContext = 'agro' | 'healthcare' | 'government' | 'finance' | 'corporate' | 'general';
+export type CouncilIAContext = 'healthcare' | 'government' | 'finance' | 'corporate' | 'general';
 
 export interface PersonaResponse {
   persona: string;
