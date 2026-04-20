@@ -66,6 +66,31 @@ export function PricingCards() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    const handleCheckout = useCallback(async (priceId: string, planName: string) => {
+        setLoading(planName);
+        try {
+            const res = await fetch("/api/stripe/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ priceId, planName: planName.toLowerCase() }),
+            });
+
+            if (res.status === 401) {
+                // Not logged in, redirect to login with return back for checkout
+                router.push(`/login?returnTo=/pricing&checkout=${planName.toLowerCase()}`);
+                return;
+            }
+
+            const { url } = await res.json();
+            if (url) window.location.href = url;
+        } catch (error) {
+            console.error("Checkout error:", error);
+            alert("Erro ao processar pagamento. Tente novamente.");
+        } finally {
+            setLoading(null);
+        }
+    }, [router]);
+
     // Handle automatic checkout if coming back from login
     useEffect(() => {
         const checkoutPlan = searchParams.get("checkout");
@@ -89,34 +114,6 @@ export function PricingCards() {
         displayPrice: isAnnual ? Math.round(parseInt(plan.price) * 0.8) : plan.price,
         period: isAnnual ? "/month (billed annually)" : "/month"
     }));
-
-    const handleCheckout = useCallback(async (priceId: string, planName: string) => {
-        setLoading(planName);
-        try {
-            const res = await fetch("/api/stripe/checkout", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ priceId, planName: planName.toLowerCase() }),
-            });
-
-            if (res.status === 401) {
-                // Redirect to login if not authenticated
-                router.push(`/login?redirect=/pricing&checkout=${planName.toLowerCase()}`);
-                return;
-            }
-
-            const data = await res.json();
-            if (data.url) {
-                window.location.href = data.url;
-            } else {
-                alert(data.error || "Something went wrong.");
-            }
-        } catch {
-            alert("Something went wrong.");
-        } finally {
-            setLoading(null);
-        }
-    }, [router]);
 
     return (
         <div className="space-y-12">
