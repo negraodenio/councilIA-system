@@ -5,7 +5,8 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-06-20',
+  // @ts-ignore: Custom Clover API version
+  apiVersion: '2026-01-28.clover',
   appInfo: {
     name: 'CouncilIA',
     version: '12.0.0',
