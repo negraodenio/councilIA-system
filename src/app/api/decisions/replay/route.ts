@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     }
 
     // v14 Audit Verification: Verify signature integrity
-    const isValid = verifyAuditHash(
+    const isValid = await verifyAuditHash(
         decision.audit_signature,
         { decision: decision.executive_verdict, score: decision.score, metrics: decision.scientific_audit },
         decision.previous_hash || ''

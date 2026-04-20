@@ -95,9 +95,16 @@ export class JudgeService {
     };
 
     // v14 Tamper-Proof: Generate Signed HMAC
-    output.metadata.auditSignature = generateSignedHash(
+    output.metadata.auditSignature = await generateSignedHash(
       { decision: output.decisaoImediata, score: output.executiveVerdict?.score, metrics: output.scientificAudit },
       input.metadata?.previousHash || ''
+    );
+
+    // v14 Audit Verification: Verify signature integrity
+    const isValid = await verifyAuditHash(
+        output.metadata.auditSignature,
+        { decision: output.decisaoImediata, score: output.executiveVerdict?.score, metrics: output.scientificAudit },
+        input.metadata?.previousHash || ''
     );
 
     // 6. Mandatory Consensus/Logic Validator Post-Check
