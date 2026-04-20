@@ -18,7 +18,7 @@ import { callLLM } from './provider';
 import { JudgeOutputValidator } from './judge/validator';
 import { validateOutput } from './validator';
 import { CitationValidator } from './judge/citation-validator';
-import { generateSignedHash } from '@/lib/security/audit';
+import { generateSignedHash, verifyAuditHash } from '@/lib/security/audit';
 import { stabilizeVariance as _stabilizeVariance, calculateECR } from '@/lib/calibration';
 import { getEmbedding, cosineSimilarity } from './provider';
 import { PersonaBaselineService } from './judge/persona-baselines'; 
