@@ -67,3 +67,41 @@ export async function callLLM(
     throw err;
   }
 }
+
+/**
+ * Generates semantic embeddings for text analysis (PSI Metrology).
+ */
+export async function getEmbedding(text: string): Promise<number[]> {
+  const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error('API_KEY_MISSING');
+
+  const response = await fetch('https://api.openai.com/v1/embeddings', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'text-embedding-3-small',
+      input: text.replace(/\n/g, ' ')
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`EMBEDDING_ERROR: ${response.status} - ${err}`);
+  }
+
+  const data = await response.json();
+  return data.data[0].embedding;
+}
+
+/**
+ * Calculates cosine similarity between two vectors.
+ */
+export function cosineSimilarity(a: number[], b: number[]): number {
+  const dotProduct = a.reduce((sum, val, i) => sum + val * b[i], 0);
+  const magnitudeA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+  const magnitudeB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+  return dotProduct / (magnitudeA * magnitudeB);
+}

@@ -139,6 +139,8 @@ export interface ScoringOutput {
   stdDev: number;
   consensusStability?: number; // Delta between rounds
   scientificVariance?: number; // Weighted variance for papers
+  isAuditReady?: boolean;      // v14 determinism flag
+  conflictPenaltyDetected?: boolean; // v14 echo-chamber guard
 }
 
 export interface PersonaResponse {
@@ -215,12 +217,13 @@ export interface ValidationResult {
 export interface OutputMetadata {
   sessionId: string;
   timestamp: string;
-  protocolVersion: '12.0.0';
+  protocolVersion: '14.0.0';
   executionTimeMs: number;
   complianceFlags: string[];
   retentionUntil: string;
   domain?: CouncilDomain;
   isAuditHardened?: boolean; // P0 Safety Verified flag
+  auditSignature?: string;    // v14 Deterministic Signed Hash
 }
 
 export interface ExecutiveVerdict {
@@ -332,14 +335,17 @@ export interface RoundTranscript {
 // ============================================
 
 export interface DecisionLineage {
-  consensusPath: number[]; // Scores across rounds [R1, R2, R3]
-  stabilityIndex: number;  // 0-1 (normalized)
-  keyPivots: string[];     // Significant stance changes detected
+  consensusPath: number[];   // Scores across rounds [R1, R2, R3]
+  stabilityIndex: number;    // 0-1 (normalized)
+  personaStability: number;  // 0-1 (PSI metric)
+  keyPivots: string[];       // Significant stance changes detected
 }
 
 export interface ScientificAudit {
-  accuracyEstimate: number; // 0-1 based on benchmark data
-  reproducibilityScore: number; // Based on variance
-  adversarialDensity: number; // 0-1 (R2 Dissent volume)
-  citationsVerified: boolean; // Semantical validation check status
+  accuracyEstimate: number;       // 0-1 based on benchmark data
+  reproducibilityScore: number;    // Based on variance
+  adversarialDensity: number;      // 0-1 (R2 Dissent volume)
+  citationsVerified: boolean;      // Semantical validation check status
+  personaStabilityIndex: number;   // Semantic drift metric (v14)
+  errorCorrectionRate: number;     // Scientific validity metric (v14)
 }

@@ -26,6 +26,16 @@ function getPersonaWeight(id: string): number {
   return isTechnical ? 1.5 : 1.0;
 }
 
+/**
+ * v14 — ADVERSARIAL PRESSURE CALIBRATION
+ * Calculates the Conflict Penalty to prevent 'Lazy Consensus'.
+ */
+function calculateConflictPenalty(personaScores: number[]): number {
+    const range = Math.max(...personaScores) - Math.min(...personaScores);
+    // If range < 5%, the debate was likely too superficial (echo chamber)
+    return range < 5 ? 20 : 0;
+}
+
 // ============================================
 // CORE METRICS
 // ============================================
@@ -55,6 +65,10 @@ export function calculateAllScores(input: ScoringInput): ScoringOutput {
   // Viability boost based on domain and mean quality
   const viabilityMultiplier = 0.5 + (0.5 * (weightedMean / 100));
   let consensusStrength = uniformity * 100 * viabilityMultiplier;
+
+  // v14 Conflict Penalty: Echo Chamber Guard
+  const conflictPenalty = calculateConflictPenalty(personaScores);
+  consensusStrength = Math.max(0, consensusStrength - conflictPenalty);
 
   // Guard: Agreement on low quality is capped
   if (weightedMean < 65 && consensusStrength > 75) {
@@ -89,6 +103,9 @@ export function calculateAllScores(input: ScoringInput): ScoringOutput {
       : 1.0,
     scientificVariance: weightedMean > 0 
       ? parseFloat((stdDev / weightedMean).toFixed(4))
-      : 0
+      : 0,
+    // v14 Deterministic Rule Indicators
+    isAuditReady: confidence === 'HIGH' && stdDev < 15,
+    conflictPenaltyDetected: conflictPenalty > 0
   };
 }

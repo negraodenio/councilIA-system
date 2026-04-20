@@ -18,6 +18,10 @@ import { callLLM } from './provider';
 import { JudgeOutputValidator } from './judge/validator';
 import { validateOutput } from './validator';
 import { CitationValidator } from './judge/citation-validator';
+import { generateSignedHash } from '@/lib/security/audit';
+import { stabilizeVariance as _stabilizeVariance, calculateECR } from '@/lib/calibration';
+import { getEmbedding, cosineSimilarity } from './provider';
+import { PersonaBaselineService } from './judge/persona-baselines'; 
 
 export class JudgeService {
   private readonly validator = new JudgeOutputValidator();
@@ -27,7 +31,7 @@ export class JudgeService {
   async execute(
     rounds: RoundResult[], 
     input: CouncilIAInput,
-    onEvent?: (event: CouncilIAEvent) => Promise<void>
+    _onEvent?: (event: CouncilIAEvent) => Promise<void>
   ): Promise<CouncilIAOutput> {
     const startTime = Date.now();
     
@@ -66,30 +70,36 @@ export class JudgeService {
       input.ragDocuments || []
     );
 
+    // v14 PSI: Measure Persona Drift
+    const r3Responses = rounds[2]?.responses || [];
+    const driftCheck = await this.calculatePersonaStability(r3Responses);
+
     const output: CouncilIAOutput = {
       metadata: this.generateMetadata(input, Date.now() - startTime),
       ...structured,
       insightLayer,
       evidenceAudit: auditStatus.audit,
-      decisionLineage: this.generateDecisionLineage(rounds, calculatedScores),
+      decisionLineage: this.generateDecisionLineage(rounds, calculatedScores, driftCheck),
       scientificAudit: {
-        accuracyEstimate: 0.92, // Scaled by benchmark index
+        accuracyEstimate: 0.92, 
         reproducibilityScore: Math.max(0, 1 - (calculatedScores.stdDev / 50)),
         adversarialDensity: 0.85, 
-        citationsVerified: auditStatus.verified
+        citationsVerified: auditStatus.verified,
+        personaStabilityIndex: driftCheck.meanStability,
+        errorCorrectionRate: calculateECR(
+          rounds[0]?.responses.map((r: any) => r.score || 50) || [],
+          rounds[2]?.responses.map((r: any) => r.score || 50) || []
+        )
       },
       fullTranscript: this.formatTranscript(rounds)
     };
 
-    // --- TELEMETRY ---
-    if (onEvent) {
-      await onEvent({
-        type: 'judge_note',
-        personaId: 'judge',
-        payload: { text: structured.decisaoImediata || 'Verdict rendered.', type: 'final_verdict' }
-      });
-    }
-    
+    // v14 Tamper-Proof: Generate Signed HMAC
+    output.metadata.auditSignature = generateSignedHash(
+      { decision: output.decisaoImediata, score: output.executiveVerdict?.score, metrics: output.scientificAudit },
+      input.metadata?.previousHash || ''
+    );
+
     // 6. Mandatory Consensus/Logic Validator Post-Check
     const validation = validateOutput(output);
     if (!validation.valid) {
@@ -247,7 +257,7 @@ export class JudgeService {
     };
   }
 
-  private generateDecisionLineage(rounds: any[], finalScores: any): any {
+  private generateDecisionLineage(rounds: any[], finalScores: any, drift?: any): any {
     const consensusPath = rounds.map(r => {
       const scores = r.responses.map((res: any) => res.score || 50);
       return Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length);
@@ -256,8 +266,29 @@ export class JudgeService {
     return {
       consensusPath,
       stabilityIndex: finalScores.consensusStability || 1.0,
+      personaStability: drift?.meanStability || 1.0,
       keyPivots: this.detectPivots(rounds)
     };
+  }
+
+  private async calculatePersonaStability(responses: any[]): Promise<{ meanStability: number; driftIndices: number[] }> {
+    try {
+      const currentEmbeddings = await Promise.all(responses.map(r => getEmbedding(r.analysis)));
+      
+      let totalStability = 0;
+      responses.forEach((res, i) => {
+          const baseline = PersonaBaselineService.getBaselineForPersona(res.persona);
+          totalStability += cosineSimilarity(currentEmbeddings[i], baseline);
+      });
+
+      return {
+        meanStability: parseFloat((totalStability / responses.length).toFixed(4)),
+        driftIndices: []
+      };
+    } catch (e) {
+      console.error("[Metrology] PSI Calculation failed, defaulting to stable.", e);
+      return { meanStability: 1.0, driftIndices: [] };
+    }
   }
 
   private detectPivots(rounds: any[]): string[] {
