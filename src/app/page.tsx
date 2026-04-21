@@ -29,28 +29,28 @@ export default function Home() {
                     <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-neon-cyan/5 blur-[120px] rounded-full"></div>
                 </div>
                 <div className="max-w-4xl mx-auto text-center relative z-10">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#f26522]/30 bg-[#f26522]/10 text-[#f26522] text-xs font-bold uppercase tracking-widest mb-8 shadow-[0_0_15px_rgba(242,101,34,0.15)]">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neon-cyan/30 bg-neon-cyan/5 text-neon-cyan text-[10px] font-bold uppercase tracking-[0.2em] mb-10 shadow-[0_0_15px_rgba(0,240,255,0.1)]">
                         <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f26522] opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#f26522]"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-cyan opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-cyan"></span>
                         </span>
-                        BUILT FOR THE YC &apos;26 AI-NATIVE AGENCY THESIS
+                        Built on peer-reviewed adversarial reasoning research
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black leading-[1] mb-8 tracking-tighter font-display uppercase">
-                        Peer-Reviewed Decision<br />
+                        Make High-Stakes Decisions<br />
                         <span className="bg-gradient-to-r from-neon-cyan via-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">
-                            Intelligence in 15m.
+                            You Can Defend.
                         </span>
                     </h1>
                     <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed">
-                        Get board-level auditability in 15 minutes — not 3 weeks of meetings. Our Adversarial Consensus Engine (ACE v12.4) uses peer-reviewed science to eliminate bias, measure stability, and fundable strategic truth.
+                        Validate strategy, risk, and execution in 15 minutes — before you commit. CouncilIA replaces weeks of meetings with a structured adversarial engine, delivering audit-ready consensus and measurable stability.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 font-display">
-                        <a href="/login" role="button" aria-label="Start Free Session" className="w-full sm:w-auto px-8 py-4 bg-neon-cyan text-black rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-all text-center">
-                            Start Free Decision
+                        <a href="/login" role="button" aria-label="Validate Your Next Decision" className="w-full sm:w-auto px-8 py-4 bg-neon-cyan text-black rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-all text-center">
+                            Validate Your Next Decision
                         </a>
                         <a href="#how-it-works" className="w-full sm:w-auto px-8 py-4 border border-[rgba(0,240,255,0.2)] bg-[#121235]/40 hover:bg-[#121235]/60 rounded-xl font-bold text-lg transition-all text-center text-neon-cyan">
-                            Watch 2-Min Demo
+                            Watch Protocol Demo
                         </a>
                     </div>
                     <p className="mt-8 text-xs font-mono text-slate-500 uppercase tracking-widest">
@@ -95,31 +95,147 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Scientific Proof Section */}
-            <section className="py-12 px-6 border-y border-[rgba(0,240,255,0.1)] bg-panel-blue/5">
+            {/* Value Block: From Opinion to Verified Decision */}
+            <section className="py-24 px-6 border-t border-white/5 bg-panel-blue/5">
                 <div className="max-w-7xl mx-auto">
-                    <p className="text-center text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-10">Validated by 5 Scientific Foundations</p>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-                        <a href="https://doi.org/10.1371/journal.pdig.0000721" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Audit Hardened</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Scientific Integrity v12.4.0</p>
-                        </a>
-                        <a href="https://doi.org/10.1073/pnas.1913936117" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Sci-Var &lt; 15%</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">Weighted Dissent Metrology</p>
-                        </a>
-                        <a href="https://arxiv.org/abs/2501.08263" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Consensus Stability</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">R1 &rarr; R3 Delta Analysis</p>
-                        </a>
-                        <div className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display tracking-tighter">3-Round Protocol</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight font-bold text-neon-cyan">Kaesberg et al. (ACL 2025)</p>
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl md:text-6xl font-black mb-4 uppercase tracking-tight font-display text-white">From Opinion to Verified Decision.</h2>
+                        <p className="text-[#c4c4ff] max-w-2xl mx-auto">CouncilIA replaces weeks of meetings and subjective opinions with a structured, adversarial decision system.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-1 px-4 lg:px-0">
+                        {/* Before */}
+                        <div className="p-10 bg-red-950/10 border border-red-500/20 rounded-3xl md:rounded-r-none relative group overflow-hidden">
+                            <div className="absolute top-4 right-4 text-red-500/20 font-black text-2xl font-display">⚠️ BEFORE</div>
+                            <h3 className="text-xl font-bold mb-8 text-red-400 uppercase tracking-tighter">Opinion-Based Decisions</h3>
+                            <ul className="space-y-4 text-slate-400 text-sm">
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-red-500/50 text-lg">close</span>
+                                    Weeks of recursive meetings
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-red-500/50 text-lg">close</span>
+                                    Conflicting or biased opinions
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-red-500/50 text-lg">close</span>
+                                    No clear accountability trail
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-red-500/50 text-lg">close</span>
+                                    Decisions based on intuition
+                                </li>
+                            </ul>
                         </div>
-                        <a href="https://doi.org/10.1145/3290605.3300233" target="_blank" rel="noopener noreferrer" className="text-center space-y-2 group">
-                            <h3 className="text-xl font-black text-white font-display group-hover:text-neon-cyan transition-colors">Sovereign Control</h3>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight group-hover:text-slate-300 transition-colors">MS Guidelines (CHI 2019)</p>
-                        </a>
+
+                        {/* Engine */}
+                        <div className="p-10 bg-neon-cyan/5 border-x border-neon-cyan/20 border-y-2 border-y-neon-cyan/50 relative group glow-cyan z-10">
+                            <div className="absolute top-4 right-4 text-neon-cyan/20 font-black text-2xl font-display">⚙️ ENGINE</div>
+                            <h3 className="text-xl font-bold mb-8 text-neon-cyan uppercase tracking-tighter">CouncilIA Protocol</h3>
+                            <ul className="space-y-4 text-slate-200 text-sm">
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-neon-cyan text-lg">check</span>
+                                    15-minute structured analysis
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-neon-cyan text-lg">check</span>
+                                    Adversarial expert deliberation
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-neon-cyan text-lg">check</span>
+                                    Deterministic decision scoring
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-neon-cyan text-lg">check</span>
+                                    Full HMAC signed audit replay
+                                </li>
+                            </ul>
+                            <div className="mt-10 pt-10 border-t border-neon-cyan/20">
+                                <p className="text-[10px] font-mono text-neon-cyan uppercase tracking-widest leading-relaxed">
+                                    REPLACING 3 WEEKS OF STRATEGY WORK WITH 15 MINUTES OF VALIDATED INTEL.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* After */}
+                        <div className="p-10 bg-green-950/10 border border-green-500/20 rounded-3xl md:rounded-l-none relative group overflow-hidden">
+                            <div className="absolute top-4 right-4 text-green-500/20 font-black text-2xl font-display">✅ AFTER</div>
+                            <h3 className="text-xl font-bold mb-8 text-green-400 uppercase tracking-tighter">Verified Outcomes</h3>
+                            <ul className="space-y-4 text-slate-400 text-sm">
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-green-500/50 text-lg">check_circle</span>
+                                    Clear GO / NO-GO verdict
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-green-500/50 text-lg">check_circle</span>
+                                    De-biased confidence score
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-green-500/50 text-lg">check_circle</span>
+                                    Concrete risk mitigation plan
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-green-500/50 text-lg">check_circle</span>
+                                    Decisions you can defend
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Built For Section */}
+            <section className="py-20 px-6 border-t border-white/5 bg-space-black">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
+                    <div className="md:w-1/3">
+                        <h2 className="text-3xl font-black uppercase tracking-tight font-display mb-4">Designed for<br /><span className="text-neon-cyan">High-Stakes Validation.</span></h2>
+                        <p className="text-slate-400 text-sm">CouncilIA is not a chat tool. It is critical decision infrastructure built for those who own the outcome.</p>
+                    </div>
+                    <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="p-6 rounded-2xl bg-panel-blue/20 border border-white/5 hover:border-neon-cyan/30 transition-all">
+                            <span className="material-symbols-outlined text-neon-cyan mb-4">rocket_launch</span>
+                            <h4 className="font-bold mb-2">Founders</h4>
+                            <p className="text-[11px] text-slate-500 uppercase tracking-widest font-mono">Making strategic bets on product & pivot</p>
+                        </div>
+                        <div className="p-6 rounded-2xl bg-panel-blue/20 border border-white/5 hover:border-orange-500/30 transition-all">
+                            <span className="material-symbols-outlined text-orange-500 mb-4">settings_suggest</span>
+                            <h4 className="font-bold mb-2">Operators</h4>
+                            <p className="text-[11px] text-slate-500 uppercase tracking-widest font-mono">Scaling execution without blind spots</p>
+                        </div>
+                        <div className="p-6 rounded-2xl bg-panel-blue/20 border border-white/5 hover:border-purple-500/30 transition-all">
+                            <span className="material-symbols-outlined text-purple-500 mb-4">account_balance_wallet</span>
+                            <h4 className="font-bold mb-2">Investors</h4>
+                            <p className="text-[11px] text-slate-500 uppercase tracking-widest font-mono">Validating capital allocation & risk</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Metrology / Scientific Proof Section */}
+            <section className="py-24 px-6 border-y border-[rgba(0,240,255,0.1)] bg-panel-blue/5">
+                <div className="max-w-7xl mx-auto">
+                    <p className="text-center text-[10px] font-bold text-neon-cyan tracking-[0.3em] uppercase mb-16">Measured Improvements in Decision Stability & Consistency</p>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+                        <div className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display">Audit Hardened</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">HMAC Hash-Chaining v14.0</p>
+                        </div>
+                        <div className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display">Zero Bias</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">Adversarial Consensus Engine</p>
+                        </div>
+                        <div className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display">Verifiable</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">Full Lineage Replay</p>
+                        </div>
+                        <div className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display">Consistency</h3>
+                            <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-tight">Measured Benchmark Stability</p>
+                        </div>
+                        <div className="text-center space-y-2 group">
+                            <h3 className="text-xl font-black text-white font-display">Protocol</h3>
+                            <p className="text-[10px] font-bold text-neon-cyan uppercase tracking-widest leading-tight">3-Round Adversarial Scan</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -130,14 +246,51 @@ export default function Home() {
                     <div className="p-6 border-b border-[rgba(0,240,255,0.2)] flex items-center justify-between bg-panel-blue/50">
                         <div className="flex items-center gap-4">
                             <div className="px-3 py-1 bg-neon-magenta/10 text-neon-magenta text-[10px] font-black uppercase rounded tracking-tighter flex items-center gap-1.5">
-                                <span className="size-1.5 bg-neon-magenta rounded-full"></span> LIVE
+                                <span className="size-1.5 bg-neon-magenta rounded-full"></span> LIVE SESSION
                             </div>
-                            <h2 className="text-sm font-mono text-[#c4c4ff]/70 tracking-widest uppercase">SESSION #0214: SaaS M&A Strategy - Project Horizon ($12M Acquisition)</h2>
+                            <h2 className="text-sm font-mono text-[#c4c4ff]/90 tracking-widest uppercase">REAL SESSION — ENTERPRISE M&A DECISION ($12M ACQUISITION)</h2>
                         </div>
-                        <div className="flex gap-1.5">
-                            <div className="size-3 rounded-full bg-red-500/40"></div>
-                            <div className="size-3 rounded-full bg-yellow-500/40"></div>
-                            <div className="size-3 rounded-full bg-green-500/40"></div>
+                        <div className="flex gap-4 items-center">
+                            <div className="hidden md:flex flex-col items-end">
+                                <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Policy Version</span>
+                                <span className="text-[10px] font-bold text-neon-cyan">v14.0.0 (Hardened)</span>
+                            </div>
+                            <div className="flex gap-1.5">
+                                <div className="size-3 rounded-full bg-red-500/40"></div>
+                                <div className="size-3 rounded-full bg-yellow-500/40"></div>
+                                <div className="size-3 rounded-full bg-green-500/40"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* v14 Audit Proof Card: High Visibility */}
+                    <div className="bg-space-black/80 border-b border-neon-cyan/20 p-4 px-6 flex flex-wrap items-center justify-between gap-6 backdrop-blur-md">
+                        <div className="flex gap-8">
+                            <div>
+                                <p className="text-[8px] font-mono text-slate-500 uppercase tracking-[0.2em] mb-1">Decision ID</p>
+                                <p className="text-xs font-black text-white font-display">#A214-X92-2026</p>
+                            </div>
+                            <div>
+                                <p className="text-[8px] font-mono text-slate-500 uppercase tracking-[0.2em] mb-1">Audit Signature (HMAC-256)</p>
+                                <p className="text-xs font-mono text-neon-cyan">8f3a9c...7d21b4</p>
+                            </div>
+                            <div className="hidden sm:block">
+                                <p className="text-[8px] font-mono text-slate-500 uppercase tracking-[0.2em] mb-1">Consensus Stability</p>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-16 h-1 bg-white/10 rounded-full overflow-hidden">
+                                        <div className="w-[88%] h-full bg-neon-cyan shadow-[0_0_10px_rgba(0,240,255,0.5)]"></div>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-white">0.88</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <button className="flex items-center gap-2 px-3 py-1.5 bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-[10px] font-bold uppercase rounded-lg hover:bg-neon-cyan hover:text-black transition-all">
+                                <span className="material-symbols-outlined text-[14px]">replay</span> Replay Decision
+                            </button>
+                            <button className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase rounded-lg hover:bg-white/10 transition-all">
+                                <span className="material-symbols-outlined text-[14px]">download</span> Download Report
+                            </button>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
@@ -242,7 +395,40 @@ export default function Home() {
                             </button>
                         </div>
                     </div>
-                </div>            </section>
+                </div>
+
+                {/* Enterprise Governance Feature Block */}
+                <div className="mt-24 grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div className="space-y-4">
+                        <div className="size-12 rounded-xl bg-neon-cyan/10 border border-neon-cyan/20 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-neon-cyan">verified_user</span>
+                        </div>
+                        <h4 className="font-bold text-white uppercase tracking-tighter">Immutable Logs</h4>
+                        <p className="text-xs text-slate-400 leading-relaxed">Cryptographic hash-chaining (HMAC-SHA256) ensures tamper-proof audit trails for legal and regulatory compliance.</p>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="size-12 rounded-xl bg-neon-cyan/10 border border-neon-cyan/20 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-neon-cyan">history_edu</span>
+                        </div>
+                        <h4 className="font-bold text-white uppercase tracking-tighter">Decision Replay</h4>
+                        <p className="text-xs text-slate-400 leading-relaxed">Reconstruct every deliberation round, thought process, and adversarial pivot with full data lineage.</p>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="size-12 rounded-xl bg-neon-cyan/10 border border-neon-cyan/20 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-neon-cyan">policy</span>
+                        </div>
+                        <h4 className="font-bold text-white uppercase tracking-tighter">Policy Versioning</h4>
+                        <p className="text-xs text-slate-400 leading-relaxed">Run decisions against snapshots of your company policies to ensure long-term governance alignment.</p>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="size-12 rounded-xl bg-neon-cyan/10 border border-neon-cyan/20 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-neon-cyan">lan</span>
+                        </div>
+                        <h4 className="font-bold text-white uppercase tracking-tighter">Tenant Isolation</h4>
+                        <p className="text-xs text-slate-400 leading-relaxed">Secure, multi-tenant architecture with Row-Level Security (RLS) for enterprise-grade data privacy.</p>
+                    </div>
+                </div>
+            </section>
 
             {/* Outcome Gallery Section */}
             <section className="py-20 px-6 max-w-7xl mx-auto border-t border-[rgba(0,240,255,0.1)]">
@@ -256,42 +442,16 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Case 1 */}
-                    <div className="group rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 overflow-hidden hover:border-neon-cyan/40 transition-all cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(0,240,255,0.1)]">
-                        <div className="h-48 bg-[#0a0f1e] p-6 relative flex flex-col justify-between overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 blur-2xl rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
-                            <div className="relative z-10 flex justify-between items-start">
-                                <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-[9px] font-black uppercase rounded tracking-widest border border-green-500/30">Viable</span>
-                                <span className="text-2xl font-black text-white font-display">88<span className="text-xs text-white/50">/100</span></span>
-                            </div>
-                            <div className="relative z-10">
-                                <h3 className="text-white font-bold leading-tight mb-2">Dental Clinic Expansion</h3>
-                                <div className="h-1.5 w-full bg-space-black/80 rounded-full overflow-hidden flex">
-                                    <div className="h-full bg-green-400 w-[88%] shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="p-6">
-                            <p className="text-xs text-[#c4c4ff] mb-4 line-clamp-2 leading-relaxed">
-                                Validated the $2M expansion layout and strategic positioning in Sao Paulo vs. local competition. 
-                            </p>
-                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-neon-cyan">
-                                <span>View Audit Trail</span>
-                                <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Case 2 */}
+                    {/* Case 1: FinTech EU */}
                     <div className="group rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 overflow-hidden hover:border-amber-400/40 transition-all cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(251,191,36,0.1)]">
                         <div className="h-48 bg-[#0a0f1e] p-6 relative flex flex-col justify-between overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-2xl rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
                             <div className="relative z-10 flex justify-between items-start">
-                                <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[9px] font-black uppercase rounded tracking-widest border border-amber-500/30">Caution</span>
-                                <span className="text-2xl font-black text-white font-display">54<span className="text-xs text-white/50">/100</span></span>
+                                <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[9px] font-black uppercase rounded tracking-widest border border-amber-500/30">Prevented</span>
+                                <span className="text-2xl font-black text-white font-display">€12M</span>
                             </div>
                             <div className="relative z-10">
-                                <h3 className="text-white font-bold leading-tight mb-2">B2B SaaS Horizon M&A</h3>
+                                <h3 className="text-white font-bold leading-tight mb-2">FinTech (EU) — M&A Target Audit</h3>
                                 <div className="h-1.5 w-full bg-space-black/80 rounded-full overflow-hidden flex">
                                     <div className="h-full bg-amber-400 w-[54%] shadow-[0_0_10px_rgba(251,191,36,0.5)]"></div>
                                 </div>
@@ -299,7 +459,7 @@ export default function Home() {
                         </div>
                         <div className="p-6">
                             <p className="text-xs text-[#c4c4ff] mb-4 line-clamp-2 leading-relaxed">
-                                Forensic audit on the acquisition target&apos;s tech debt. Avoided a $12M overpayment.
+                                Prevented a €12M overpayment in a SaaS acquisition by identifying legacy tech debt anchors that single-agent LLMs missed.
                             </p>
                             <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-amber-400">
                                 <span>View Decision Lineage</span>
@@ -308,16 +468,42 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Case 3 */}
+                    {/* Case 2: Healthcare BR */}
+                    <div className="group rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 overflow-hidden hover:border-green-400/40 transition-all cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(74,222,128,0.1)]">
+                        <div className="h-48 bg-[#0a0f1e] p-6 relative flex flex-col justify-between overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 blur-2xl rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
+                            <div className="relative z-10 flex justify-between items-start">
+                                <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-[9px] font-black uppercase rounded tracking-widest border border-green-500/30">Validated</span>
+                                <span className="text-2xl font-black text-white font-display">$2M</span>
+                            </div>
+                            <div className="relative z-10">
+                                <h3 className="text-white font-bold leading-tight mb-2">Healthcare (BR) — Expansion Strategy</h3>
+                                <div className="h-1.5 w-full bg-space-black/80 rounded-full overflow-hidden flex">
+                                    <div className="h-full bg-green-400 w-[88%] shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-6">
+                            <p className="text-xs text-[#c4c4ff] mb-4 line-clamp-2 leading-relaxed">
+                                Validated a $2M expansion strategy by de-biasing territorial assumptions through adversarial market simulation.
+                            </p>
+                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-green-400">
+                                <span>View Audit Trail</span>
+                                <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Case 3: Logistics Pivot */}
                     <div className="group rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 overflow-hidden hover:border-red-400/40 transition-all cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(248,113,113,0.1)]">
                         <div className="h-48 bg-[#0a0f1e] p-6 relative flex flex-col justify-between overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 blur-2xl rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
                             <div className="relative z-10 flex justify-between items-start">
-                                <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[9px] font-black uppercase rounded tracking-widest border border-red-500/30">High Risk</span>
-                                <span className="text-2xl font-black text-white font-display">21<span className="text-xs text-white/50">/100</span></span>
+                                <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[9px] font-black uppercase rounded tracking-widest border border-red-500/30">Aborted</span>
+                                <span className="text-2xl font-black text-white font-display">REJECTED</span>
                             </div>
                             <div className="relative z-10">
-                                <h3 className="text-white font-bold leading-tight mb-2">E-com Logistics Pivot</h3>
+                                <h3 className="text-white font-bold leading-tight mb-2">Logistics Hub — Operational Pivot</h3>
                                 <div className="h-1.5 w-full bg-space-black/80 rounded-full overflow-hidden flex">
                                     <div className="h-full bg-red-500 w-[21%] shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
                                 </div>
@@ -325,7 +511,7 @@ export default function Home() {
                         </div>
                         <div className="p-6">
                             <p className="text-xs text-[#c4c4ff] mb-4 line-clamp-2 leading-relaxed">
-                                Stress-tested the pivot from 3PL to internal warehousing. Hallucination shield detected logic gaps. Plan aborted.
+                                Identified critical flaws in a high-risk logistics pivot before executive execution, saving 14 months of wasted development.
                             </p>
                             <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-red-400">
                                 <span>See Report</span>
@@ -508,17 +694,17 @@ export default function Home() {
                             </div>
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <h4 className="font-bold text-sm font-display uppercase tracking-tight text-indigo-100">Your Specialist</h4>
-                                    <span className="px-1.5 py-0.5 bg-indigo-500 text-[8px] font-black text-white rounded uppercase tracking-tighter">Enterprise</span>
+                                    <h4 className="font-bold text-sm font-display uppercase tracking-tight text-indigo-100">Private Board Member</h4>
+                                    <span className="px-1.5 py-0.5 bg-indigo-500 text-[8px] font-black text-white rounded uppercase tracking-tighter">Hardened Context</span>
                                 </div>
-                                <p className="text-[10px] text-indigo-400 uppercase tracking-widest font-black">Proprietary Training</p>
+                                <p className="text-[10px] text-indigo-400 uppercase tracking-widest font-black">Proprietary Knowledge</p>
                             </div>
                         </div>
                         <p className="text-xs text-slate-200 leading-relaxed font-medium mb-6 relative z-10">
-                            Train a 7th agent on your company&apos;s internal data. Upload strategy docs, research, and financial data. Your dedicated expert defends YOUR priorities alongside the council.
+                            Train a dedicated agent on your company&apos;s internal financials and strategic roadmap. Let your private board member defend your reality against the council.
                         </p>
                         <a href="/login" className="inline-flex items-center gap-2 text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest transition-colors relative z-10">
-                            Create Your 7th Agent <span className="material-symbols-outlined text-[12px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            Configure Your Board Member <span className="material-symbols-outlined text-[12px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </a>
                     </div>
                     {/* The Judge */}
@@ -722,11 +908,11 @@ export default function Home() {
                             The 7th Protocol
                         </div>
                         <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] font-display">
-                            Your Internal Data.<br />
-                            <span className="text-indigo-400">The 7th Expert.</span>
+                            Your Private AI<br />
+                            <span className="text-indigo-400">Board Member.</span>
                         </h2>
                         <p className="text-xl text-slate-300 font-medium leading-relaxed mb-10 max-w-xl">
-                            Train a 7th agent on your company&apos;s internal data. Your strategy docs, your customer insights, your past decisions — all debating alongside the council.
+                            Train a dedicated agent on your internal financials, strategy decks, and customer insights. Let your private board member defend your company&apos;s reality inside the adversarial loop.
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div className="flex items-center gap-4 group">
@@ -777,7 +963,7 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <a href="/login" className="w-full py-4 bg-indigo-500 text-white rounded-xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] transition-all transform group-hover:scale-[1.02] active:scale-95">
-                                    Hire Your 7th Expert
+                                    Onboard Your Board Member
                                     <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                 </a>
                             </div>
@@ -786,90 +972,92 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Simple Pricing Component Section */}
+            {/* Pricing Section: Efficiency Arbitrage Overhaul */}
             <section className="py-24 px-6 max-w-7xl mx-auto" id="pricing">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl font-black mb-4 uppercase tracking-tight font-display">Straightforward Pricing</h2>
-                    <p className="text-[#c4c4ff] max-w-xl mx-auto">Choose the tier that matches your decision-making velocity.</p>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neon-cyan/20 bg-neon-cyan/5 text-neon-cyan text-[10px] font-bold uppercase tracking-widest mb-6">Efficiency Arbitrage</div>
+                    <h2 className="text-4xl md:text-6xl font-black mb-6 uppercase tracking-tight font-display text-white">Choose Your Velocity.</h2>
+                    <p className="text-[#c4c4ff] max-w-xl mx-auto text-lg">Replace weeks of strategic work with a 15-minute validated decision. Infrastructure built for scale.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Starter */}
-                    <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-panel-blue/10 flex flex-col">
-                        <h3 className="font-bold text-lg mb-2 font-display">Starter</h3>
+                    <div className="p-8 rounded-2xl border border-white/5 bg-panel-blue/10 flex flex-col hover:border-white/20 transition-all">
+                        <h3 className="font-bold text-lg mb-2 font-display uppercase tracking-widest text-[#c4c4ff]">Founder</h3>
                         <div className="flex items-baseline gap-1 mb-6">
                             <span className="text-4xl font-black font-display text-white">€29</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
-                        <ul className="space-y-4 mb-8 flex-grow">
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
-                                5 decisions / month
+                        <ul className="space-y-4 mb-8 flex-grow mb-10">
+                            <li className="flex items-center gap-3 text-xs text-slate-300">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                5 Validated Decisions / mo
                             </li>
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
+                            <li className="flex items-center gap-3 text-xs text-slate-300">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
                                 All 6 Expert Personas
                             </li>
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
-                                Full Debate Transcript
+                            <li className="flex items-center gap-3 text-xs text-slate-300">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                Immutable Audit Signature
                             </li>
                         </ul>
-                        <a href="/login" className="w-full py-3 border border-[rgba(0,240,255,0.2)] rounded-xl font-bold hover:bg-panel-blue transition-all text-center text-neon-cyan font-display text-sm">Get Started</a>
+                        <a href="/login" className="w-full py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-center hover:bg-white/5 transition-all">Start Validation</a>
                     </div>
-                    {/* Professional */}
-                    <div className="p-8 rounded-2xl border-2 border-neon-cyan/50 bg-panel-blue/20 flex flex-col relative shadow-[0_0_30px_rgba(0,240,255,0.1)]">
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-neon-cyan text-black text-[10px] font-black uppercase rounded-full tracking-widest">Enterprise Ready</div>
-                        <h3 className="font-bold text-lg mb-2 text-neon-cyan font-display">Pro Decisionist</h3>
-                        <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-black font-display text-white">€199</span>
+
+                    {/* Pro */}
+                    <div className="p-8 rounded-2xl border-2 border-neon-cyan/40 bg-neon-cyan/5 flex flex-col relative glow-cyan scale-105 z-10">
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-neon-cyan text-black text-[10px] font-black uppercase rounded-full shadow-[0_0_20px_rgba(0,240,255,0.4)]">Most Strategic</div>
+                        <h3 className="font-bold text-lg mb-2 font-display uppercase tracking-widest text-neon-cyan">Operator</h3>
+                        <div className="flex items-baseline gap-1 mb-6 text-white">
+                            <span className="text-4xl font-black font-display">€199</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
-                        <ul className="space-y-4 mb-8 flex-grow">
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
-                                <strong>Unlimited</strong> Decisions
+                        <ul className="space-y-4 mb-8 flex-grow mb-10">
+                            <li className="flex items-center gap-3 text-xs text-white">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                30 Validated Decisions / mo
                             </li>
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
-                                <strong>The 7th Expert</strong> (Your Data)
+                            <li className="flex items-center gap-3 text-xs text-white">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                Private Board Member (v14)
                             </li>
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
-                                Real-time Intervention
+                            <li className="flex items-center gap-3 text-xs text-white">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                Full Traceable Decision Replay
                             </li>
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-neon-cyan text-lg">check_circle</span>
-                                Exportable PDF Reports
+                            <li className="flex items-center gap-3 text-xs text-white">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                Export API & Webhooks
                             </li>
                         </ul>
-                        <a href="/login" className="w-full py-3 bg-neon-cyan text-black rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)] font-display text-sm hover:scale-105 active:scale-95 text-center">Start Professional</a>
+                        <a href="/login" className="w-full py-4 bg-neon-cyan text-black rounded-xl text-xs font-black uppercase tracking-[0.2em] text-center shadow-[0_0_30px_rgba(0,240,255,0.2)] hover:shadow-[0_0_50px_rgba(0,240,255,0.4)] transition-all">Start Scaling</a>
                     </div>
+
                     {/* Enterprise */}
-                    <div className="p-8 rounded-2xl border border-[rgba(0,240,255,0.1)] bg-purple-500/5 flex flex-col">
-                        <h3 className="font-bold text-lg mb-2 font-display uppercase tracking-tight text-purple-300">Enterprise</h3>
+                    <div className="p-8 rounded-2xl border border-white/5 bg-[#121235]/40 flex flex-col hover:border-white/20 transition-all">
+                        <h3 className="font-bold text-lg mb-2 font-display uppercase tracking-widest text-slate-400">Enterprise</h3>
                         <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-black font-display text-white">€5.000</span>
-                            <span className="text-slate-500 text-sm">/yr</span>
+                            <span className="text-4xl font-black font-display text-white">Custom</span>
                         </div>
-                        <ul className="space-y-4 mb-8 flex-grow">
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-purple-400 text-lg">verified</span>
-                                <strong>Surgical Mode™</strong> Accuracy
+                        <ul className="space-y-4 mb-8 flex-grow mb-10">
+                            <li className="flex items-center gap-3 text-xs text-slate-400">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                Custom Governance Protocols
                             </li>
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-purple-400 text-lg">verified</span>
-                                Custom Model Onboarding
+                            <li className="flex items-center gap-3 text-xs text-slate-400">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                SSO & Multi-tenant Isolation
                             </li>
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-purple-400 text-lg">verified</span>
-                                Full API & SSO Access
+                            <li className="flex items-center gap-3 text-xs text-slate-400">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                Dedicated Science Calibration
                             </li>
-                            <li className="flex items-center gap-3 text-sm text-[#c4c4ff]">
-                                <span className="material-symbols-outlined text-purple-400 text-lg">verified</span>
-                                Dedicated Strategy Manager
+                            <li className="flex items-center gap-3 text-xs text-slate-400">
+                                <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
+                                Liability-grade Audit Access
                             </li>
                         </ul>
-                        <a href="/login" className="w-full py-3 border border-purple-500/30 bg-purple-500/10 rounded-xl font-bold hover:bg-purple-500/20 transition-all text-purple-300 font-display text-sm text-center">Contact Sales</a>
+                        <a href="mailto:denio@councilia.system" className="w-full py-3 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-center hover:bg-white/5 transition-all">Contact Governance Team</a>
                     </div>
                 </div>
             </section>
@@ -880,18 +1068,18 @@ export default function Home() {
                 <div className="max-w-4xl mx-auto text-center relative z-10">
                     <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-neon-cyan/60 mb-4">Consultants charge €50,000. CouncilIA Elite costs €29.</p>
                     <h2 className="text-4xl md:text-6xl font-black mb-6 font-display uppercase leading-tight">
-                        Your Board of Directors<br />
-                        <span className="text-neon-cyan">starts now.</span>
+                        Your Decision Infrastructure<br />
+                        <span className="text-neon-cyan">is audit-ready.</span>
                     </h2>
-                    <p className="text-lg text-slate-400 mb-4 max-w-xl mx-auto">Make your next strategic decision with 6 AI experts who are designed to disagree with you.</p>
+                    <p className="text-lg text-slate-400 mb-4 max-w-xl mx-auto">Make your next strategic decision with a peer-reviewed adversarial engine designed to identify risks before they happen.</p>
                     <p className="text-sm text-amber-400 font-mono mb-10 flex items-center justify-center gap-2">
                         <span className="size-2 bg-amber-400 rounded-full animate-pulse inline-block"></span>
-                        7 days free · No credit card · Cancel anytime
+                        Enterprise Grade Security · HMAC-SHA256 Signed · Audit Traceable
                     </p>
                     <a href="/login" className="inline-block px-12 py-5 bg-gradient-to-r from-neon-cyan to-blue-500 text-black rounded-2xl font-black text-xl hover:shadow-[0_0_40px_rgba(0,240,255,0.4)] transition-all transform hover:-translate-y-1 active:scale-95">
-                        Start Free Session Now →
+                        Validate Your Next High-Stakes Decision →
                     </a>
-                    <p className="mt-6 text-[10px] text-slate-600 font-mono uppercase tracking-widest">Decision in 15 minutes · PDF Report included · Peer-reviewed science</p>
+                    <p className="mt-6 text-[10px] text-slate-600 font-mono uppercase tracking-widest">Scientific Protocol v14.0 · Immutable Decision Lineage · Deterministic Scoring</p>
                 </div>
             </section>
 

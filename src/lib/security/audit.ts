@@ -9,7 +9,7 @@
  * This ensures that the audit trail is verifiable by a server-side secret.
  */
 export async function generateSignedHash(payload: any, prevHash: string = ''): Promise<string> {
-    const secret = process.env.AUDIT_SECRET || 'councilia_hardened_fallback_key_2026';
+    const secret = (process.env.AUDIT_SECRET || 'councilia_hardened_fallback_key_2026').trim();
     const data = JSON.stringify(payload) + prevHash;
     
     // Using globalThis.crypto which is available in Node 17+, Edge, and Browsers.
