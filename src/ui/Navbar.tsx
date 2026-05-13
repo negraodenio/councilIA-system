@@ -21,7 +21,7 @@ export function Navbar() {
             </Link>
 
             <div className="flex items-center gap-8">
-                <div className="hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-widest">
+                <div className="hidden lg:flex items-center gap-8 text-[11px] font-bold uppercase tracking-widest">
                     {isInternal ? (
                         <>
                             <Link href="/dashboard" className="text-muted hover:text-text transition-colors">Workspace</Link>
@@ -29,6 +29,8 @@ export function Navbar() {
                         </>
                     ) : (
                         <>
+                            <Link href="/#product" className="text-muted hover:text-text transition-colors">Product</Link>
+                            <Link href="/#use-cases" className="text-muted hover:text-text transition-colors">Use Cases</Link>
                             <Link href="/methodology" className="text-muted hover:text-text transition-colors">Methodology</Link>
                             <Link href="/pricing" className="text-muted hover:text-text transition-colors">Pricing</Link>
                         </>
