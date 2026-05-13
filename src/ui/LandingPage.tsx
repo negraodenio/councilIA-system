@@ -11,7 +11,6 @@ export default function LandingPage() {
     const [status, setStatus] = useState('Ready');
     const [results, setResults] = useState<any>(null);
     const [typingText, setTypingText] = useState({ market: '', risk: '', rec: '' });
-    const outputColRef = useRef<HTMLDivElement>(null);
 
     const typeText = async (key: 'market' | 'risk' | 'rec', text: string, speed = 18) => {
         let current = '';
@@ -39,11 +38,8 @@ export default function LandingPage() {
             
             if (data.ok) {
                 const payload = data.data;
-                // payload looks like: { perspectives: [{name, text, emoji}], score, recommendation }
-                // We need to map it to the new UI structure (Market, Risk, Verdict)
-                
-                const marketText = payload.perspectives.find((p: any) => p.id === 'market')?.text || payload.perspectives[0]?.text;
-                const riskText = payload.perspectives.find((p: any) => p.id === 'risk' || p.id === 'contrarian')?.text || payload.perspectives[1]?.text;
+                const marketText = payload.perspectives.find((p: any) => p.id === 'market')?.text || payload.perspectives[0]?.text || '';
+                const riskText = payload.perspectives.find((p: any) => p.id === 'risk' || p.id === 'contrarian')?.text || payload.perspectives[1]?.text || '';
                 
                 setResults({
                     market: marketText,
@@ -55,7 +51,6 @@ export default function LandingPage() {
 
                 setStatus('Council aligned');
                 
-                // Start typing effects
                 await Promise.all([
                     typeText('market', marketText),
                     typeText('risk', riskText)
@@ -79,9 +74,9 @@ export default function LandingPage() {
     };
 
     return (
-        <div className="landing-page-v3">
+        <div className="lp-container">
             <style jsx>{`
-                .landing-page-v3 {
+                .lp-container {
                     --bg: #080A0E;
                     --surface: #0F1219;
                     --surface-2: #151A24;
@@ -99,9 +94,11 @@ export default function LandingPage() {
                     min-height: 100vh;
                     font-family: 'DM Sans', sans-serif;
                     position: relative;
+                    overflow-x: hidden;
+                    -webkit-font-smoothing: antialiased;
                 }
 
-                .landing-page-v3::before {
+                .lp-container::before {
                     content: '';
                     position: fixed;
                     inset: 0;
@@ -216,6 +213,7 @@ export default function LandingPage() {
                     border: 1px solid var(--border-hover);
                     background: rgba(255,255,255,0.02);
                     margin-bottom: 32px;
+                    animation: fadeUp 0.6s ease both;
                 }
 
                 .eyebrow-dot {
@@ -246,6 +244,7 @@ export default function LandingPage() {
                     line-height: 0.95;
                     letter-spacing: -3px;
                     margin-bottom: 22px;
+                    animation: fadeUp 0.6s 0.1s ease both;
                 }
 
                 .h1-line2 {
@@ -263,6 +262,12 @@ export default function LandingPage() {
                     color: var(--muted-2);
                     margin-bottom: 52px;
                     font-weight: 300;
+                    animation: fadeUp 0.6s 0.2s ease both;
+                }
+
+                @keyframes fadeUp {
+                    from { opacity: 0; transform: translateY(18px); }
+                    to   { opacity: 1; transform: translateY(0); }
                 }
 
                 .demo-panel {
@@ -270,6 +275,7 @@ export default function LandingPage() {
                     border: 1px solid var(--border-hover);
                     background: var(--surface);
                     overflow: hidden;
+                    animation: fadeUp 0.6s 0.3s ease both;
                     position: relative;
                 }
 
@@ -500,6 +506,7 @@ export default function LandingPage() {
                     max-width: 1160px;
                     margin: 56px auto 0;
                     padding: 0 60px 80px;
+                    animation: fadeUp 0.6s 0.5s ease both;
                 }
 
                 .sp-label {
@@ -708,7 +715,7 @@ export default function LandingPage() {
 
                         <div className="demo-output-col">
                             <div className="output-perspectives">
-                                <div className={`perspective-card ${loading ? 'state-loading' : results ? 'active' : 'state-idle'}`}>
+                                <div className={`perspective-card ${loading ? 'state-loading active' : results ? 'active' : 'state-idle'}`}>
                                     <div className="p-tag market">Market Perspective</div>
                                     <div className="skel">
                                         <div className="skeleton-line" style={{ width: '90%' }}></div>
@@ -716,11 +723,11 @@ export default function LandingPage() {
                                     </div>
                                     <div className="p-text">
                                         {results ? typingText.market : "Run a simulation to see how the market sees this."}
-                                        {loading && <span className="cursor"></span>}
+                                        {loading && typingText.market.length > 0 && <span className="cursor"></span>}
                                     </div>
                                 </div>
 
-                                <div className={`perspective-card ${loading ? 'state-loading' : results ? 'active' : 'state-idle'}`}>
+                                <div className={`perspective-card ${loading ? 'state-loading active' : results ? 'active' : 'state-idle'}`}>
                                     <div className="p-tag risk">Risk Perspective</div>
                                     <div className="skel">
                                         <div className="skeleton-line" style={{ width: '85%' }}></div>
@@ -728,7 +735,7 @@ export default function LandingPage() {
                                     </div>
                                     <div className="p-text">
                                         {results ? typingText.risk : "Operational and financial risks will appear here."}
-                                        {loading && <span className="cursor"></span>}
+                                        {loading && typingText.risk.length > 0 && <span className="cursor"></span>}
                                     </div>
                                 </div>
                             </div>
@@ -740,11 +747,12 @@ export default function LandingPage() {
                                         {results ? results.verdict : '—'}
                                     </div>
                                     <div className="p-text" style={{ fontSize: '12px', marginTop: '4px' }}>
-                                        {results ? typingText.rec : "Waiting for simulation…"}
+                                        {results ? typingText.rec : (loading ? '…' : "Waiting for simulation…")}
+                                        {loading && typingText.rec.length > 0 && <span className="cursor"></span>}
                                     </div>
                                 </div>
                                 <div className="rec-confidence">
-                                    <span className="rec-conf-num">{results ? results.confidence + '%' : '—'}</span>
+                                    <span className="rec-conf-num">{results ? results.confidence + '%' : (loading ? '…' : '—')}</span>
                                     Confidence
                                 </div>
                             </div>
