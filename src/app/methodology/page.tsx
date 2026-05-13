@@ -19,140 +19,147 @@ export default function MethodologyPage() {
             <Navbar />
 
             {/* Hero Section */}
-            <section className="relative pt-40 pb-24 px-6 z-10">
+            <section className="relative pt-48 pb-24 px-6 z-10">
                 <div className="max-w-4xl mx-auto text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-teal/20 bg-teal-dim text-teal text-[10px] font-bold uppercase tracking-widest mb-10">
-                        Scientific Protocol v14.0.0
+                        Scientific Protocol v14.0.0 — ACE Engine
                     </div>
                     <h1 className="text-5xl md:text-8xl font-extrabold font-syne tracking-tighter mb-8 leading-[0.95]">
-                        Decision Architecture.<br />
+                        The Science of<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal to-indigo">
-                            Scientifically Defensible.
+                            Strategic Stability.
                         </span>
                     </h1>
                     <p className="text-xl text-muted-2 max-w-2xl mx-auto leading-relaxed font-light">
-                        CouncilIA transforms complex strategic bets into structured, auditable processes — combining multi-agent reasoning, adversarial analysis, and deterministic validation.
+                        CouncilIA replaces "AI chats" with a structured adversarial protocol. We don't just ask an AI; we simulate a conflict of perspectives to find the truth.
                     </p>
                 </div>
             </section>
 
-            {/* Scientific Foundation */}
+            {/* The 3-Round Protocol */}
             <section className="py-32 px-6 relative z-10 border-t border-border">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo/20 bg-indigo-dim text-indigo text-[10px] font-bold uppercase tracking-widest mb-8">Foundational Theory</div>
-                        <h2 className="text-4xl md:text-5xl font-extrabold font-syne tracking-tighter mb-8 leading-tight text-text">Grounded in research.<br />Built for reality.</h2>
-                        <p className="text-muted-2 text-lg mb-10 leading-relaxed font-light">
-                            CouncilIA operationalizes established principles from **Multi-Agent Systems (MAS)**, Decision Science, and Human-AI Interaction into a hardened strategic framework.
-                        </p>
-                        <div className="p-8 rounded-2xl border border-border bg-surface-2 italic text-muted-2 text-sm border-l-2 border-l-teal leading-relaxed font-light">
-                            "Our approach is scientifically grounded, not universally proven. We extend validated concepts into auditable decision processes designed for high-stakes executive environments."
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6">
-                        <div className="premium-card p-10 hover:border-teal/30 transition-all">
-                            <h4 className="text-teal font-bold text-[10px] uppercase tracking-widest mb-4">Core Framework</h4>
-                            <p className="text-2xl font-extrabold font-syne tracking-tight mb-4 italic text-text">"Independence reduces systemic bias."</p>
-                            <p className="text-sm text-muted font-light leading-relaxed">Implementing **Bayesian Truth Serum (BTS)** proxies to identify surprisingly common answers and filter for true expert consensus vs. stochastic parrots.</p>
-                        </div>
-                        <div className="premium-card p-10 hover:border-indigo/30 transition-all">
-                            <h4 className="text-indigo font-bold text-[10px] uppercase tracking-widest mb-4">Adversarial Pressure</h4>
-                            <p className="text-2xl font-extrabold font-syne tracking-tight mb-4 italic text-text">"Tension reveals hidden risk."</p>
-                            <p className="text-sm text-muted font-light leading-relaxed">Leveraging **Adversarial Consensus Engine (ACE)** protocols to stress-test conclusions against edge-case risk vectors in real-time.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Core Pillars */}
-            <section className="py-32 px-6 bg-surface relative z-10">
                 <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-24">
-                        <h2 className="text-5xl md:text-7xl font-extrabold font-syne tracking-tighter mb-6 text-text uppercase">Three Pillars of Rigor.</h2>
-                        <p className="text-muted-2 max-w-2xl mx-auto font-light text-lg">More reasoning is not always better — structured reasoning is.</p>
+                    <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
+                        <div className="max-w-xl text-left">
+                            <h2 className="text-4xl md:text-5xl font-extrabold font-syne tracking-tighter mb-6 text-text">The Protocol Cycle.</h2>
+                            <p className="text-muted-2 font-light">Every simulation follows a strict 3-round adversarial sequence to eliminate hallucinations and group-think.</p>
+                        </div>
+                        <div className="hidden md:block text-[10px] font-bold text-teal uppercase tracking-[0.3em]">
+                            Deterministic / Non-Recursive
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <Pillar 
-                            num="01" 
-                            title="Multi-Agent Deliberation" 
-                            desc="Research indicates that multi-instance LLM deliberation can outperform single-model outputs. CouncilIA applies structured independence across agents to prevent early convergence." 
-                            outcome="Reduced Blind Spots"
-                            color="teal"
+                        <ProtocolStep 
+                            num="01"
+                            title="Adversarial Opening"
+                            desc="Agents are tasked to isolate 'fatal failure' assumptions. They must identify why the idea will fail before they are allowed to support it."
+                            badge="R1: Isolation"
                         />
-                        <Pillar 
-                            num="02" 
-                            title="Adversarial Reasoning" 
-                            desc="Inspired by Game Theory models, we introduce deliberate tension between expert personas. Each argument must survive adversarial pressure before being considered valid." 
-                            outcome="Early Risk Exposure"
-                            color="indigo"
+                        <ProtocolStep 
+                            num="02"
+                            title="Cross-Examination"
+                            desc="Experts must address the dissent points raised in R1. Real-time deliberation forces agents to defend their logic against opposing models."
+                            badge="R2: Deliberation"
                         />
-                        <Pillar 
-                            num="03" 
-                            title="Structured Iteration" 
-                            desc="A fixed three-stage protocol: Thesis (Independent Analysis), Antithesis (Adversarial Challenge), and Synthesis (Refined Conclusion)." 
-                            outcome="Efficient Convergence"
-                            color="text"
+                        <ProtocolStep 
+                            num="03"
+                            title="Recursive Audit"
+                            desc="The Arbitrator synthesizes only the arguments that survived R1/R2. Hallucinations are discarded; only the stable core remains."
+                            badge="R3: Synthesis"
                         />
                     </div>
                 </div>
             </section>
 
-            {/* Decision System Layer */}
-            <section className="py-32 px-6 relative z-10 overflow-hidden">
+            {/* Scientific Components */}
+            <section className="py-32 px-6 bg-surface relative z-10">
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col lg:flex-row gap-20 items-center">
-                        <div className="lg:w-1/2">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-teal/20 bg-teal-dim text-teal text-[10px] font-bold uppercase tracking-widest mb-8">Operational Layer</div>
-                            <h2 className="text-4xl md:text-5xl font-extrabold font-syne tracking-tighter mb-8 leading-tight text-text">From Deliberation<br />to Hardened Verdict.</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                        <div className="grid grid-cols-1 gap-6">
+                            <div className="premium-card p-10 bg-bg">
+                                <h4 className="text-teal font-bold text-[10px] uppercase tracking-widest mb-4">ACE Engine</h4>
+                                <p className="text-2xl font-extrabold font-syne tracking-tight mb-4 text-text">Adversarial Consensus</p>
+                                <p className="text-sm text-muted-2 font-light leading-relaxed">
+                                    Inspired by Game Theory, our engine measures the "tension" between models. High tension indicates hidden strategic risk.
+                                </p>
+                            </div>
+                            <div className="premium-card p-10 bg-bg">
+                                <h4 className="text-indigo font-bold text-[10px] uppercase tracking-widest mb-4">BTS Proxy</h4>
+                                <p className="text-2xl font-extrabold font-syne tracking-tight mb-4 text-text">Bayesian Truth Serum</p>
+                                <p className="text-sm text-muted-2 font-light leading-relaxed">
+                                    We filter for "surprisingly common" answers to separate true expert insights from standard LLM training data noise.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="text-left">
+                            <h2 className="text-4xl md:text-5xl font-extrabold font-syne tracking-tighter mb-8 leading-tight text-text">Built on Peer-Reviewed Decision Science.</h2>
                             <p className="text-muted-2 text-lg mb-10 leading-relaxed font-light">
-                                CouncilIA does not stop at analysis. A deterministic decision layer evaluates agent outputs using measurable signals. This ensures decisions are not narrative-driven, but rule-based.
+                                CouncilIA operationalizes established principles from Multi-Agent Systems (MAS) and Rational Choice Theory. We use 7 different models (GPT-4o, Claude 3.5, Gemini 1.5, Llama 3) to ensure total cognitive diversity.
                             </p>
                             <div className="space-y-4">
-                                <VerdictRow label="GO" status="Robust Decision" color="teal" />
-                                <VerdictRow label="CONDITIONAL" status="Further Validation Required" color="indigo" />
-                                <VerdictRow label="NO-GO" status="High Risk Detected" color="red-400" />
-                            </div>
-                        </div>
-                        <div className="lg:w-1/2 w-full">
-                            <div className="premium-card p-12 relative overflow-hidden bg-surface-2">
-                                <div className="absolute top-0 right-0 w-48 h-48 bg-teal opacity-[0.03] blur-3xl"></div>
-                                <div className="text-center mb-10 border-b border-border pb-8">
-                                    <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-teal mb-2">Simulation Metrics</h4>
-                                    <p className="text-[10px] text-muted uppercase font-light">Measurable Signals — Not Subjective Scores</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-8">
-                                    <Metric label="Confidence Score" value="0.92" sub="Reliability proxy" />
-                                    <Metric label="Variance Score" value="0.14" sub="Uncertainty level" />
-                                    <Metric label="Evidence Strength" value="8/10" sub="Argument support" />
-                                    <Metric label="Consensus Level" value="High" sub="Stability index" />
-                                </div>
-                                <div className="mt-12 p-5 rounded-xl bg-bg border border-border">
-                                    <p className="text-[10px] text-teal/80 font-bold uppercase tracking-widest text-center leading-relaxed">
-                                        SIGNALS ARE COMBINED INTO A FINAL DECISION VERDICT, NOT AVERAGED INTO A BLACK-BOX SCORE.
-                                    </p>
-                                </div>
+                                <Metric label="Sync Stability" value="0.92" />
+                                <Metric label="Bias Correction" value="-42%" />
+                                <Metric label="Protocol Version" value="v14.0.0" />
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Audit & Governance */}
-            <section className="py-32 px-6 border-t border-border bg-bg relative z-10">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-24">
-                        <h2 className="text-5xl md:text-7xl font-extrabold font-syne tracking-tighter mb-6 text-text uppercase">Audit Ready.</h2>
-                        <p className="text-muted-2 max-w-2xl mx-auto text-lg leading-relaxed font-light">
-                            Every decision is fully traceable, reproducible, and verifiable. CouncilIA provides the infrastructure for adversarial accountability.
-                        </p>
+            {/* Practice vs Theory */}
+            <section className="py-32 px-6 relative z-10 border-t border-border">
+                <div className="max-w-5xl mx-auto text-center">
+                    <h2 className="text-4xl font-extrabold font-syne tracking-tighter mb-16 text-text">From Opinion to Verified Intel.</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div className="premium-card p-10 text-left border-red-500/20">
+                            <h4 className="text-red-400 font-bold text-[10px] uppercase tracking-widest mb-6">Before CouncilIA</h4>
+                            <ul className="space-y-4">
+                                <li className="flex items-center gap-3 text-sm text-muted-2 font-light line-through decoration-red-500/30">Recursive, biased meetings</li>
+                                <li className="flex items-center gap-3 text-sm text-muted-2 font-light line-through decoration-red-500/30">Confirmation bias in leadership</li>
+                                <li className="flex items-center gap-3 text-sm text-muted-2 font-light line-through decoration-red-500/30">No clear accountability trail</li>
+                                <li className="flex items-center gap-3 text-sm text-muted-2 font-light line-through decoration-red-500/30">"Gut feel" strategic bets</li>
+                            </ul>
+                        </div>
+                        <div className="premium-card p-10 text-left border-teal/20">
+                            <h4 className="text-teal font-bold text-[10px] uppercase tracking-widest mb-6">After CouncilIA</h4>
+                            <ul className="space-y-4">
+                                <li className="flex items-center gap-3 text-sm text-text font-medium"><span className="text-teal">✓</span> 15-minute adversarial audit</li>
+                                <li className="flex items-center gap-3 text-sm text-text font-medium"><span className="text-teal">✓</span> Measurable Consensus Stability</li>
+                                <li className="flex items-center gap-3 text-sm text-text font-medium"><span className="text-teal">✓</span> Complete Decision Lineage</li>
+                                <li className="flex items-center gap-3 text-sm text-text font-medium"><span className="text-teal">✓</span> Audit-ready strategic defense</li>
+                            </ul>
+                        </div>
                     </div>
+                </div>
+            </section>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        <AuditItem title="Decision Lineage" desc="Complete trace of every deliberation round and expert pivot." />
-                        <AuditItem title="Policy Versioning" desc="Track active rules and constraints during the decision cycle." />
-                        <AuditItem title="Replay Capability" desc="Re-run and verify outcomes with the exact same starting context." />
-                        <AuditItem title="Immutable Audit" desc="HMAC-SHA256 signed structure for cryptographically verified integrity." />
+            {/* Outcomes Summary */}
+            <section className="py-32 px-6 bg-surface-2 relative z-10">
+                <div className="max-w-7xl mx-auto text-center">
+                    <h2 className="text-4xl font-extrabold font-syne tracking-tighter mb-16 text-text uppercase">Outcome Gallery.</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <Outcome 
+                            title="FinTech Acquisition"
+                            verdict="REJECTED"
+                            result="Saved €12M"
+                            desc="Identified tech debt that single-agent analysis missed."
+                            color="red-400"
+                        />
+                        <Outcome 
+                            title="Global Expansion"
+                            verdict="VALIDATED"
+                            result="88% Confidence"
+                            desc="Confirmed Portugal as the optimal entry point over Brazil."
+                            color="teal"
+                        />
+                        <Outcome 
+                            title="Product Pivot"
+                            verdict="CONDITIONAL"
+                            result="Pivot Approved"
+                            desc="Required 20% holdback based on risk mitigation plan."
+                            color="indigo"
+                        />
                     </div>
                 </div>
             </section>
@@ -161,18 +168,15 @@ export default function MethodologyPage() {
             <section className="py-40 px-6 relative z-10 text-center">
                 <div className="max-w-4xl mx-auto">
                     <h2 className="text-5xl md:text-7xl font-extrabold font-syne tracking-tighter mb-10 text-text leading-[0.95]">
-                        CouncilIA does not decide for you.
+                        Simulate before you commit.
                     </h2>
-                    <p className="text-xl text-muted-2 mb-16 max-w-2xl mx-auto font-light">
-                        It ensures the decisions you make are tested, structured, and defensible — before you commit capital or reputation.
-                    </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         <Link href="/login" className="premium-button px-10 py-5 rounded-2xl font-bold text-sm uppercase tracking-widest">
-                            Start Simulation
+                            Run Simulation →
                         </Link>
-                        <button className="px-10 py-5 border border-border-hover hover:bg-surface-2 rounded-2xl font-bold text-sm uppercase tracking-widest text-text transition-all">
-                            Talk to Governance Team
-                        </button>
+                        <Link href="/pricing" className="px-10 py-5 border border-border-hover hover:bg-surface-2 rounded-2xl font-bold text-sm uppercase tracking-widest text-text transition-all">
+                            View Plans
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -182,43 +186,39 @@ export default function MethodologyPage() {
     );
 }
 
-function Pillar({ num, title, desc, outcome, color }: any) {
+function ProtocolStep({ num, title, desc, badge }: any) {
     return (
-        <div className="premium-card p-10 flex flex-col hover:bg-surface-2/50 transition-all border-t-2" style={{ borderTopColor: color === 'teal' ? 'var(--teal)' : color === 'indigo' ? 'var(--indigo)' : 'var(--text)' }}>
-            <div className="text-4xl font-extrabold font-syne text-muted/20 mb-8">{num}</div>
-            <h3 className="text-2xl font-extrabold font-syne mb-5 uppercase tracking-tighter text-text">{title}</h3>
-            <p className="text-muted-2 text-sm mb-10 leading-relaxed font-light">{desc}</p>
-            <div className="mt-auto pt-6 border-t border-border">
-                <span className="text-[10px] font-bold text-teal uppercase tracking-widest">{outcome}</span>
+        <div className="premium-card p-10 flex flex-col group hover:border-teal/30 transition-all">
+            <div className="flex justify-between items-start mb-8">
+                <div className="text-4xl font-extrabold font-syne text-muted/20">{num}</div>
+                <div className="px-3 py-1 rounded bg-surface-2 border border-border text-[9px] font-bold text-muted uppercase tracking-widest">{badge}</div>
             </div>
+            <h3 className="text-2xl font-extrabold font-syne mb-4 uppercase tracking-tighter text-text">{title}</h3>
+            <p className="text-muted-2 text-sm leading-relaxed font-light">{desc}</p>
         </div>
     );
 }
 
-function VerdictRow({ label, status, color }: any) {
+function Metric({ label, value }: any) {
     return (
-        <div className="flex items-center justify-between p-5 rounded-2xl border border-border bg-surface-2 group hover:border-border-hover transition-all">
-            <span className={`font-extrabold font-syne tracking-tight text-${color}`}>{label}</span>
-            <span className="text-[10px] text-muted font-bold uppercase tracking-widest">{status}</span>
+        <div className="flex items-center justify-between p-4 border-b border-border">
+            <span className="text-[10px] font-bold text-muted uppercase tracking-widest">{label}</span>
+            <span className="text-lg font-extrabold font-syne text-text">{value}</span>
         </div>
     );
 }
 
-function Metric({ label, value, sub }: any) {
+function Outcome({ title, verdict, result, desc, color }: any) {
     return (
-        <div className="p-6 rounded-2xl border border-border bg-bg">
-            <div className="text-[9px] font-bold uppercase text-muted tracking-widest mb-3">{label}</div>
-            <div className="text-3xl font-extrabold font-syne text-text mb-2 tracking-tighter">{value}</div>
-            <div className="text-[9px] text-muted uppercase font-light tracking-widest">{sub}</div>
-        </div>
-    );
-}
-
-function AuditItem({ title, desc }: any) {
-    return (
-        <div className="premium-card p-8 hover:border-teal/20 transition-all">
-            <h4 className="font-extrabold font-syne text-text mb-4 uppercase tracking-tighter text-lg">{title}</h4>
-            <p className="text-xs text-muted-2 leading-relaxed font-light">{desc}</p>
+        <div className="premium-card p-10 text-left bg-bg hover:border-border-hover transition-all">
+            <div className="flex justify-between items-start mb-6">
+                <div>
+                    <h4 className="font-bold text-text mb-1">{title}</h4>
+                    <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: `var(--${color.split('-')[0]})` }}>{verdict}</div>
+                </div>
+                <div className="text-lg font-extrabold font-syne text-text">{result}</div>
+            </div>
+            <p className="text-xs text-muted-2 font-light leading-relaxed">{desc}</p>
         </div>
     );
 }
