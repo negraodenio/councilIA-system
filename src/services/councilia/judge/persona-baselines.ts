@@ -8,10 +8,11 @@ export class PersonaBaselineService {
      * Simulation of persona baseline vectors. 
      * In a live production environment, these would be pre-computed 
      * centroid vectors from a gold-standard persona response dataset.
+     * v14: Alignment with Mistral 1024-dimension embeddings.
      */
     static getBaselineForPersona(_persona: string): number[] {
-        // Mock vector for v14 Scientific Demo
-        return new Array(1536).fill(0).map(() => Math.random());
+        // Mock vector for v14 Scientific Demo (Mistral dimension = 1024)
+        return new Array(1024).fill(0).map(() => Math.random());
     }
 
     /**

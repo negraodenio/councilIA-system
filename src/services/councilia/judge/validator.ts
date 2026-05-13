@@ -20,19 +20,24 @@ export class JudgeOutputValidator {
     'fontesEvidencia'
   ];
 
+  // Updated v14: Generalized Strategic Keywords (removed strict Lab-only requirements)
   private readonly REQUIRED_KEYWORDS = {
     decisaoImediata: [
-      'prevalece',
+      'conclusão',
       'determina-se',
-      'deve ser considerado',
-      'acreditado',
-      'incerteza'
+      'estratégia',
+      'recomenda-se',
+      'prioridade',
+      'prevalece',
+      'veredito'
     ],
     sinteseTecnica: [
-      'ISO',
-      'RDC',
-      'incerteza',
-      'guard-band'
+      'análise',
+      'fundamentação',
+      'evidência',
+      'risco',
+      'métricas',
+      'projeção'
     ]
   };
 
@@ -40,7 +45,7 @@ export class JudgeOutputValidator {
     const errors: string[] = [];
     let parsedOutput: any;
 
-    // 1. Verifica se é JSON válido
+    // 1. Verify if it is valid JSON
     try {
       parsedOutput = typeof rawOutput === 'string' ? JSON.parse(rawOutput) : rawOutput;
     } catch {
@@ -48,7 +53,7 @@ export class JudgeOutputValidator {
       return { isValid: false, errors };
     }
 
-    // 2. Verifica se todas as seções obrigatórias existem
+    // 2. Verify all required sections exist
     for (const section of this.REQUIRED_SECTIONS) {
       if (!parsedOutput[section] || typeof parsedOutput[section] !== 'string') {
         errors.push(`Seção "${section}" ausente ou inválida`);
@@ -59,36 +64,32 @@ export class JudgeOutputValidator {
       return { isValid: false, errors };
     }
 
-    // --- NEW v11.1: Heading Duplication Check ---
+    // --- Heading Duplication Check ---
     const headingRegex = /^\d+\.\s*(DECISÃO\s*IMEDIATA|SÍNTESE\s*TÉCNICA|FONTES\s*DE\s*EVIDÊNCIA)/i;
     if (headingRegex.test(parsedOutput.decisaoImediata)) errors.push('Título duplicado detectado em decisaoImediata');
     if (headingRegex.test(parsedOutput.sinteseTecnica)) errors.push('Título duplicado detectado em sinteseTecnica');
     if (headingRegex.test(parsedOutput.fontesEvidencia)) errors.push('Título duplicado detectado em fontesEvidencia');
 
-    // 3. Valida conteúdo da DECISÃO IMEDIATA
+    // 3. Validate DECISÃO IMEDIATA content
     const decisao = parsedOutput.decisaoImediata.toLowerCase();
-    const hasHierarchy = decisao.includes('acreditado') || decisao.includes('pep') || decisao.includes('17025');
     const hasDecision = this.REQUIRED_KEYWORDS.decisaoImediata.some(k => decisao.includes(k));
     
-    if (!hasHierarchy && !decisao.includes('lab')) {
-      errors.push('DECISÃO IMEDIATA não estabelece claramente a hierarquia de laboratórios');
+    // Check for substance, not just specific lab words
+    if (decisao.length < 50) {
+      errors.push('DECISÃO IMEDIATA está demasiado curta ou sem fundamentação');
     }
-    if (!hasDecision) {
-      errors.push('DECISÃO IMEDIATA não contém linguagem decisiva obrigatória (determina-se/prevalece)');
-    }
-
-    // 4. Valida conteúdo da SÍNTESE TÉCNICA
-    const sintese = parsedOutput.sinteseTecnica.toLowerCase();
-    const hasNormas = this.REQUIRED_KEYWORDS.sinteseTecnica.some(k => sintese.includes(k));
     
-    if (!hasNormas) {
-      errors.push('SÍNTESE TÉCNICA não contém referência a normas técnicas obrigatórias');
+    // We keep a soft requirement for some decisive language to ensure executive tone
+    if (!hasDecision && !decisao.includes('deve') && !decisao.includes('ser')) {
+      errors.push('DECISÃO IMEDIATA não contém linguagem decisiva obrigatória (ex: determina-se/recomenda-se)');
     }
 
-    // 5. Valida FONTES DE EVIDÊNCIA
-    if (!parsedOutput.fontesEvidencia.toLowerCase().includes('iso') &&
-        !parsedOutput.fontesEvidencia.toLowerCase().includes('rdc')) {
-      errors.push('FONTES DE EVIDÊNCIA não lista normas técnicas');
+    // 4. Validate SÍNTESE TÉCNICA content
+    const sintese = parsedOutput.sinteseTecnica.toLowerCase();
+    const hasSubstance = this.REQUIRED_KEYWORDS.sinteseTecnica.some(k => sintese.includes(k));
+    
+    if (!hasSubstance && sintese.length < 100) {
+      errors.push('SÍNTESE TÉCNICA não contém substância analítica suficiente');
     }
 
     return {
@@ -99,7 +100,6 @@ export class JudgeOutputValidator {
   }
 
   private attemptCorrection(partial: any): JudgeOutput {
-    // Tenta corrigir estrutura faltante com fallbacks técnicos seguros e remove cabeçalhos redundantes
     return {
       decisaoImediata: this.removeHeadings(partial.decisaoImediata) || this.getDefaultDecisao(),
       sinteseTecnica: this.removeHeadings(partial.sinteseTecnica) || this.getDefaultSintese(),
@@ -115,14 +115,14 @@ export class JudgeOutputValidator {
   }
 
   public getDefaultDecisao(): string {
-    return `**Conflito entre laboratórios**: Determina-se que **prevalece** o resultado do laboratório acreditado conforme ISO/IEC 17025 e com desempenho satisfatório em PEP (Programa de Excelência). O laboratório não acreditado deve ser desconsiderado para fins oficiais. **Situação limítrofe**: Aplica-se o princípio da **incerteza expandida (k=2)** e Guard-bands. O solo deve ser considerado elegível caso o intervalo de confiança toque a zona de transição favorável ao produtor.`;
+    return `**Parecer Consolidado**: Com base na análise das evidências e no debate entre os especialistas, determina-se que a proposta possui viabilidade estratégica condicionada à mitigação dos riscos operacionais identificados. Recomenda-se o avanço faseado com pontos de controle claros.`;
   }
 
   public getDefaultSintese(): string {
-    return `A análise granulométrica está sujeita a incertezas inerentes de amostragem e medição. Conforme ISO 5725 [SOURCE: ISO 5725], a reprodutibilidade deve ser monitorada. Em situações de borda, a aplicação de critérios metrológicos rigorosos mitiga o risco de descrédito indevido e garante a segurança jurídica do processo de seguro rural ZARC.`;
+    return `A síntese técnica aponta para uma convergência de opiniões sobre a necessidade de maior profundidade nos dados de entrada. Embora o consenso global tenha sido atingido, a variância nas projeções de risco sugere uma abordagem conservadora na execução imediata.`;
   }
 
   public getDefaultFontes(): string {
-    return `- ISO/IEC 17025:2017 – Competência de Laboratórios\n- ISO 5725 – Exatidão de Métodos\n- ISO/IEC Guide 98-3 (GUM) – Incerteza de Medição\n- ISO 11277 – Distribuição granulométrica do solo`;
+    return `- Análise Interna de Dados CouncilIA\n- Benchmarks de Mercado Consultados\n- Princípios de Governança Estratégica\n- Matriz de Riscos Transversal`;
   }
 }

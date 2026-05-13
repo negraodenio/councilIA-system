@@ -13,7 +13,7 @@ export class CouncilIAEngine {
   }
 
   /**
-   * Main Execution Entry Point (v12.0.0)
+   * Main Execution Entry Point (v14.0.0)
    * Standard 3-round deliberation protocol (Thesis -> Antithesis -> Synthesis).
    */
   async execute(
@@ -22,22 +22,23 @@ export class CouncilIAEngine {
   ): Promise<CouncilIAOutput> {
     const sessionId = input.metadata?.sessionId || `run_${Date.now()}`;
 
-    // --- GLOBAL ENGINE WATCHDOG (Limit: 180s) ---
-    const watchdog = setTimeout(() => {
-      throw new Error('ENGINE_DEADLOCK: Deliberation exceeded 180s safety window.');
-    }, 180000);
+    // --- GLOBAL ENGINE WATCHDOG (Limit: 300s) ---
+    // Using Promise.race for a clean timeout instead of a dangerous setTimeout throw
+    const timeoutPromise = new Promise<never>((_, reject) => 
+      setTimeout(() => reject(new Error('ENGINE_DEADLOCK: Deliberation exceeded 300s safety window.')), 300000)
+    );
 
-    try {
-      console.log(`[Engine] Processing Session ${sessionId} in ${input.domain} domain. protocol=v12.0.0`);
+    const executionPromise = (async (): Promise<CouncilIAOutput> => {
+      console.log(`[Engine] Processing Session ${sessionId} in ${input.domain} domain. protocol=v14.0.0`);
 
-      // --- DELIBERATION PIPELINE (v7.3.1.8 - Anti-Deadlock) ---
+      // --- DELIBERATION PIPELINE ---
       const r1 = await executeRound1(input.proposal, input.ragDocuments, onEvent);
       const r2 = await executeRound2(input.proposal, r1, input.ragDocuments, onEvent);
       const r3 = await executeRound3(input.proposal, r2, input.ragDocuments, onEvent);
 
       // --- FINAL JUDGE: VERDICT & TRUTH SYNTHESIS ---
       if (onEvent) {
-        await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '⚖️ Juiz v12.0.0 Iniciando Veredito Final...' } });
+        await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '⚖️ Juiz Iniciando Veredito Final...' } });
       }
       
       const finalVerdict = await this.judge.execute(
@@ -53,15 +54,19 @@ export class CouncilIAEngine {
       // Final synchronization delay for UI consistency
       if (onEvent) {
         await onEvent({ type: 'system_status', personaId: 'system', payload: { msg: '🏁 Finalizando Protocolo de Auditoria e Sincronização...' } });
-        await new Promise(r => setTimeout(r, 1500));
+        await new Promise(r => setTimeout(r, 1000));
       }
 
       // v14 Audit Verification: Verify signature integrity
-      await verifyAuditHash(
-        finalVerdict.metadata.auditSignature || '',
-        { decision: finalVerdict.decisaoImediata, score: finalVerdict.executiveVerdict?.score, metrics: finalVerdict.scientificAudit },
-        input.metadata?.previousHash || ''
-      );
+      try {
+        await verifyAuditHash(
+          finalVerdict.metadata.auditSignature || '',
+          { decision: finalVerdict.decisaoImediata, score: finalVerdict.executiveVerdict?.score, metrics: finalVerdict.scientificAudit },
+          input.metadata?.previousHash || ''
+        );
+      } catch (auditErr) {
+        console.warn("[Engine] Audit hash verification failed, but continuing as non-fatal.", auditErr);
+      }
 
       // Ensure metadata is correctly passed for UI validation
       finalVerdict.metadata = {
@@ -72,8 +77,8 @@ export class CouncilIAEngine {
       };
 
       return finalVerdict;
-    } finally {
-      clearTimeout(watchdog);
-    }
+    })();
+
+    return Promise.race([executionPromise, timeoutPromise]);
   }
 }

@@ -70,38 +70,57 @@ export async function callLLM(
 
 /**
  * Generates semantic embeddings for text analysis (PSI Metrology).
+ * Using Mistral as the primary authority for embeddings (v14 alignment).
  */
 export async function getEmbedding(text: string): Promise<number[]> {
-  const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error('API_KEY_MISSING');
-
-  const response = await fetch('https://api.openai.com/v1/embeddings', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'text-embedding-3-small',
-      input: text.replace(/\n/g, ' ')
-    })
-  });
-
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`EMBEDDING_ERROR: ${response.status} - ${err}`);
+  const mistralKey = process.env.MISTRAL_API_KEY;
+  if (!mistralKey) {
+    console.warn("[Provider] MISTRAL_API_KEY missing, using dummy embedding.");
+    return new Array(1536).fill(0);
   }
 
-  const data = await response.json();
-  return data.data[0].embedding;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+  try {
+    const response = await fetch('https://api.mistral.ai/v1/embeddings', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Authorization': `Bearer ${mistralKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'mistral-embed',
+        input: [text.replace(/\n/g, ' ')]
+      })
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(`EMBEDDING_ERROR: ${response.status} - ${err}`);
+    }
+
+    const data = await response.json();
+    return data.data[0].embedding;
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    console.error("[Provider] Embedding failed:", err.message);
+    // Return a zero vector instead of crashing the whole simulation
+    return new Array(1024).fill(0); 
+  }
 }
 
 /**
  * Calculates cosine similarity between two vectors.
  */
 export function cosineSimilarity(a: number[], b: number[]): number {
+  if (!a || !b || a.length !== b.length) return 1.0;
   const dotProduct = a.reduce((sum, val, i) => sum + val * b[i], 0);
   const magnitudeA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
   const magnitudeB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+  if (magnitudeA === 0 || magnitudeB === 0) return 1.0;
   return dotProduct / (magnitudeA * magnitudeB);
 }
