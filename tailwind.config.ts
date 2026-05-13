@@ -10,17 +10,19 @@ const config: Config = {
     theme: {
         extend: {
             fontFamily: {
-                display: ['var(--font-public-sans)', 'var(--font-space)', 'sans-serif'],
-                body: ['var(--font-inter)', 'sans-serif'],
-                mono: ['var(--font-mono)', 'monospace'],
+                display: ['Outfit', 'Inter', 'sans-serif'],
+                body: ['Inter', 'sans-serif'],
+                mono: ['JetBrains Mono', 'monospace'],
             },
             colors: {
+                'premium-bg': '#F6F5F2',
+                'premium-text': '#111111',
+                'premium-muted': '#6B7280',
+                'premium-accent': '#14B8A6',
+                'premium-secondary': '#4F46E5',
                 'space-black': '#06070d',
                 'deep-blue': '#0c0d1e',
                 'panel-blue': '#13152e',
-                'neon-cyan': '#38bdf8',
-                'neon-lime': '#d4a853',
-                'neon-magenta': '#e879a0',
             },
             backgroundImage: {
                 "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

@@ -1,162 +1,194 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
     const router = useRouter();
-    const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+    const [idea, setIdea] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [previewResult, setPreviewResult] = useState<any>(null);
+    const resultRef = useRef<HTMLDivElement>(null);
 
-    const features = [
-        {
-            icon: '🏛️',
-            title: 'AI Council Debate',
-            description: 'Multiple AI personas debate your ideas from different perspectives'
-        },
-        {
-            icon: '⚖️',
-            title: 'Unbiased Validation',
-            description: 'Get objective analysis through structured multi-agent deliberation'
-        },
-        {
-            icon: '🔒',
-            title: 'EU-First Privacy',
-            description: 'Data sovereignty with policy-controlled retention and audit trails'
-        },
-        {
-            icon: '⚡',
-            title: 'Instant Insights',
-            description: 'Real-time collaborative intelligence for critical decisions'
+    const runPreview = async () => {
+        if (!idea.trim() || loading) return;
+        setLoading(true);
+        setPreviewResult(null);
+        try {
+            const res = await fetch('/api/session/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idea })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                setPreviewResult(data.data);
+                setTimeout(() => {
+                    resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
-            {/* Navigation */}
-            <nav className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-lg border-b border-purple-500/20">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="text-2xl">🏛️</div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                            CouncilIA
-                        </span>
+        <div className="min-h-screen bg-premium-bg text-premium-text font-body selection:bg-premium-accent/20 selection:text-premium-text antialiased">
+            {/* Header */}
+            <nav className="fixed top-0 w-full z-50 bg-premium-bg/80 backdrop-blur-md border-b border-black/[0.03]">
+                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="size-10 rounded-xl bg-premium-text flex items-center justify-center text-premium-bg shadow-lg shadow-black/10">
+                            <span className="material-symbols-outlined text-[20px]">layers</span>
+                        </div>
+                        <div>
+                            <h1 className="font-display font-black text-lg tracking-tight uppercase leading-none mb-1">CouncilIA</h1>
+                            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-premium-muted">Strategic Intelligence Workspace</span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-6">
-                        <button
-                            onClick={() => router.push('/marketplace')}
-                            className="text-gray-300 hover:text-white transition-colors"
-                        >
-                            Marketplace
-                        </button>
-                        <button
-                            onClick={() => router.push('/login')}
-                            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all"
-                        >
+                    <div className="flex items-center gap-8">
+                        <button onClick={() => router.push('/login')} className="text-sm font-bold text-premium-muted hover:text-premium-text transition-colors">
                             Sign In
+                        </button>
+                        <button onClick={() => router.push('/login')} className="premium-button premium-button-primary">
+                            Get Started
                         </button>
                     </div>
                 </div>
             </nav>
 
             {/* Hero Section */}
-            <div className="pt-32 pb-20 px-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <div className="inline-block mb-4 px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-full">
-                            <span className="text-purple-300 text-sm font-medium">
-                                🚀 AI-Powered Decision Intelligence
-                            </span>
+            <main className="pt-40 pb-32 px-6">
+                <div className="max-w-4xl mx-auto text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-premium-accent/10 border border-premium-accent/20 rounded-full mb-8">
+                        <span className="size-2 bg-premium-accent rounded-full animate-pulse"></span>
+                        <span className="text-[11px] font-bold uppercase tracking-widest text-premium-accent">Strategic Intelligence v14.0</span>
+                    </div>
+                    
+                    <h1 className="text-6xl md:text-7xl font-black font-display tracking-tight text-premium-text mb-8 leading-[1.1]">
+                        Simulate outcomes <br />
+                        <span className="text-premium-muted">before you commit.</span>
+                    </h1>
+                    
+                    <p className="text-xl text-premium-muted mb-12 max-w-2xl mx-auto leading-relaxed">
+                        Explore strategic decisions through multiple AI perspectives, simulated risks, and organizational intelligence. No blind spots, just clarity.
+                    </p>
+
+                    {/* Interactive Prompt Box */}
+                    <div className="max-w-2xl mx-auto mb-20">
+                        <div className="premium-card p-2 flex flex-col md:flex-row gap-2">
+                            <input 
+                                type="text"
+                                value={idea}
+                                onChange={(e) => setIdea(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && runPreview()}
+                                placeholder="Should we expand to Brazil or Portugal first?"
+                                className="flex-1 bg-transparent border-0 px-6 py-4 text-lg focus:ring-0 focus:outline-none placeholder:text-premium-muted/50"
+                            />
+                            <button 
+                                onClick={runPreview}
+                                disabled={loading || !idea.trim()}
+                                className="premium-button premium-button-primary flex items-center justify-center gap-2 min-w-[180px] disabled:opacity-50"
+                            >
+                                {loading ? (
+                                    <span className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                ) : (
+                                    <>Run Simulation <span className="text-xl">→</span></>
+                                )}
+                            </button>
                         </div>
-                        <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent leading-tight">
-                            Validate Your Ideas<br />
-                            Through AI Debate
-                        </h1>
-                        <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-                            CouncilIA brings together multiple AI personas to debate, challenge, and validate your ideas.
-                            Get unbiased insights through structured multi-agent deliberation.
+                        <p className="mt-4 text-[11px] font-bold uppercase tracking-widest text-premium-muted/60">
+                            Try a lightweight simulation. No signup required.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <button
-                                onClick={() => router.push('/dashboard')}
-                                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105"
-                            >
-                                Start Free Session →
-                            </button>
-                            <button
-                                onClick={() => router.push('/marketplace')}
-                                className="px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold text-lg hover:bg-white/10 transition-all"
-                            >
-                                Explore Templates
-                            </button>
-                        </div>
                     </div>
 
-                    {/* Features Grid */}
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-20">
-                        {features.map((feature, index) => (
-                            <div
-                                key={index}
-                                onMouseEnter={() => setHoveredFeature(index)}
-                                onMouseLeave={() => setHoveredFeature(null)}
-                                className={`p-6 rounded-2xl border transition-all duration-300 ${hoveredFeature === index
-                                        ? 'bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border-purple-500/50 shadow-xl shadow-purple-500/20 transform scale-105'
-                                        : 'bg-white/5 border-white/10'
-                                    }`}
-                            >
-                                <div className="text-4xl mb-4">{feature.icon}</div>
-                                <h3 className="text-xl font-bold mb-2 text-white">{feature.title}</h3>
-                                <p className="text-gray-400 leading-relaxed">{feature.description}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* How It Works */}
-                    <div className="mt-32 text-center">
-                        <h2 className="text-4xl font-bold mb-4 text-white">How It Works</h2>
-                        <p className="text-gray-400 mb-16 max-w-2xl mx-auto">
-                            Three simple steps to get unbiased AI-powered validation
-                        </p>
-                        <div className="grid md:grid-cols-3 gap-8">
-                            {[
-                                { step: '01', title: 'Describe Your Idea', desc: 'Share your concept, decision, or proposal' },
-                                { step: '02', title: 'AI Council Debates', desc: 'Multiple personas analyze from different angles' },
-                                { step: '03', title: 'Get Synthesis', desc: 'Receive balanced judgment and actionable insights' }
-                            ].map((item, i) => (
-                                <div key={i} className="relative">
-                                    <div className="text-6xl font-bold text-purple-500/20 mb-4">{item.step}</div>
-                                    <h3 className="text-2xl font-bold mb-2 text-white">{item.title}</h3>
-                                    <p className="text-gray-400">{item.desc}</p>
-                                    {i < 2 && (
-                                        <div className="hidden md:block absolute top-12 -right-4 text-purple-500/30 text-4xl">
-                                            →
+                    {/* Preview Results */}
+                    {previewResult && (
+                        <div ref={resultRef} className="max-w-4xl mx-auto text-left mb-24 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                {previewResult.perspectives.map((p: any) => (
+                                    <div key={p.id} className="premium-card p-6">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <span className="text-2xl">{p.emoji}</span>
+                                            <span className="text-[11px] font-bold uppercase tracking-widest text-premium-muted">{p.name}</span>
                                         </div>
-                                    )}
+                                        <p className="text-sm leading-relaxed text-premium-text/80 italic">"{p.text}"</p>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <div className="premium-card p-8 bg-white/50 backdrop-blur-sm border-premium-accent/20">
+                                <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <span className="px-3 py-1 bg-premium-accent text-white text-[10px] font-black uppercase tracking-widest rounded-full">Executive Verdict</span>
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-sm font-bold">Confidence:</span>
+                                                <span className="text-sm font-black text-premium-accent">{previewResult.score}%</span>
+                                            </div>
+                                        </div>
+                                        <p className="text-xl font-bold leading-tight text-premium-text">{previewResult.recommendation}</p>
+                                    </div>
+                                    <button 
+                                        onClick={() => router.push('/login')}
+                                        className="premium-button premium-button-primary bg-premium-accent hover:bg-premium-accent/90 px-8 py-4 text-base"
+                                    >
+                                        Unlock Full Council →
+                                    </button>
                                 </div>
-                            ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
-                    {/* CTA Section */}
-                    <div className="mt-32 p-12 rounded-3xl bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 text-center">
-                        <h2 className="text-4xl font-bold mb-4 text-white">Ready to Validate Your Ideas?</h2>
-                        <p className="text-xl text-gray-300 mb-8">
-                            Join hundreds of decision-makers using AI-powered deliberation
-                        </p>
-                        <button
-                            onClick={() => router.push('/dashboard')}
-                            className="px-10 py-5 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl font-bold text-xl hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105"
-                        >
-                            Start Your First Session →
-                        </button>
+                    {/* Trust Logos / Social Proof */}
+                    <div className="pt-20 border-t border-black/[0.03]">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.4em] text-premium-muted/40 mb-12">Trusted by founders at</p>
+                        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 grayscale opacity-30 hover:opacity-100 transition-opacity duration-500">
+                            <span className="text-2xl font-black font-display tracking-tighter">STRATEGY.CO</span>
+                            <span className="text-2xl font-black font-display tracking-tighter">NEXUS</span>
+                            <span className="text-2xl font-black font-display tracking-tighter">AURA AI</span>
+                            <span className="text-2xl font-black font-display tracking-tighter">LUCID</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </main>
+
+            {/* Values Section */}
+            <section className="bg-white py-32 px-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid md:grid-cols-3 gap-16">
+                        <div>
+                            <div className="size-12 bg-premium-bg rounded-2xl flex items-center justify-center mb-8">
+                                <span className="material-symbols-outlined text-premium-accent">diversity_3</span>
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Perspective-Driven UX</h3>
+                            <p className="text-premium-muted leading-relaxed">Agents don't just answer questions. Multiple specialized perspectives debate, challenge, and refine your strategy to find the objective truth.</p>
+                        </div>
+                        <div>
+                            <div className="size-12 bg-premium-bg rounded-2xl flex items-center justify-center mb-8">
+                                <span className="material-symbols-outlined text-premium-secondary">memory</span>
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Organizational Intelligence</h3>
+                            <p className="text-premium-muted leading-relaxed">The 7th member of your council. Integrate your company's real numbers and historical context for simulations grounded in reality.</p>
+                        </div>
+                        <div>
+                            <div className="size-12 bg-premium-bg rounded-2xl flex items-center justify-center mb-8">
+                                <span className="material-symbols-outlined text-premium-text">verified</span>
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">Calm Intelligence</h3>
+                            <p className="text-premium-muted leading-relaxed">No complexity, no noise. An interface designed for deep thinking and executive-level decision making.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Footer */}
-            <footer className="border-t border-white/10 py-8 px-6">
-                <div className="max-w-7xl mx-auto text-center text-gray-500">
-                    <p>© 2026 CouncilIA. Built with AI-powered multi-agent intelligence.</p>
-                </div>
+            <footer className="py-12 border-t border-black/[0.03] text-center">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-premium-muted">
+                    © 2026 CouncilIA — Strategic Intelligence for High-Stakes Decisions.
+                </p>
             </footer>
         </div>
     );

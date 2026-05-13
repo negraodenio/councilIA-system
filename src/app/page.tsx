@@ -72,14 +72,12 @@ export default function Home() {
                                 at any time — no scheduling meetings, no expensive consultants.&rdquo;
                             </p>
                             <div className="flex items-center gap-4 pl-4">
-                                {/* Photo placeholder — replace src with actual photo when available */}
                                 <div className="size-12 rounded-full bg-gradient-to-br from-neon-cyan/30 to-blue-500/30 border border-neon-cyan/30 flex items-center justify-center text-neon-cyan font-black text-lg shrink-0 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
-                                    {/* REPLACE_WITH_PHOTO: <img src="/testimonials/client-dental.jpg" alt="Dr. ..." className="size-12 rounded-full object-cover" /> */}
-                                    DR
+                                    MS
                                 </div>
                                 <div>
-                                    <p className="font-bold text-white text-sm">Dentist — Dental Clinic</p>
-                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Brazil · Verified Client ✓</p>
+                                    <p className="font-bold text-white text-sm">Miguel Silva — M&A Director</p>
+                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Portugal · Verified Client ✓</p>
                                 </div>
                                 <div className="ml-auto flex items-center gap-1">
                                     {[1,2,3,4,5].map(i => (
@@ -987,10 +985,10 @@ export default function Home() {
                             <span className="text-4xl font-black font-display text-white">€29</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
-                        <ul className="space-y-4 mb-8 flex-grow mb-10">
+                        <ul className="space-y-4 flex-grow mb-10">
                             <li className="flex items-center gap-3 text-xs text-slate-300">
                                 <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
-                                5 Validated Decisions / mo
+                                30 Validated Decisions / mo
                             </li>
                             <li className="flex items-center gap-3 text-xs text-slate-300">
                                 <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
@@ -1012,10 +1010,10 @@ export default function Home() {
                             <span className="text-4xl font-black font-display">€199</span>
                             <span className="text-slate-500 text-sm">/mo</span>
                         </div>
-                        <ul className="space-y-4 mb-8 flex-grow mb-10">
+                        <ul className="space-y-4 flex-grow mb-10">
                             <li className="flex items-center gap-3 text-xs text-white">
                                 <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
-                                30 Validated Decisions / mo
+                                300 Validated Decisions / mo
                             </li>
                             <li className="flex items-center gap-3 text-xs text-white">
                                 <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
@@ -1039,7 +1037,7 @@ export default function Home() {
                         <div className="flex items-baseline gap-1 mb-6">
                             <span className="text-4xl font-black font-display text-white">Custom</span>
                         </div>
-                        <ul className="space-y-4 mb-8 flex-grow mb-10">
+                        <ul className="space-y-4 flex-grow mb-10">
                             <li className="flex items-center gap-3 text-xs text-slate-400">
                                 <span className="material-symbols-outlined text-neon-cyan text-sm">verified</span>
                                 Custom Governance Protocols
@@ -1097,8 +1095,8 @@ export default function Home() {
                             Part of the Antigravity Ecosystem. Built in Lisbon, Portugal for high-stakes decision validation.
                         </p>
                         <div className="flex gap-4">
-                            <a aria-label="Visit our website" className="text-slate-500 hover:text-neon-cyan transition-colors" href="#"><span className="material-symbols-outlined select-none" aria-hidden="true">public</span></a>
-                            <a aria-label="Send us an email" className="text-slate-500 hover:text-neon-cyan transition-colors" href="#"><span className="material-symbols-outlined select-none" aria-hidden="true">mail</span></a>
+                            <a aria-label="Visit our LinkedIn" className="text-slate-500 hover:text-neon-cyan transition-colors" href="https://linkedin.com/company/councilia" target="_blank" rel="noreferrer"><span className="material-symbols-outlined select-none" aria-hidden="true">business_center</span></a>
+                            <a aria-label="Send us an email" className="text-slate-500 hover:text-neon-cyan transition-colors" href="mailto:dpo@ia4all.eu"><span className="material-symbols-outlined select-none" aria-hidden="true">mail</span></a>
                         </div>
                     </div>
                     <nav aria-label="Footer Platform Links">

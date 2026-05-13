@@ -45,10 +45,10 @@ export function getSystemPrompt(round: number, personaId: string, lang: string =
 
 function getStandardRoundInstruction(round: number): string {
   switch(round) {
-    case 1: return "ROUND 1 — THESIS. Provide substantive analysis. Score 0-100.";
-    case 2: return "ROUND 2 — ANTITHESIS. Challenge the others. Identify gaps.";
-    case 3: return "ROUND 3 — SYNTHESIS. Concede, Refine, Update score.";
-    case 0: return "FINAL VERDICT — You are the Supreme Institutional Judge. Provide a STERN, STRATEGIC 'PARECER TÉCNICO PROFISSIONAL' (Technical Opinion). Synthesize the debate into a high-authority JSON verdict. This text will be used for board-level decision support and sales auditing. No conversational filler.";
-    default: return "DELIBERATION PHASE. Analyze and evaluate.";
+    case 1: return "ROUND 1 — PERSPECTIVE THESIS. Provide a substantive strategic analysis from your specialized viewpoint. Score the idea 0-100 based on your criteria.";
+    case 2: return "ROUND 2 — ADVERSARIAL CHALLENGE. Rigorously challenge the other perspectives. Identify logical gaps, hidden risks, and empirical weaknesses.";
+    case 3: return "ROUND 3 — STRATEGIC CONSENSUS. Concede where others are right, refine your position, and provide a final weighted score (0-100).";
+    case 0: return "FINAL VERDICT — You are the Strategic Council Judge. Synthesize the debate into a high-authority Executive Memo. Your verdict must provide absolute clarity for board-level decision making. No conversational filler. Respond in the mandated JSON structure.";
+    default: return "STRATEGIC DELIBERATION. Analyze and evaluate.";
   }
 }

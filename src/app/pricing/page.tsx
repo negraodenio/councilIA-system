@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Navbar } from "@/ui/Navbar";
 import { Footer } from "@/ui/Footer";
@@ -37,8 +37,8 @@ export default function PricingPage() {
                                     <tr className="border-b border-neutral-100">
                                         <th className="py-4 px-4 font-semibold text-neutral-900">Feature</th>
                                         <th className="py-4 px-4 font-semibold text-neutral-900 text-center">Free</th>
-                                        <th className="py-4 px-4 font-semibold text-neutral-900 text-center">Pro</th>
-                                        <th className="py-4 px-4 font-semibold text-neutral-900 text-center">Team</th>
+                                        <th className="py-4 px-4 font-semibold text-neutral-900 text-center">Founder</th>
+                                        <th className="py-4 px-4 font-semibold text-neutral-900 text-center">Operator</th>
                                     </tr>
                                 </thead>
                                 <tbody className="text-sm">
@@ -209,8 +209,8 @@ export default function PricingPage() {
                             <div className="p-10 bg-neutral-50/50">
                                 <h3 className="font-semibold mb-6 text-neutral-400 uppercase text-[10px] tracking-[0.2em]">Our margins</h3>
                                 <div className="space-y-4 text-sm leading-relaxed">
-                                    <p className="text-neutral-600">{"·"} <span className="font-mono text-neutral-900 font-semibold text-base">Pro: €0.97/session</span> → 89% funds development & support.</p>
-                                    <p className="text-neutral-600">{"·"} <span className="font-mono text-neutral-900 font-semibold text-base">Team: €0.33/session</span> → 67% funds enterprise features.</p>
+                                    <p className="text-neutral-600">{"·"} <span className="font-mono text-neutral-900 font-semibold text-base">Founder: ~€0.97/session</span> → 89% funds development & support.</p>
+                                    <p className="text-neutral-600">{"·"} <span className="font-mono text-neutral-900 font-semibold text-base">Operator: ~€0.66/session</span> → 67% funds enterprise features.</p>
                                 </div>
                                 <div className="mt-8 space-y-3">
                                     <p className="text-sm text-neutral-600">We don{"'"}t hide fees behind {"'"}contact sales.{"'"} We don{"'"}t train AI on your data. We don{"'"}t sell your information.</p>
@@ -243,7 +243,7 @@ export default function PricingPage() {
                             />
                             <FAQItem
                                 q="What happens if I hit my limit?"
-                                a="Free: Wait until next month. Pro: Upgrade to Team or wait for reset. Team: €0.30 per additional session, billed automatically at month end."
+                                a="Free: Wait until next month. Founder: Upgrade to Operator or wait for reset. Operator: €0.60 per additional session, billed automatically at month end."
                             />
                             <FAQItem
                                 q="Do unused sessions roll over?"
