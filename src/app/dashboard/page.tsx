@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { Navbar } from '@/ui/Navbar';
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -30,121 +31,106 @@ export default async function DashboardPage() {
     const recentValidations = validations?.slice(0, 10) || [];
 
     return (
-        <div className="min-h-screen bg-premium-bg text-premium-text font-body selection:bg-premium-accent/20 antialiased">
+        <div className="min-h-screen">
+            <Navbar />
             
-            {/* Header */}
-            <header className="border-b border-black/[0.03] bg-premium-bg/80 backdrop-blur-xl sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-8 h-24 flex items-center justify-between">
-                    <div className="flex items-center gap-6">
-                        <Link href="/" className="size-12 rounded-xl bg-premium-text flex items-center justify-center text-premium-bg hover:scale-105 transition-transform shadow-lg shadow-black/5">
-                            <span className="material-symbols-outlined text-[24px]">layers</span>
-                        </Link>
-                        <div>
-                            <h1 className="text-xl font-black font-display tracking-tight uppercase">Strategic Dashboard</h1>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-premium-muted">Portfolio Overview & Intelligence</p>
-                        </div>
+            <main className="max-w-[1160px] mx-auto px-6 md:px-15 py-16 animate-fade-up">
+                
+                {/* Hero Header */}
+                <div className="mb-16">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--surface-2)] border border-[var(--border)] rounded-full mb-6">
+                        <div className="size-1.5 bg-[var(--teal)] rounded-full animate-premium-pulse shadow-[0_0_8px_var(--teal)]"></div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-2)]">Strategic Workspace v14.0</span>
                     </div>
-
-                    <div className="flex gap-4 items-center">
-                        <Link href="/new" className="premium-button px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-premium-accent/10">
-                            New Simulation
-                        </Link>
-                        <div className="h-8 w-px bg-black/[0.05] mx-2"></div>
-                        <form action="/api/auth/signout" method="post">
-                            <button type="submit" className="size-10 rounded-full bg-black/[0.03] flex items-center justify-center text-premium-muted hover:text-red-500 hover:bg-red-50 transition-all">
-                                <span className="material-symbols-outlined text-[20px]">logout</span>
-                            </button>
-                        </form>
-                    </div>
+                    <h1 className="premium-heading text-5xl md:text-6xl text-[var(--text)] mb-4">Strategic Dashboard</h1>
+                    <p className="text-lg text-[var(--muted-2)] font-light max-w-2xl">
+                        Portfolio Overview & Strategic Intelligence. Monitor your organization's simulated outcomes and decision confidence.
+                    </p>
                 </div>
-            </header>
-
-            <main className="max-w-7xl mx-auto px-8 py-16">
 
                 {/* Metrics Row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-                    <div className="premium-card p-10 group hover:border-premium-accent/20 transition-all">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="size-10 rounded-xl bg-black/[0.03] flex items-center justify-center text-premium-muted group-hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined">folder_open</span>
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-premium-muted">Total Simulations</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+                    <div className="premium-card premium-card-accent">
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="material-symbols-outlined text-[var(--muted)] text-xl">folder_open</span>
+                            <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--muted)]">Total Simulations</span>
                         </div>
-                        <div className="text-6xl font-black font-display tracking-tighter">{totalValidations}</div>
+                        <div className="text-5xl font-extrabold font-syne tracking-tighter text-[var(--text)]">{totalValidations}</div>
                     </div>
 
-                    <div className="premium-card p-10 group hover:border-premium-accent/20 transition-all">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="size-10 rounded-xl bg-black/[0.03] flex items-center justify-center text-premium-muted group-hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined">analytics</span>
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-premium-muted">Avg Confidence</span>
+                    <div className="premium-card premium-card-accent">
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="material-symbols-outlined text-[var(--muted)] text-xl">analytics</span>
+                            <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--muted)]">Avg Confidence</span>
                         </div>
                         <div className="flex items-baseline gap-2">
-                            <div className={`text-6xl font-black font-display tracking-tighter ${averageScore >= 70 ? 'text-emerald-600' : 'text-premium-text'}`}>{averageScore}</div>
-                            <span className="text-xl font-bold text-premium-muted">%</span>
+                            <div className="text-5xl font-extrabold font-syne tracking-tighter text-[var(--teal)]">{averageScore}%</div>
                         </div>
                     </div>
 
-                    <div className="premium-card p-10 group hover:border-premium-accent/20 transition-all">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="size-10 rounded-xl bg-black/[0.03] flex items-center justify-center text-premium-muted group-hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined">verified</span>
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-premium-muted">Viable Outcomes</span>
+                    <div className="premium-card premium-card-accent">
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="material-symbols-outlined text-[var(--muted)] text-xl">verified</span>
+                            <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--muted)]">Viable Outcomes</span>
                         </div>
-                        <div className="text-6xl font-black font-display tracking-tighter text-emerald-600">{viableIdeas}</div>
+                        <div className="text-5xl font-extrabold font-syne tracking-tighter text-[var(--indigo)]">{viableIdeas}</div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
                     {/* LEFT COLUMN: History */}
                     <div className="lg:col-span-8">
-                        <div className="flex items-center gap-4 mb-10">
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-premium-muted">Simulation History</h2>
-                            <div className="flex-1 h-px bg-black/[0.03]"></div>
+                        <div className="flex items-center justify-between mb-8">
+                            <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">Simulation History</h2>
+                            <Link href="/new" className="text-[11px] font-bold uppercase tracking-widest text-[var(--teal)] hover:underline">New Simulation +</Link>
                         </div>
 
                         {recentValidations && recentValidations.length > 0 ? (
                             <div className="space-y-4">
-                                {recentValidations.map((v) => (
-                                    <Link key={v.id} href={`/report/${v.id}`} className="premium-card p-8 flex items-center justify-between group hover:border-premium-accent/40 hover:shadow-2xl hover:shadow-black/5 transition-all">
-                                        <div className="flex-1 min-w-0 pr-8">
-                                            <div className="text-lg font-black font-display tracking-tight mb-2 truncate group-hover:text-premium-accent transition-colors">
-                                                {v.idea}
-                                            </div>
-                                            <div className="flex items-center gap-6">
-                                                <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${
-                                                    v.status === 'complete' ? 'border-emerald-100 text-emerald-700 bg-emerald-50' : 
-                                                    v.status === 'error' ? 'border-red-100 text-red-700 bg-red-50' :
-                                                    'border-amber-100 text-amber-700 bg-amber-50'
-                                                }`}>
-                                                    {v.status === 'complete' ? 'Deliberated' : v.status}
-                                                </span>
-                                                <span className="text-[9px] font-bold uppercase tracking-widest text-premium-muted">
-                                                    {new Date(v.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {v.consensus_score && (
-                                            <div className="text-right">
-                                                <div className="text-[9px] font-black uppercase tracking-widest text-premium-muted mb-1">Score</div>
-                                                <div className={`text-3xl font-black font-display ${v.consensus_score >= 70 ? 'text-emerald-600' : 'text-premium-text'}`}>
-                                                    {Math.round(v.consensus_score)}
+                                {recentValidations.map((v, idx) => (
+                                    <Link 
+                                        key={v.id} 
+                                        href={`/report/${v.id}`} 
+                                        className="premium-card block group hover:border-[var(--teal)] transition-all animate-fade-up"
+                                        style={{ animationDelay: `${idx * 0.05}s` }}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex-1 min-w-0 pr-8">
+                                                <h3 className="text-xl font-bold font-syne tracking-tight mb-2 truncate group-hover:text-[var(--teal)] transition-colors">
+                                                    {v.idea}
+                                                </h3>
+                                                <div className="flex items-center gap-4">
+                                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${
+                                                        v.status === 'complete' ? 'text-[var(--teal)]' : 
+                                                        v.status === 'error' ? 'text-red-400' :
+                                                        'text-[var(--muted-2)]'
+                                                    }`}>
+                                                        {v.status === 'complete' ? 'Deliberated' : v.status}
+                                                    </span>
+                                                    <span className="text-[10px] text-[var(--muted)] tracking-widest uppercase">
+                                                        {new Date(v.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                                    </span>
                                                 </div>
                                             </div>
-                                        )}
+
+                                            {v.consensus_score !== null && (
+                                                <div className="text-right">
+                                                    <div className="text-3xl font-extrabold font-syne tracking-tighter text-[var(--text)]">
+                                                        {Math.round(v.consensus_score)}%
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </Link>
                                 ))}
                             </div>
                         ) : (
-                            <div className="premium-card p-20 text-center border-dashed">
-                                <span className="material-symbols-outlined text-4xl text-premium-muted/30 mb-6">history_edu</span>
-                                <h3 className="text-xl font-black font-display mb-2">Workspace Empty</h3>
-                                <p className="text-sm text-premium-muted mb-10 max-w-xs mx-auto">No strategic simulations detected. Start a new session to begin deliberation.</p>
-                                <Link href="/new" className="premium-button premium-button-secondary px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em]">
+                            <div className="premium-card py-24 text-center border-dashed border-[var(--border)] bg-transparent">
+                                <span className="material-symbols-outlined text-4xl text-[var(--border-hover)] mb-6">history_edu</span>
+                                <h3 className="text-2xl font-syne font-bold mb-2">Workspace Empty</h3>
+                                <p className="text-[var(--muted-2)] mb-10 max-w-xs mx-auto font-light">No strategic simulations detected. Start a new session to begin deliberation.</p>
+                                <Link href="/new" className="premium-button premium-button-primary inline-flex">
                                     Start First Session
                                 </Link>
                             </div>
@@ -153,43 +139,55 @@ export default async function DashboardPage() {
 
                     {/* RIGHT COLUMN: Resources */}
                     <div className="lg:col-span-4">
-                        <div className="sticky top-32 space-y-12">
+                        <div className="sticky top-32 space-y-10">
                             <div>
-                                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-premium-muted mb-8">Strategic Resources</h2>
+                                <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--muted)] mb-8">Strategic Resources</h2>
                                 <div className="space-y-4">
-                                    <Link href="/dashboard/custom-persona" className="premium-card p-6 flex items-center gap-5 group hover:border-premium-accent/20 transition-all">
-                                        <div className="size-12 rounded-xl bg-black/[0.03] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                                            🏛️
+                                    <Link href="/dashboard/custom-persona" className="premium-card block group">
+                                        <div className="flex items-center gap-4">
+                                            <div className="size-10 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                                🏛️
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold uppercase tracking-tight group-hover:text-[var(--teal)] transition-colors">Perspective Training</p>
+                                                <p className="text-[10px] text-[var(--muted)] font-medium uppercase tracking-widest">Add Internal Data</p>
+                                            </div>
+                                            <span className="material-symbols-outlined ml-auto text-[var(--muted)] group-hover:text-[var(--teal)] transition-colors">arrow_forward</span>
                                         </div>
-                                        <div>
-                                            <p className="text-[11px] font-black uppercase tracking-tight">Perspective Training</p>
-                                            <p className="text-[9px] text-premium-muted font-bold uppercase tracking-widest">Add Internal Data</p>
-                                        </div>
-                                        <span className="material-symbols-outlined ml-auto text-premium-muted group-hover:text-premium-accent transition-colors">arrow_forward</span>
                                     </Link>
 
-                                    <button className="w-full premium-card p-6 flex items-center gap-5 group hover:border-premium-accent/20 transition-all text-left">
-                                        <div className="size-12 rounded-xl bg-black/[0.03] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                                            📊
+                                    <button className="w-full premium-card group text-left">
+                                        <div className="flex items-center gap-4">
+                                            <div className="size-10 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                                📊
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold uppercase tracking-tight group-hover:text-[var(--teal)] transition-colors">Executive Export</p>
+                                                <p className="text-[10px] text-[var(--muted)] font-medium uppercase tracking-widest">Generate Portfolio</p>
+                                            </div>
+                                            <span className="material-symbols-outlined ml-auto text-[var(--muted)] group-hover:text-[var(--teal)] transition-colors">download</span>
                                         </div>
-                                        <div>
-                                            <p className="text-[11px] font-black uppercase tracking-tight">Executive Export</p>
-                                            <p className="text-[9px] text-premium-muted font-bold uppercase tracking-widest">Generate PDF Portfolio</p>
-                                        </div>
-                                        <span className="material-symbols-outlined ml-auto text-premium-muted group-hover:text-premium-accent transition-colors">download</span>
                                     </button>
                                 </div>
                             </div>
 
                             <div>
-                                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-premium-muted mb-8">Account</h2>
-                                <Link href="/api/stripe/portal" className="premium-card p-6 flex items-center justify-between group hover:border-premium-accent/20 transition-all">
-                                    <div className="flex items-center gap-4">
-                                        <span className="material-symbols-outlined text-premium-muted">credit_card</span>
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Subscription & Billing</span>
+                                <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--muted)] mb-8">Account</h2>
+                                <Link href="/api/stripe/portal" className="premium-card block group">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <span className="material-symbols-outlined text-[var(--muted)]">credit_card</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest">Subscription & Billing</span>
+                                        </div>
+                                        <span className="material-symbols-outlined text-[var(--muted)] group-hover:text-[var(--teal)] transition-colors">open_in_new</span>
                                     </div>
-                                    <span className="material-symbols-outlined text-premium-muted group-hover:text-premium-accent transition-colors">open_in_new</span>
                                 </Link>
+                                
+                                <form action="/api/auth/signout" method="post" className="mt-4">
+                                    <button type="submit" className="w-full premium-card py-4 text-center group border-red-500/10 hover:border-red-500/40 hover:bg-red-500/5 transition-all">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-red-400 group-hover:text-red-500">Sign Out</span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
