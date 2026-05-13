@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -8,13 +8,27 @@ export default function LandingPage() {
     const router = useRouter();
     const [idea, setIdea] = useState('');
     const [loading, setLoading] = useState(false);
-    const [previewResult, setPreviewResult] = useState<any>(null);
-    const resultRef = useRef<HTMLDivElement>(null);
+    const [status, setStatus] = useState('Ready');
+    const [results, setResults] = useState<any>(null);
+    const [typingText, setTypingText] = useState({ market: '', risk: '', rec: '' });
+    const outputColRef = useRef<HTMLDivElement>(null);
 
-    const runPreview = async () => {
+    const typeText = async (key: 'market' | 'risk' | 'rec', text: string, speed = 18) => {
+        let current = '';
+        for (let i = 0; i < text.length; i++) {
+            current += text[i];
+            setTypingText(prev => ({ ...prev, [key]: current }));
+            await new Promise(r => setTimeout(r, speed));
+        }
+    };
+
+    const runSimulation = async () => {
         if (!idea.trim() || loading) return;
         setLoading(true);
-        setPreviewResult(null);
+        setStatus('Simulating…');
+        setResults(null);
+        setTypingText({ market: '', risk: '', rec: '' });
+
         try {
             const res = await fetch('/api/session/preview', {
                 method: 'POST',
@@ -22,696 +36,756 @@ export default function LandingPage() {
                 body: JSON.stringify({ idea })
             });
             const data = await res.json();
+            
             if (data.ok) {
-                setPreviewResult(data.data);
-                setTimeout(() => {
-                    resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
+                const payload = data.data;
+                // payload looks like: { perspectives: [{name, text, emoji}], score, recommendation }
+                // We need to map it to the new UI structure (Market, Risk, Verdict)
+                
+                const marketText = payload.perspectives.find((p: any) => p.id === 'market')?.text || payload.perspectives[0]?.text;
+                const riskText = payload.perspectives.find((p: any) => p.id === 'risk' || p.id === 'contrarian')?.text || payload.perspectives[1]?.text;
+                
+                setResults({
+                    market: marketText,
+                    risk: riskText,
+                    verdict: payload.score >= 70 ? 'GO' : payload.score >= 40 ? 'CONDITIONAL' : 'NO-GO',
+                    confidence: payload.score,
+                    recommendation: payload.recommendation
+                });
+
+                setStatus('Council aligned');
+                
+                // Start typing effects
+                await Promise.all([
+                    typeText('market', marketText),
+                    typeText('risk', riskText)
+                ]);
+                await typeText('rec', payload.recommendation, 22);
+
+            } else {
+                throw new Error('Simulation failed');
             }
         } catch (err) {
             console.error(err);
+            setStatus('Error');
+            setTypingText(prev => ({ ...prev, market: 'Could not reach the simulation engine. Try again.' }));
         } finally {
             setLoading(false);
         }
     };
 
+    const setQ = (text: string) => {
+        setIdea(text);
+    };
+
     return (
-        <div className="landing-page-root">
+        <div className="landing-page-v3">
             <style jsx>{`
-                .landing-page-root {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                    --bg: #0B0D12;
-                    --surface: #12161D;
-                    --surface-2: #171C25;
-                    --text: #F8FAFC;
-                    --muted: #94A3B8;
-                    --line: rgba(255,255,255,0.06);
-                    --accent: #14B8A6;
-                    --accent2: #4F46E5;
-                    --shadow: 0 10px 40px rgba(0,0,0,0.32);
-                    --radius-xl: 30px;
-                    --radius-lg: 22px;
-                    font-family: 'Inter', sans-serif;
-                    background:
-                        radial-gradient(circle at top right, rgba(20,184,166,0.10), transparent 25%),
-                        radial-gradient(circle at bottom left, rgba(79,70,229,0.10), transparent 25%),
-                        var(--bg);
+                .landing-page-v3 {
+                    --bg: #080A0E;
+                    --surface: #0F1219;
+                    --surface-2: #151A24;
+                    --border: rgba(255,255,255,0.07);
+                    --border-hover: rgba(255,255,255,0.14);
+                    --text: #F0F4FA;
+                    --muted: #6B7A95;
+                    --muted-2: #9AA5BB;
+                    --teal: #0ECFB8;
+                    --teal-dim: rgba(14,207,184,0.12);
+                    --indigo: #5B50F0;
+                    --indigo-dim: rgba(91,80,240,0.12);
+                    background: var(--bg);
                     color: var(--text);
-                    min-height: 100 screen;
-                    overflow-x: hidden;
-                    -webkit-font-smoothing: antialiased;
+                    min-height: 100vh;
+                    font-family: 'DM Sans', sans-serif;
+                    position: relative;
                 }
 
-                .noise {
+                .landing-page-v3::before {
+                    content: '';
                     position: fixed;
                     inset: 0;
-                    opacity: 0.015;
-                    pointer-events: none;
                     background-image:
-                        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='white'%3E%3Ccircle cx='12' cy='12' r='1'/%3E%3Ccircle cx='70' cy='50' r='1'/%3E%3Ccircle cx='120' cy='80' r='1'/%3E%3Ccircle cx='90' cy='130' r='1'/%3E%3C/g%3E%3C/svg%3E");
-                    z-index: 1;
+                        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+                    background-size: 60px 60px;
+                    pointer-events: none;
+                    z-index: 0;
                 }
 
-                .container {
-                    max-width: 1440px;
-                    margin: 0 auto;
-                    padding: 0 40px;
-                    position: relative;
-                    z-index: 2;
+                .orb {
+                    position: fixed;
+                    border-radius: 50%;
+                    filter: blur(120px);
+                    pointer-events: none;
+                    z-index: 0;
+                }
+                .orb-1 {
+                    width: 600px; height: 600px;
+                    top: -200px; right: -100px;
+                    background: radial-gradient(circle, rgba(14,207,184,0.07), transparent 70%);
+                }
+                .orb-2 {
+                    width: 500px; height: 500px;
+                    bottom: 0; left: -150px;
+                    background: radial-gradient(circle, rgba(91,80,240,0.07), transparent 70%);
                 }
 
                 nav {
-                    height: 92px;
+                    position: relative;
+                    z-index: 10;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    padding: 28px 60px;
+                    border-bottom: 1px solid var(--border);
                 }
 
                 .logo {
                     display: flex;
                     align-items: center;
-                    gap: 14px;
-                }
-
-                .logo-icon {
-                    width: 44px;
-                    height: 44px;
-                    border-radius: 14px;
-                    background: linear-gradient(135deg, var(--accent), var(--accent2));
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-weight: 800;
-                    font-size: 16px;
-                    box-shadow: 0 0 30px rgba(20,184,166,0.18);
-                    color: white;
-                }
-
-                .logo-text {
-                    display: flex;
-                    flex-direction: column;
-                }
-
-                .logo-title {
-                    font-size: 22px;
-                    font-weight: 800;
-                    letter-spacing: -1px;
-                }
-
-                .logo-sub {
-                    font-size: 10px;
-                    color: var(--muted);
-                    letter-spacing: 0.18em;
-                    text-transform: uppercase;
-                }
-
-                .nav-links {
-                    display: flex;
-                    align-items: center;
-                    gap: 34px;
-                }
-
-                .nav-links a {
+                    gap: 12px;
                     text-decoration: none;
-                    color: var(--muted);
+                }
+
+                .logo-mark {
+                    width: 36px; height: 36px;
+                    border-radius: 10px;
+                    background: linear-gradient(135deg, var(--teal), var(--indigo));
+                    display: flex; align-items: center; justify-content: center;
+                    font-family: 'Syne', sans-serif;
+                    font-weight: 800;
                     font-size: 15px;
-                    transition: 0.3s ease;
-                }
-
-                .nav-links a:hover {
                     color: white;
                 }
 
-                .cta {
-                    padding: 14px 24px;
-                    border-radius: 16px;
-                    background: linear-gradient(135deg, var(--accent), var(--accent2));
-                    text-decoration: none;
-                    color: white;
-                    font-weight: 700;
+                .logo-name {
+                    font-family: 'Syne', sans-serif;
+                    font-weight: 800;
+                    font-size: 20px;
+                    letter-spacing: -0.5px;
+                    color: var(--text);
+                }
+
+                .nav-right {
+                    display: flex;
+                    align-items: center;
+                    gap: 32px;
+                }
+
+                .nav-link {
                     font-size: 14px;
-                    box-shadow: 0 0 40px rgba(20,184,166,0.16);
-                    transition: 0.35s ease;
-                    border: none;
+                    color: var(--muted);
+                    text-decoration: none;
+                    transition: color 0.2s;
+                }
+                .nav-link:hover { color: var(--text); }
+
+                .nav-cta {
+                    padding: 10px 20px;
+                    border-radius: 10px;
+                    background: var(--surface-2);
+                    border: 1px solid var(--border-hover);
+                    color: var(--text);
+                    font-size: 14px;
+                    font-weight: 500;
+                    text-decoration: none;
+                    transition: all 0.2s;
                     cursor: pointer;
                 }
-
-                .cta:hover {
-                    transform: translateY(-2px);
+                .nav-cta:hover {
+                    background: var(--surface);
+                    border-color: var(--teal);
+                    color: var(--teal);
                 }
 
                 .hero {
-                    padding: 90px 0 100px;
-                    text-align: center;
+                    position: relative;
+                    z-index: 2;
+                    max-width: 1160px;
+                    margin: 0 auto;
+                    padding: 80px 60px 0;
                 }
 
-                .badge {
+                .eyebrow {
                     display: inline-flex;
                     align-items: center;
-                    gap: 10px;
-                    padding: 10px 18px;
+                    gap: 8px;
+                    padding: 6px 14px;
                     border-radius: 999px;
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid var(--line);
-                    margin-bottom: 38px;
-                    backdrop-filter: blur(12px);
+                    border: 1px solid var(--border-hover);
+                    background: rgba(255,255,255,0.02);
+                    margin-bottom: 32px;
                 }
 
-                .badge-dot {
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 999px;
-                    background: var(--accent);
-                    box-shadow: 0 0 12px var(--accent);
+                .eyebrow-dot {
+                    width: 6px; height: 6px;
+                    border-radius: 50%;
+                    background: var(--teal);
+                    box-shadow: 0 0 8px var(--teal);
+                    animation: pulse 2.5s ease-in-out infinite;
                 }
 
-                .badge span {
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.4; }
+                }
+
+                .eyebrow span {
                     font-size: 11px;
-                    color: var(--muted);
-                    letter-spacing: 0.14em;
+                    font-weight: 500;
+                    letter-spacing: 0.1em;
                     text-transform: uppercase;
-                    font-weight: 700;
+                    color: var(--muted-2);
                 }
 
                 h1 {
-                    font-size: 112px;
-                    line-height: 0.90;
-                    letter-spacing: -7px;
-                    font-weight: 900;
-                    max-width: 1100px;
-                    margin: 0 auto 34px;
+                    font-family: 'Syne', sans-serif;
+                    font-weight: 800;
+                    font-size: clamp(52px, 7vw, 86px);
+                    line-height: 0.95;
+                    letter-spacing: -3px;
+                    margin-bottom: 22px;
                 }
 
-                .gradient {
-                    background: linear-gradient(135deg, var(--accent), var(--accent2));
+                .h1-line2 {
+                    display: block;
+                    background: linear-gradient(135deg, var(--teal) 0%, var(--indigo) 100%);
                     -webkit-background-clip: text;
                     -webkit-text-fill-color: transparent;
+                    background-clip: text;
                 }
 
-                .subtitle {
-                    max-width: 900px;
-                    margin: 0 auto;
-                    color: var(--muted);
-                    font-size: 25px;
-                    line-height: 1.7;
+                .hero-sub {
+                    max-width: 580px;
+                    font-size: 18px;
+                    line-height: 1.75;
+                    color: var(--muted-2);
+                    margin-bottom: 52px;
+                    font-weight: 300;
                 }
 
-                .prompt-wrapper {
-                    margin: 70px auto 0;
-                    max-width: 1120px;
-                    border-radius: var(--radius-xl);
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid var(--line);
-                    padding: 28px;
-                    backdrop-filter: blur(16px);
-                    box-shadow: var(--shadow);
-                    text-align: left;
+                .demo-panel {
+                    border-radius: 20px;
+                    border: 1px solid var(--border-hover);
+                    background: var(--surface);
+                    overflow: hidden;
+                    position: relative;
                 }
 
-                .prompt-top {
+                .demo-panel::before {
+                    content: '';
+                    position: absolute;
+                    top: 0; left: 0; right: 0;
+                    height: 1px;
+                    background: linear-gradient(90deg, transparent, var(--teal), var(--indigo), transparent);
+                }
+
+                .demo-top {
+                    padding: 20px 24px;
+                    border-bottom: 1px solid var(--border);
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    margin-bottom: 20px;
                 }
 
-                .prompt-label {
+                .demo-dots {
+                    display: flex;
+                    gap: 6px;
+                }
+
+                .demo-dot {
+                    width: 10px; height: 10px;
+                    border-radius: 50%;
+                    background: var(--border-hover);
+                }
+                .demo-dot:nth-child(1) { background: #FF5F57; }
+                .demo-dot:nth-child(2) { background: #FFBD2E; }
+                .demo-dot:nth-child(3) { background: #28C840; }
+
+                .demo-label {
+                    font-size: 12px;
                     color: var(--muted);
-                    font-size: 12px;
+                    letter-spacing: 0.06em;
                     text-transform: uppercase;
-                    letter-spacing: 0.16em;
-                    font-weight: 700;
                 }
 
-                .prompt-free {
-                    color: rgba(255,255,255,0.35);
-                    font-size: 12px;
+                .demo-body {
+                    padding: 24px;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 16px;
+                    min-height: 320px;
                 }
 
-                textarea {
-                    width: 100%;
-                    min-height: 170px;
-                    background: var(--surface);
-                    border: 1px solid var(--line);
-                    border-radius: 24px;
-                    padding: 28px;
-                    color: white;
-                    font-size: 24px;
+                .demo-input-col {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 14px;
+                }
+
+                .input-label {
+                    font-size: 11px;
+                    color: var(--muted);
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                    font-weight: 500;
+                }
+
+                textarea#q {
+                    flex: 1;
+                    background: var(--surface-2);
+                    border: 1px solid var(--border);
+                    border-radius: 14px;
+                    padding: 18px;
+                    color: var(--text);
+                    font-size: 16px;
+                    font-family: 'DM Sans', sans-serif;
+                    font-weight: 300;
                     line-height: 1.7;
                     resize: none;
                     outline: none;
-                    font-family: 'Inter', sans-serif;
+                    transition: border-color 0.2s;
+                    min-height: 160px;
                 }
 
-                textarea::placeholder {
-                    color: rgba(255,255,255,0.28);
-                }
+                textarea#q::placeholder { color: rgba(255,255,255,0.22); }
+                textarea#q:focus { border-color: var(--border-hover); }
 
-                .prompt-footer {
-                    margin-top: 18px;
+                .chips-row {
                     display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                }
-
-                .chips {
-                    display: flex;
-                    gap: 10px;
                     flex-wrap: wrap;
+                    gap: 8px;
                 }
 
                 .chip {
-                    padding: 10px 14px;
+                    padding: 6px 12px;
                     border-radius: 999px;
-                    background: rgba(255,255,255,0.04);
-                    border: 1px solid rgba(255,255,255,0.05);
-                    color: var(--muted);
+                    background: var(--surface-2);
+                    border: 1px solid var(--border);
+                    color: var(--muted-2);
                     font-size: 12px;
-                }
-
-                .simulate-btn {
-                    padding: 16px 28px;
-                    border-radius: 16px;
-                    border: none;
-                    background: linear-gradient(135deg, var(--accent), var(--accent2));
-                    color: white;
-                    font-size: 15px;
-                    font-weight: 700;
                     cursor: pointer;
-                    box-shadow: 0 0 40px rgba(20,184,166,0.15);
-                    transition: 0.3s ease;
+                    transition: all 0.15s;
+                    white-space: nowrap;
+                }
+                .chip:hover {
+                    border-color: var(--teal);
+                    color: var(--teal);
                 }
 
-                .simulate-btn:hover {
-                    transform: translateY(-2px);
-                }
-
-                .simulate-btn:disabled {
-                    opacity: 0.5;
-                    cursor: not-allowed;
-                }
-
-                .preview-grid {
-                    margin-top: 38px;
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 20px;
-                }
-
-                .preview-card {
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid var(--line);
-                    border-radius: 24px;
-                    padding: 28px;
-                }
-
-                .preview-tag {
-                    font-size: 11px;
-                    text-transform: uppercase;
-                    letter-spacing: 0.14em;
-                    color: var(--muted);
-                    margin-bottom: 16px;
-                    font-weight: 700;
-                }
-
-                .preview-card p {
-                    color: rgba(255,255,255,0.76);
-                    line-height: 1.8;
-                    font-size: 16px;
-                }
-
-                .section {
-                    padding: 120px 0;
-                }
-
-                .section-title {
-                    text-align: center;
-                    font-size: 64px;
-                    line-height: 1;
-                    letter-spacing: -4px;
-                    margin-bottom: 24px;
-                }
-
-                .section-sub {
-                    max-width: 760px;
-                    margin: 0 auto 70px;
-                    text-align: center;
-                    color: var(--muted);
-                    font-size: 20px;
-                    line-height: 1.8;
-                }
-
-                .features {
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 24px;
-                }
-
-                .feature-card {
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid var(--line);
-                    border-radius: 28px;
-                    padding: 36px;
-                    transition: 0.35s ease;
-                }
-
-                .feature-card:hover {
-                    transform: translateY(-6px);
-                    border-color: rgba(255,255,255,0.12);
-                }
-
-                .feature-icon {
-                    width: 52px;
-                    height: 52px;
-                    border-radius: 18px;
-                    background: rgba(255,255,255,0.04);
-                    border: 1px solid rgba(255,255,255,0.05);
+                .run-btn {
+                    padding: 14px 22px;
+                    border-radius: 12px;
+                    border: none;
+                    background: linear-gradient(135deg, var(--teal), var(--indigo));
+                    color: white;
+                    font-family: 'DM Sans', sans-serif;
+                    font-size: 15px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: opacity 0.2s, transform 0.15s;
                     display: flex;
                     align-items: center;
+                    gap: 8px;
+                    width: 100%;
                     justify-content: center;
-                    margin-bottom: 26px;
-                    font-size: 20px;
                 }
 
-                .feature-card h3 {
-                    font-size: 28px;
-                    margin-bottom: 18px;
-                    line-height: 1.1;
+                .run-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+                .run-btn:active { transform: translateY(0); }
+                .run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+                .demo-output-col {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
                 }
 
-                .feature-card p {
-                    color: rgba(255,255,255,0.65);
-                    line-height: 1.9;
-                    font-size: 16px;
+                .output-perspectives {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    flex: 1;
                 }
 
-                .simulation-demo {
-                    margin-top: 90px;
-                    border-radius: 34px;
-                    overflow: hidden;
-                    border: 1px solid var(--line);
-                    background: rgba(255,255,255,0.03);
-                    backdrop-filter: blur(14px);
-                    box-shadow: var(--shadow);
+                .perspective-card {
+                    background: var(--surface-2);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                    transition: border-color 0.2s;
+                    min-height: 80px;
                 }
 
-                .simulation-header {
-                    padding: 22px 28px;
-                    border-bottom: 1px solid var(--line);
+                .perspective-card.active { border-color: var(--border-hover); }
+
+                .p-tag {
+                    font-size: 10px;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                }
+
+                .p-tag.market { color: var(--teal); }
+                .p-tag.risk { color: #F59E0B; }
+                .p-tag.rec { color: var(--indigo); }
+
+                .p-text {
+                    font-size: 13px;
+                    line-height: 1.65;
+                    color: rgba(240,244,250,0.75);
+                    font-weight: 300;
+                }
+
+                .rec-card {
+                    background: linear-gradient(135deg, var(--teal-dim), var(--indigo-dim));
+                    border: 1px solid rgba(14,207,184,0.18);
+                    border-radius: 12px;
+                    padding: 14px 16px;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    gap: 10px;
                 }
 
-                .simulation-title {
+                .rec-verdict {
+                    font-family: 'Syne', sans-serif;
+                    font-size: 22px;
+                    font-weight: 800;
+                    letter-spacing: -0.5px;
+                }
+
+                .rec-confidence {
+                    font-size: 12px;
+                    color: var(--muted-2);
+                    text-align: right;
+                }
+
+                .rec-conf-num {
+                    font-size: 20px;
+                    font-weight: 500;
+                    color: var(--teal);
+                    display: block;
+                }
+
+                .skeleton-line {
+                    height: 12px;
+                    border-radius: 6px;
+                    background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,0.06) 50%, var(--border) 75%);
+                    background-size: 200% 100%;
+                    animation: shimmer 1.4s infinite;
+                    margin-bottom: 6px;
+                }
+
+                @keyframes shimmer {
+                    from { background-position: 200% 0; }
+                    to   { background-position: -200% 0; }
+                }
+
+                .skel { display: none; }
+                .state-loading .skel { display: block; }
+                .state-loading .p-text { display: none; }
+
+                .cursor { display: inline-block; width: 2px; height: 1em; background: var(--teal); margin-left: 2px; vertical-align: text-bottom; animation: blink 0.8s step-end infinite; }
+                @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+                .social-proof {
+                    position: relative;
+                    z-index: 2;
+                    max-width: 1160px;
+                    margin: 56px auto 0;
+                    padding: 0 60px 80px;
+                }
+
+                .sp-label {
+                    text-align: center;
+                    font-size: 12px;
+                    color: var(--muted);
+                    text-transform: uppercase;
+                    letter-spacing: 0.12em;
+                    margin-bottom: 28px;
+                }
+
+                .sp-logos {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0;
+                    border: 1px solid var(--border);
+                    border-radius: 16px;
+                    background: var(--surface);
+                    overflow: hidden;
+                }
+
+                .sp-item {
+                    flex: 1;
+                    padding: 20px 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-right: 1px solid var(--border);
+                }
+
+                .sp-item:last-child { border-right: none; }
+
+                .sp-logo-text {
+                    font-family: 'Syne', sans-serif;
+                    font-weight: 700;
                     font-size: 15px;
                     color: var(--muted);
+                    letter-spacing: -0.3px;
+                    transition: color 0.2s;
                 }
 
-                .simulation-status {
-                    color: var(--accent);
-                    font-size: 13px;
-                }
+                .sp-item:hover .sp-logo-text { color: var(--muted-2); }
 
-                .simulation-body {
-                    padding: 34px;
-                    display: grid;
-                    grid-template-columns: 1.2fr 0.8fr;
-                    gap: 26px;
-                }
-
-                .discussion {
+                .sp-stat-row {
                     display: flex;
-                    flex-direction: column;
-                    gap: 18px;
+                    gap: 0;
+                    margin-top: 16px;
                 }
 
-                .discussion-card {
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid var(--line);
-                    border-radius: 22px;
-                    padding: 22px;
+                .sp-stat {
+                    flex: 1;
+                    text-align: center;
+                    padding: 20px;
+                    border: 1px solid var(--border);
+                    border-radius: 14px;
+                    background: var(--surface);
                 }
 
-                .discussion-role {
+                .sp-stat + .sp-stat { margin-left: 12px; }
+
+                .sp-stat-num {
+                    font-family: 'Syne', sans-serif;
+                    font-size: 32px;
+                    font-weight: 800;
+                    letter-spacing: -1px;
+                    background: linear-gradient(135deg, var(--teal), var(--indigo));
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    display: block;
+                }
+
+                .sp-stat-label {
+                    font-size: 13px;
                     color: var(--muted);
-                    font-size: 11px;
-                    letter-spacing: 0.12em;
-                    text-transform: uppercase;
-                    margin-bottom: 12px;
-                    font-weight: 700;
+                    margin-top: 4px;
+                    font-weight: 300;
                 }
 
-                .discussion-card p {
-                    color: rgba(255,255,255,0.78);
-                    line-height: 1.8;
+                .sp-quote {
+                    margin-top: 16px;
+                    border: 1px solid var(--border);
+                    border-radius: 14px;
+                    background: var(--surface);
+                    padding: 24px 28px;
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
                 }
 
-                .consensus {
-                    background: linear-gradient(
-                        180deg,
-                        rgba(20,184,166,0.10),
-                        rgba(79,70,229,0.10)
-                    );
-                    border: 1px solid rgba(255,255,255,0.08);
-                    border-radius: 28px;
-                    padding: 30px;
-                }
-
-                .consensus-label {
-                    color: var(--muted);
-                    font-size: 11px;
-                    text-transform: uppercase;
-                    letter-spacing: 0.14em;
-                    margin-bottom: 16px;
-                    font-weight: 700;
-                }
-
-                .consensus h4 {
-                    font-size: 42px;
-                    margin-bottom: 18px;
-                }
-
-                .consensus p {
-                    color: rgba(255,255,255,0.78);
-                    line-height: 1.9;
-                    margin-bottom: 24px;
-                }
-
-                .confidence {
-                    padding: 14px 18px;
-                    border-radius: 16px;
-                    background: rgba(255,255,255,0.06);
-                    display: inline-block;
-                    color: white;
+                .q-avatar {
+                    width: 44px; height: 44px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, var(--teal-dim), var(--indigo-dim));
+                    border: 1px solid var(--border-hover);
+                    display: flex; align-items: center; justify-content: center;
+                    font-family: 'Syne', sans-serif;
                     font-weight: 700;
                     font-size: 14px;
+                    flex-shrink: 0;
                 }
 
-                .final-cta {
-                    text-align: center;
-                    padding-bottom: 120px;
+                .q-body {
+                    flex: 1;
                 }
 
-                .final-cta h2 {
-                    font-size: 78px;
-                    line-height: 0.96;
-                    letter-spacing: -5px;
-                    margin-bottom: 24px;
+                .q-text {
+                    font-size: 15px;
+                    line-height: 1.7;
+                    color: var(--muted-2);
+                    font-weight: 300;
+                    font-style: italic;
+                    margin-bottom: 8px;
                 }
 
-                .final-cta p {
-                    max-width: 760px;
-                    margin: 0 auto 40px;
+                .q-author {
+                    font-size: 13px;
                     color: var(--muted);
-                    font-size: 21px;
-                    line-height: 1.8;
                 }
 
-                @media(max-width: 1200px) {
-                    h1 { font-size: 82px; }
-                    .preview-grid, .features, .simulation-body { grid-template-columns: 1fr; }
+                .q-author strong {
+                    color: var(--text);
+                    font-weight: 500;
+                    font-style: normal;
                 }
 
-                @media(max-width: 768px) {
-                    .container { padding: 0 24px; }
-                    .nav-links { display: none; }
-                    h1 { font-size: 56px; letter-spacing: -4px; }
-                    .subtitle { font-size: 18px; }
-                    textarea { font-size: 18px; }
-                    .prompt-footer { flex-direction: column; align-items: flex-start; gap: 18px; }
-                    .section-title { font-size: 44px; }
-                    .final-cta h2 { font-size: 50px; }
+                @media (max-width: 860px) {
+                    nav { padding: 20px 24px; }
+                    .hero { padding: 52px 24px 0; }
+                    .demo-body { grid-template-columns: 1fr; }
+                    .demo-output-col { display: none; }
+                    .social-proof { padding: 0 24px 60px; }
+                    .sp-logos { flex-wrap: wrap; }
+                    .sp-item { border-right: none; border-bottom: 1px solid var(--border); }
+                    .sp-item:last-child { border-bottom: none; }
                 }
             `}</style>
 
-            <div className="noise"></div>
+            <div className="orb orb-1"></div>
+            <div className="orb orb-2"></div>
 
-            <div className="container">
-                <nav>
-                    <div className="logo">
-                        <div className="logo-icon">C</div>
-                        <div className="logo-text">
-                            <div className="logo-title">CouncilIA</div>
-                            <div className="logo-sub">Strategic Simulation AI</div>
+            <nav>
+                <Link href="/" className="logo">
+                    <div className="logo-mark">C</div>
+                    <span className="logo-name">CouncilIA</span>
+                </Link>
+                <div className="nav-right">
+                    <Link href="#" className="nav-link">Product</Link>
+                    <Link href="#" className="nav-link">Use Cases</Link>
+                    <Link href="#" className="nav-link">Pricing</Link>
+                    <button onClick={() => router.push('/login')} className="nav-cta">Start free →</button>
+                </div>
+            </nav>
+
+            <section className="hero">
+                <div className="eyebrow">
+                    <div className="eyebrow-dot"></div>
+                    <span>Strategic Simulation AI</span>
+                </div>
+
+                <h1>
+                    Simulate the decision.
+                    <span className="h1-line2">Before reality does.</span>
+                </h1>
+
+                <p className="hero-sub">
+                    Run any strategic decision through multiple AI perspectives — financial, operational, contrarian — and get a clear recommendation before you commit.
+                </p>
+
+                <div className="demo-panel">
+                    <div className="demo-top">
+                        <div className="demo-dots">
+                            <div className="demo-dot"></div>
+                            <div className="demo-dot"></div>
+                            <div className="demo-dot"></div>
+                        </div>
+                        <div className="demo-label">Live Simulation</div>
+                        <div style={{ fontSize: '12px', color: status === 'Simulating…' ? '#F59E0B' : '#0ECFB8' }}>
+                            {status}
                         </div>
                     </div>
 
-                    <div className="nav-links">
-                        <a href="#">Product</a>
-                        <a href="#">Perspectives</a>
-                        <a href="#">Use Cases</a>
-                        <a href="#">Pricing</a>
-                        <a href="#">Resources</a>
-                    </div>
+                    <div className="demo-body">
+                        <div className="demo-input-col">
+                            <div className="input-label">Your decision</div>
+                            <textarea 
+                                id="q" 
+                                placeholder="Should we expand to Brazil or Portugal first?"
+                                value={idea}
+                                onChange={(e) => setIdea(e.target.value)}
+                            />
 
-                    <button onClick={() => router.push('/login')} className="cta">
-                        Start Simulating
-                    </button>
-                </nav>
-
-                <section className="hero">
-                    <div className="badge">
-                        <div className="badge-dot"></div>
-                        <span>Collaborative Strategic Intelligence</span>
-                    </div>
-
-                    <h1>
-                        Simulate outcomes <br />
-                        <span className="gradient">before you commit.</span>
-                    </h1>
-
-                    <p className="subtitle">
-                        CouncilIA helps founders, operators and organizations explore strategic decisions through collaborative AI perspectives and organizational intelligence — before real-world execution.
-                    </p>
-
-                    <div className="prompt-wrapper">
-                        <div className="prompt-top">
-                            <div className="prompt-label">Try a lightweight simulation</div>
-                            <div className="prompt-free">No signup required</div>
-                        </div>
-
-                        <textarea 
-                            placeholder="Should we expand operations to Brazil or Portugal first?"
-                            value={idea}
-                            onChange={(e) => setIdea(e.target.value)}
-                        ></textarea>
-
-                        <div className="prompt-footer">
-                            <div className="chips">
-                                <div className="chip">Market Expansion</div>
-                                <div className="chip">AI Adoption</div>
-                                <div className="chip">Pricing Strategy</div>
-                                <div className="chip">Operations</div>
+                            <div className="chips-row">
+                                <div className="chip" onClick={() => setQ('Should we hire now or wait until Series A?')}>Hiring timing</div>
+                                <div className="chip" onClick={() => setQ('Should we raise prices by 20% this quarter?')}>Pricing</div>
+                                <div className="chip" onClick={() => setQ('Should we build the feature in-house or buy a solution?')}>Build vs buy</div>
+                                <div className="chip" onClick={() => setQ('Should we enter the US market before product-market fit?')}>Market entry</div>
                             </div>
 
-                            <button 
-                                className="simulate-btn"
-                                onClick={runPreview}
-                                disabled={loading || !idea.trim()}
-                            >
-                                {loading ? 'Simulating...' : 'Simulate'}
+                            <button className="run-btn" disabled={loading || !idea.trim()} onClick={runSimulation}>
+                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><polygon points="5,3 19,12 5,21"/></svg>
+                                Run Simulation
                             </button>
                         </div>
 
-                        {previewResult && (
-                            <div ref={resultRef} className="preview-grid">
-                                {previewResult.perspectives.map((p: any) => (
-                                    <div key={p.id} className="preview-card">
-                                        <div className="preview-tag">{p.name}</div>
-                                        <p>{p.text}</p>
+                        <div className="demo-output-col">
+                            <div className="output-perspectives">
+                                <div className={`perspective-card ${loading ? 'state-loading' : results ? 'active' : 'state-idle'}`}>
+                                    <div className="p-tag market">Market Perspective</div>
+                                    <div className="skel">
+                                        <div className="skeleton-line" style={{ width: '90%' }}></div>
+                                        <div className="skeleton-line" style={{ width: '70%' }}></div>
                                     </div>
-                                ))}
-                                <div className="preview-card">
-                                    <div className="preview-tag">Recommendation</div>
-                                    <p>{previewResult.recommendation}</p>
+                                    <div className="p-text">
+                                        {results ? typingText.market : "Run a simulation to see how the market sees this."}
+                                        {loading && <span className="cursor"></span>}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                        
-                        {!previewResult && !loading && (
-                             <div className="preview-grid">
-                                <div className="preview-card">
-                                    <div className="preview-tag">Market Perspective</div>
-                                    <p>Brazil offers stronger long-term upside, but operational complexity and support costs may slow execution during the first 18 months.</p>
-                                </div>
-                                <div className="preview-card">
-                                    <div className="preview-tag">Contrarian Perspective</div>
-                                    <p>Expanding into the smaller market first may create stronger operational maturity before scaling aggressively.</p>
-                                </div>
-                                <div className="preview-card">
-                                    <div className="preview-tag">Recommendation</div>
-                                    <p>Validate operational assumptions in Portugal first, then expand into Brazil with stronger execution readiness.</p>
-                                </div>
-                             </div>
-                        )}
-                    </div>
-                </section>
 
-                <section className="section">
-                    <h2 className="section-title">Strategic thinking for modern organizations.</h2>
-                    <p className="section-sub">Simulate strategic decisions through multiple perspectives, organizational memory and real-world consequence modeling.</p>
-
-                    <div className="features">
-                        <div className="feature-card">
-                            <div className="feature-icon">◐</div>
-                            <h3>Strategic Perspectives</h3>
-                            <p>Multiple AI perspectives collaborate and debate decisions to expose blind spots, hidden assumptions and second-order effects.</p>
-                        </div>
-                        <div className="feature-card">
-                            <div className="feature-icon">◎</div>
-                            <h3>Organizational Intelligence</h3>
-                            <p>Bring company knowledge, strategic context and internal memory directly into simulations and recommendations.</p>
-                        </div>
-                        <div className="feature-card">
-                            <div className="feature-icon">✦</div>
-                            <h3>Decision Confidence</h3>
-                            <p>Move beyond intuition with simulated strategic outcomes designed to improve clarity before execution.</p>
-                        </div>
-                    </div>
-
-                    <div className="simulation-demo">
-                        <div className="simulation-header">
-                            <div className="simulation-title">Strategic Simulation — Market Expansion</div>
-                            <div className="simulation-status">Council aligned</div>
-                        </div>
-
-                        <div className="simulation-body">
-                            <div className="discussion">
-                                <div className="discussion-card">
-                                    <div className="discussion-role">Financial Perspective</div>
-                                    <p>Customer acquisition costs may exceed projections during the first year, reducing margin sustainability during aggressive expansion.</p>
-                                </div>
-                                <div className="discussion-card">
-                                    <div className="discussion-role">Operations Perspective</div>
-                                    <p>Current support infrastructure may struggle with multilingual operational scaling across multiple regions simultaneously.</p>
-                                </div>
-                                <div className="discussion-card">
-                                    <div className="discussion-role">Company Perspective</div>
-                                    <p>Previous LATAM expansion initiatives experienced elevated onboarding and support complexity during rapid deployment phases.</p>
+                                <div className={`perspective-card ${loading ? 'state-loading' : results ? 'active' : 'state-idle'}`}>
+                                    <div className="p-tag risk">Risk Perspective</div>
+                                    <div className="skel">
+                                        <div className="skeleton-line" style={{ width: '85%' }}></div>
+                                        <div className="skeleton-line" style={{ width: '60%' }}></div>
+                                    </div>
+                                    <div className="p-text">
+                                        {results ? typingText.risk : "Operational and financial risks will appear here."}
+                                        {loading && <span className="cursor"></span>}
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="consensus">
-                                <div className="consensus-label">Recommendation</div>
-                                <h4>NO-GO</h4>
-                                <p>Current operational readiness does not support aggressive multi-market expansion. A phased rollout strategy is recommended before scaling further.</p>
-                                <div className="confidence">Decision Confidence — 87%</div>
+                            <div className="rec-card">
+                                <div>
+                                    <div style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Recommendation</div>
+                                    <div className="rec-verdict" style={{ color: results?.verdict === 'GO' ? 'var(--teal)' : results?.verdict === 'NO-GO' ? '#F87171' : '#F59E0B' }}>
+                                        {results ? results.verdict : '—'}
+                                    </div>
+                                    <div className="p-text" style={{ fontSize: '12px', marginTop: '4px' }}>
+                                        {results ? typingText.rec : "Waiting for simulation…"}
+                                    </div>
+                                </div>
+                                <div className="rec-confidence">
+                                    <span className="rec-conf-num">{results ? results.confidence + '%' : '—'}</span>
+                                    Confidence
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section className="final-cta">
-                    <h2>Think through decisions <br /> before reality does.</h2>
-                    <p>Strategic Simulation AI for founders, consultants, operators and modern organizations.</p>
-                    <button onClick={() => router.push('/login')} className="cta">
-                        Start Your First Simulation
-                    </button>
-                </section>
-            </div>
+            <section className="social-proof">
+                <div className="sp-label">Trusted by forward-thinking teams</div>
+                <div className="sp-logos">
+                    <div className="sp-item"><span className="sp-logo-text">Accenture</span></div>
+                    <div className="sp-item"><span className="sp-logo-text">Deloitte Digital</span></div>
+                    <div className="sp-item"><span className="sp-logo-text">Sequoia Alumni</span></div>
+                    <div className="sp-item"><span className="sp-logo-text">YC W24</span></div>
+                    <div className="sp-item"><span className="sp-logo-text">500 Startups</span></div>
+                </div>
+
+                <div className="sp-stat-row">
+                    <div className="sp-stat">
+                        <span className="sp-stat-num">12 400+</span>
+                        <div className="sp-stat-label">Simulations run</div>
+                    </div>
+                    <div className="sp-stat">
+                        <span className="sp-stat-num">87%</span>
+                        <div className="sp-stat-label">Avg decision confidence</div>
+                    </div>
+                    <div className="sp-stat">
+                        <span className="sp-stat-num">3.2×</span>
+                        <div className="sp-stat-label">Faster than a strategy meeting</div>
+                    </div>
+                </div>
+
+                <div className="sp-quote">
+                    <div className="q-avatar">MF</div>
+                    <div className="q-body">
+                        <p className="q-text">"We ran a simulation before our Series B pitch. The council surfaced a risk our team had completely overlooked. We fixed it. The round closed."</p>
+                        <p className="q-author"><strong>Miguel Ferreira</strong> — CEO, Portela Labs</p>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }
