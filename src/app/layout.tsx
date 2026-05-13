@@ -1,28 +1,17 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, JetBrains_Mono, Inter, Public_Sans } from "next/font/google";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
-const jetBrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-public-sans" });
-
 export const metadata: Metadata = {
-    title: "CouncilIA — Council as a Service",
-    description: "Validate your ideas with CouncilIA. Six AI experts debate your strategy through adversarial rounds while a Judge arbitrates. Elevate your decision-making.",
+    title: "CouncilIA — Strategic Intelligence Chamber",
+    description: "Validate high-stakes decisions with a council of 7 specialized AI perspectives. Adversarial deliberation for board-level insights.",
     metadataBase: new URL("https://www.councilia.com"),
     openGraph: {
-        title: "CouncilIA — One AI agrees with you. Six won't.",
-        description: "Validate your ideas with CouncilIA. 6 AI experts debate your strategy through adversarial rounds while a Judge arbitrates. Elevate your decision-making.",
+        title: "CouncilIA — Simulate outcomes before you commit.",
+        description: "Adversarial AI deliberation for strategic decision support.",
         url: "https://www.councilia.com",
         siteName: "CouncilIA",
         locale: "en_US",
         type: "website",
-    },
-    twitter: {
-        card: "summary_large_image",
-        title: "CouncilIA — One AI agrees with you. Six won't.",
-        description: "Validate your ideas with CouncilIA. 6 AI experts debate your strategy through adversarial rounds while a Judge arbitrates. Elevate your decision-making.",
     },
 };
 
@@ -33,7 +22,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${spaceGrotesk.variable} ${jetBrainsMono.variable} ${inter.variable} ${publicSans.variable} font-body bg-deep-blue text-slate-100 selection:bg-neon-lime selection:text-black`}>
+            <head>
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+            </head>
+            <body className="bg-bg text-text min-h-screen">
                 {children}
             </body>
         </html>
