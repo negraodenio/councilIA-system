@@ -1,34 +1,45 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export function Navbar() {
     const router = useRouter();
+    const pathname = usePathname();
+
+    const isInternal = pathname?.startsWith('/dashboard') || pathname?.startsWith('/report') || pathname?.startsWith('/chamber');
 
     return (
-        <nav className="relative z-10 flex items-center justify-between padding-x h-20 border-b border-[var(--border)] bg-[var(--bg)]/40 backdrop-blur-xl">
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-20 border-b border-border bg-bg/60 backdrop-blur-xl">
             <Link href="/" className="flex items-center gap-3 group">
-                <div className="size-9 rounded-xl bg-gradient-to-br from-[var(--teal)] to-[var(--indigo)] flex items-center justify-center font-bold text-[15px] text-white shadow-lg shadow-[var(--teal-dim)]">
+                <div className="size-9 rounded-xl bg-gradient-to-br from-teal to-indigo flex items-center justify-center font-syne font-extrabold text-[15px] text-white shadow-lg">
                     C
                 </div>
-                <span className="font-syne font-extrabold text-xl tracking-tighter text-[var(--text)] group-hover:text-[var(--teal)] transition-colors">
+                <span className="font-syne font-extrabold text-xl tracking-tighter text-text group-hover:text-teal transition-colors">
                     CouncilIA
                 </span>
             </Link>
 
             <div className="flex items-center gap-8">
-                <div className="hidden md:flex items-center gap-8 text-sm">
-                    <Link href="/dashboard" className="text-[var(--muted)] hover:text-[var(--text)] transition-colors">Dashboard</Link>
-                    <Link href="/dashboard/custom-persona" className="text-[var(--muted)] hover:text-[var(--text)] transition-colors">Perspectives</Link>
-                    <Link href="#" className="text-[var(--muted)] hover:text-[var(--text)] transition-colors">Pricing</Link>
+                <div className="hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-widest">
+                    {isInternal ? (
+                        <>
+                            <Link href="/dashboard" className="text-muted hover:text-text transition-colors">Workspace</Link>
+                            <Link href="/dashboard/custom-persona" className="text-muted hover:text-text transition-colors">Experts</Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/methodology" className="text-muted hover:text-text transition-colors">Methodology</Link>
+                            <Link href="/pricing" className="text-muted hover:text-text transition-colors">Pricing</Link>
+                        </>
+                    )}
                 </div>
                 
                 <button 
-                    onClick={() => router.push('/login')}
-                    className="px-5 py-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border-hover)] text-[var(--text)] text-sm font-medium hover:border-[var(--teal)] hover:text-[var(--teal)] transition-all"
+                    onClick={() => router.push(isInternal ? '/dashboard' : '/login')}
+                    className="px-5 py-2.5 rounded-xl bg-surface-2 border border-border-hover text-text text-xs font-bold uppercase tracking-widest hover:border-teal hover:text-teal transition-all"
                 >
-                    Start free →
+                    {isInternal ? 'Workspace →' : 'Start free →'}
                 </button>
             </div>
         </nav>
