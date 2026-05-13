@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Navbar } from "@/ui/Navbar";
 import { Footer } from "@/ui/Footer";
 import { PricingCards } from "./PricingCards";
+import Link from 'next/link';
 
 export const metadata: Metadata = {
     title: "Pricing — CouncilIA",
@@ -11,283 +12,128 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
     return (
-        <main className="bg-white text-neutral-900 min-h-screen">
+        <main className="bg-bg text-text min-h-screen relative overflow-hidden">
+            {/* Grid Background */}
+            <div className="fixed inset-0 pointer-events-none opacity-[0.03]">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+            </div>
+
             <Navbar />
 
-            <section className="pt-32 pb-20 px-6">
+            <section className="pt-40 pb-20 px-6 relative z-10">
                 <div className="max-w-5xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                        Simple, transparent pricing
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-teal/20 bg-teal-dim text-teal text-[10px] font-bold uppercase tracking-widest mb-6">
+                        Transparent Economics
+                    </div>
+                    <h1 className="text-5xl md:text-7xl font-extrabold font-syne tracking-tighter mb-6">
+                        Simple, transparent pricing.
                     </h1>
-                    <p className="text-lg text-neutral-500 mb-16 max-w-2xl mx-auto">
+                    <p className="text-lg text-muted-2 mb-16 max-w-2xl mx-auto font-light leading-relaxed">
                         Start with 2 free sessions. Upgrade when your decisions need the full
                         power of 7 AI models debating in real-time.
                     </p>
 
-                    <Suspense fallback={<div className="h-96 flex items-center justify-center text-neutral-400">Loading plans...</div>}>
+                    <Suspense fallback={<div className="h-96 flex items-center justify-center text-muted">Loading plans...</div>}>
                         <PricingCards />
                     </Suspense>
 
-                    {/* Section 3: Compare plans */}
-                    <div className="mt-24 max-w-4xl mx-auto overflow-hidden">
-                        <h2 className="text-3xl font-bold tracking-tight mb-12">Compare in detail</h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="border-b border-neutral-100">
-                                        <th className="py-4 px-4 font-semibold text-neutral-900">Feature</th>
-                                        <th className="py-4 px-4 font-semibold text-neutral-900 text-center">Free</th>
-                                        <th className="py-4 px-4 font-semibold text-neutral-900 text-center">Founder</th>
-                                        <th className="py-4 px-4 font-semibold text-neutral-900 text-center">Operator</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="text-sm">
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Sessions/month</td>
-                                        <td className="py-4 px-4 text-center font-medium">2</td>
-                                        <td className="py-4 px-4 text-center font-medium">30</td>
-                                        <td className="py-4 px-4 text-center font-medium">300</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Cost per session</td>
-                                        <td className="py-4 px-4 text-center text-neutral-400">—</td>
-                                        <td className="py-4 px-4 text-center font-medium">€0.97</td>
-                                        <td className="py-4 px-4 text-center font-medium">€0.33</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">7 AI models</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">3-round debate</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Full PDF reports</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Score evolution</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Live streaming</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Interject mid-debate</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">GitHub integration</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Team sharing</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center font-medium">5 members</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">API access</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">SSO + audit logs</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Custom personas</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                    <tr className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
-                                        <td className="py-4 px-4 text-neutral-600">Priority support</td>
-                                        <td className="py-4 px-4 text-center text-rose-500 text-lg">{"\u274C"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                        <td className="py-4 px-4 text-center text-emerald-500 text-lg">{"\u2705"}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    {/* Compare plans */}
+                    <div className="mt-32 max-w-4xl mx-auto">
+                        <h2 className="text-3xl font-extrabold font-syne tracking-tighter mb-12">Compare in detail</h2>
+                        <div className="premium-card overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="border-b border-border">
+                                            <th className="py-6 px-6 font-bold text-text uppercase text-[10px] tracking-widest">Feature</th>
+                                            <th className="py-6 px-6 font-bold text-text text-center uppercase text-[10px] tracking-widest">Free</th>
+                                            <th className="py-6 px-6 font-bold text-text text-center uppercase text-[10px] tracking-widest">Founder</th>
+                                            <th className="py-6 px-6 font-bold text-text text-center uppercase text-[10px] tracking-widest">Operator</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-sm font-light">
+                                        <TableRow label="Sessions/month" free="2" founder="30" operator="300" />
+                                        <TableRow label="Cost per session" free="—" founder="€0.97" operator="€0.33" />
+                                        <TableRow label="7 AI models" free="✓" founder="✓" operator="✓" isCheck />
+                                        <TableRow label="3-round debate" free="✓" founder="✓" operator="✓" isCheck />
+                                        <TableRow label="Full PDF reports" free="✕" founder="✓" operator="✓" isCheck />
+                                        <TableRow label="Score evolution" free="✕" founder="✓" operator="✓" isCheck />
+                                        <TableRow label="Live streaming" free="✕" founder="✓" operator="✓" isCheck />
+                                        <TableRow label="GitHub integration" free="✕" founder="✓" operator="✓" isCheck />
+                                        <TableRow label="SSO + audit logs" free="✕" founder="✕" operator="✓" isCheck />
+                                        <TableRow label="Custom personas" free="✕" founder="✕" operator="✓" isCheck />
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Social Proof */}
-                    <div className="mt-20 py-8 border-y border-neutral-100">
-                        <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 font-semibold mb-8">
-                            Used by 200+ founders & strategists
-                        </p>
-                        <div className="flex flex-wrap justify-center gap-x-12 gap-y-8 grayscale opacity-50">
-                            <div className="font-bold text-neutral-900 text-xl tracking-tighter italic">LINDOS</div>
-                            <div className="font-extrabold text-neutral-900 text-xl tracking-tight">KREATIVE</div>
-                            <div className="font-black text-neutral-900 text-xl">SDR.ai</div>
-                            <div className="font-bold text-neutral-900 text-xl tracking-widest">QUARTZ</div>
-                        </div>
-                    </div>
-
-                    <div className="mt-16 max-w-2xl mx-auto">
-                        <h2 className="font-semibold text-lg mb-6">Every plan includes</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-sm">
-                            <Feature text="7 different AI models per session" />
-                            <Feature text="3-round adversarial debate" />
-                            <Feature text="6 expert perspectives" />
-                            <Feature text="Structured judicial verdict" />
-                            <Feature text="Consensus score (0-100)" />
-                            <Feature text="Multi-language support" />
-                            <Feature text="EU data sovereignty routing" />
-                            <Feature text="Actionable recommendations" />
-                        </div>
-                    </div>
-
-                    <div className="mt-16 p-6 rounded-xl bg-neutral-50 border border-neutral-200 max-w-xl mx-auto text-left">
-                        <h3 className="font-semibold mb-2">{"🔒"} Secure payments via Stripe</h3>
-                        <p className="text-sm text-neutral-500 leading-relaxed">
-                            All payments are processed by Stripe (PCI-DSS Level 1). We never see
-                            or store your card details. Cancel anytime — no questions asked.
-                            7-day refund policy for first-time subscribers.
-                        </p>
-                    </div>
-
-                    {/* Section 1: Why this price? */}
-                    <div className="mt-24 max-w-2xl mx-auto text-left">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold tracking-tight mb-4">Why this price?</h2>
-                            <p className="text-lg font-semibold text-neutral-900 mb-2">We believe in radical transparency.</p>
-                            <p className="text-neutral-500">Continuous innovation isn{"'"}t free. Here{"'"}s how it works.</p>
+                    {/* Why this price? */}
+                    <div className="mt-32 max-w-3xl mx-auto text-left">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl font-extrabold font-syne tracking-tighter mb-4">Why this price?</h2>
+                            <p className="text-muted-2 font-light">We believe in radical transparency. No hidden markups.</p>
                         </div>
 
-                        <div className="bg-white rounded-3xl border border-neutral-100 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                            <div className="p-10 border-b border-neutral-50">
-                                <h3 className="font-semibold mb-6 text-neutral-400 uppercase text-[10px] tracking-[0.2em]">Real cost per session</h3>
+                        <div className="premium-card overflow-hidden p-0">
+                            <div className="p-10 border-b border-border">
+                                <h3 className="font-bold text-muted uppercase text-[10px] tracking-widest mb-8">Direct Operational Costs</h3>
                                 <div className="space-y-6">
-                                    <div className="flex justify-between items-center text-sm">
-                                        <div className="flex flex-col">
-                                            <span className="text-neutral-900 font-medium">6 Experts (Multi-Model)</span>
-                                            <span className="text-neutral-400 text-xs text-[10px]">DeepSeek, Qwen, Mistral, Llama, Kimi, Gemini</span>
-                                        </div>
-                                        <span className="font-mono text-neutral-900">~€0.06</span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm">
-                                        <div className="flex flex-col">
-                                            <span className="text-neutral-900 font-medium">1 Head Judge</span>
-                                            <span className="text-neutral-400 text-xs text-[10px]">GPT-4o 2024-08-06 (Latest)</span>
-                                        </div>
-                                        <span className="font-mono text-neutral-900">~€0.05</span>
-                                    </div>
-                                    <div className="flex justify-between items-center text-sm">
-                                        <div className="flex flex-col">
-                                            <span className="text-neutral-900 font-medium">Infrastructure & Storage</span>
-                                            <span className="text-neutral-400 text-xs text-[10px]">Sovereign routing & Zero Data Retention</span>
-                                        </div>
-                                        <span className="font-mono text-neutral-900">~€0.002</span>
-                                    </div>
-                                    <div className="pt-6 border-t border-neutral-50 flex justify-between items-center">
+                                    <CostRow label="6 Experts (Multi-Model)" sub="DeepSeek, Qwen, Mistral, Llama, Gemini" cost="~€0.06" />
+                                    <CostRow label="1 Head Judge" sub="GPT-4o latest reasoning model" cost="~€0.05" />
+                                    <CostRow label="Infrastructure" sub="Sovereign routing & storage" cost="~€0.002" />
+                                    <div className="pt-6 border-t border-border flex justify-between items-center">
                                         <span className="font-bold text-lg">Total Baseline AI Cost</span>
-                                        <span className="font-mono font-bold text-lg text-emerald-600">~€0.11</span>
+                                        <span className="font-syne font-extrabold text-xl text-teal">~€0.11</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-10 bg-neutral-50/50">
-                                <h3 className="font-semibold mb-6 text-neutral-400 uppercase text-[10px] tracking-[0.2em]">Our margins</h3>
-                                <div className="space-y-4 text-sm leading-relaxed">
-                                    <p className="text-neutral-600">{"·"} <span className="font-mono text-neutral-900 font-semibold text-base">Founder: ~€0.97/session</span> → 89% funds development & support.</p>
-                                    <p className="text-neutral-600">{"·"} <span className="font-mono text-neutral-900 font-semibold text-base">Operator: ~€0.66/session</span> → 67% funds enterprise features.</p>
-                                </div>
-                                <div className="mt-8 space-y-3">
-                                    <p className="text-sm text-neutral-600">We don{"'"}t hide fees behind {"'"}contact sales.{"'"} We don{"'"}t train AI on your data. We don{"'"}t sell your information.</p>
-                                    <p className="text-sm font-semibold text-neutral-900 italic">This is sustainable software, not a VC-funded growth trap.</p>
-                                </div>
-                                <div className="mt-8 flex items-center justify-between p-4 bg-white rounded-2xl border border-neutral-100">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-xl">🛡️</span>
-                                        <p className="text-xs text-neutral-500 font-medium">No hidden fees. No massive markups.</p>
-                                    </div>
-                                    <div className="flex items-center gap-1.5 px-3 py-1 bg-neutral-900 text-white rounded-full scale-90 origin-right">
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">7-DAY REFUND</span>
-                                    </div>
+                            <div className="p-10 bg-surface-2/50">
+                                <h3 className="font-bold text-muted uppercase text-[10px] tracking-widest mb-6">Sustainable Software</h3>
+                                <p className="text-sm text-muted-2 leading-relaxed mb-6">
+                                    We don't hide fees behind "contact sales" or train AI on your data. 
+                                    Our margins fund development, 24/7 reliability, and continuous protocol innovation.
+                                </p>
+                                <div className="flex items-center gap-3 p-4 bg-bg rounded-xl border border-border">
+                                    <div className="w-2 h-2 rounded-full bg-teal"></div>
+                                    <p className="text-xs text-muted font-medium uppercase tracking-widest">No VC-funded growth traps. Just stable, premium intelligence.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Section 2: Common questions */}
-                    <div className="mt-24 max-w-2xl mx-auto text-left">
-                        <h2 className="text-3xl font-bold tracking-tight mb-12 text-center">Common questions</h2>
-                        <div className="space-y-8">
+                    {/* Common questions */}
+                    <div className="mt-32 max-w-2xl mx-auto text-left">
+                        <h2 className="text-3xl font-extrabold font-syne tracking-tighter mb-12 text-center">Questions</h2>
+                        <div className="space-y-10">
                             <FAQItem
                                 q="What counts as one session?"
-                                a="One complete 3-round debate + judicial verdict. Starting a new debate on a different topic counts as a new session. Re-running the same prompt counts as a new session."
-                            />
-                            <FAQItem
-                                q="Can I upgrade or downgrade anytime?"
-                                a="Yes. Changes apply at your next billing cycle. Downgrades keep your current plan until the period ends. You can manage everything via the Client Portal."
-                            />
-                            <FAQItem
-                                q="What happens if I hit my limit?"
-                                a="Free: Wait until next month. Founder: Upgrade to Operator or wait for reset. Operator: €0.60 per additional session, billed automatically at month end."
-                            />
-                            <FAQItem
-                                q="Do unused sessions roll over?"
-                                a="No. We reset monthly to keep pricing simple and sustainable. This allows us to maintain our radical transparency model."
+                                a="One complete 3-round debate + judicial verdict. Starting a new topic or re-running a prompt counts as one session."
                             />
                             <FAQItem
                                 q="Is my data used to train AI models?"
-                                a="Never. We use Zero Data Retention (ZDR) with supported providers (Mistral, OpenAI Azure, OpenRouter). Your debates are yours alone."
+                                a="Never. We use Zero Data Retention (ZDR) endpoints. Your strategy is your property alone."
                             />
                             <FAQItem
-                                q="Can I get a refund?"
-                                a="First-time subscribers: 7-day full refund, no questions asked. After 7 days: prorated for unused time on the subscription."
+                                q="Can I cancel anytime?"
+                                a="Yes. Manage your subscription through the billing portal. You keep access until the end of your current period."
                             />
                         </div>
                     </div>
 
-                    {/* Section 4: Data & Privacy */}
-                    <div className="mt-24 max-w-2xl mx-auto text-left py-12 px-8 bg-neutral-900 rounded-3xl text-white">
-                        <h2 className="text-2xl font-bold mb-8">Your data stays yours</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 text-sm">
-                            <div className="space-y-1">
-                                <span className="text-neutral-400 uppercase text-[10px] tracking-widest font-bold">Storage</span>
-                                <p>Supabase EU (Frankfurt)</p>
-                            </div>
-                            <div className="space-y-1">
-                                <span className="text-neutral-400 uppercase text-[10px] tracking-widest font-bold">AI Providers</span>
-                                <p>Mistral (France), Azure OpenAI (Netherlands), others via OpenRouter</p>
-                            </div>
-                            <div className="space-y-1">
-                                <span className="text-neutral-400 uppercase text-[10px] tracking-widest font-bold">Encryption</span>
-                                <p>At rest (AES-256) and in transit (TLS 1.3)</p>
-                            </div>
-                            <div className="space-y-1">
-                                <span className="text-neutral-400 uppercase text-[10px] tracking-widest font-bold">Retention</span>
-                                <p>Deleted 30 days after account closure</p>
-                            </div>
-                            <div className="col-span-1 md:col-span-2 space-y-1 pt-4 border-t border-neutral-700">
-                                <span className="text-neutral-400 uppercase text-[10px] tracking-widest font-bold">GDPR Compliance</span>
-                                <p>Full compliance, DPO: Denio Negrão (dpo@ia4all.eu)</p>
-                            </div>
+                    {/* Data & Privacy */}
+                    <div className="mt-32 premium-card p-12 text-left bg-surface-2 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-teal opacity-[0.05] blur-3xl"></div>
+                        <h2 className="text-2xl font-extrabold font-syne tracking-tight mb-8">Data Sovereignty</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 text-sm">
+                            <DataPoint label="Storage" value="Supabase EU (Frankfurt)" />
+                            <DataPoint label="AI Nodes" value="Mistral (FR), Azure (NL), OpenRouter" />
+                            <DataPoint label="Encryption" value="AES-256 at rest, TLS 1.3 in transit" />
+                            <DataPoint label="Retention" value="Hard deletion 30 days after account closure" />
                         </div>
-                        <div className="mt-10 flex gap-4 text-xs">
-                            <a href="/privacy" className="text-neutral-400 hover:text-white underline underline-offset-4 transition">Read full Privacy Policy</a>
-                            <a href="/terms" className="text-neutral-400 hover:text-white underline underline-offset-4 transition">Read Terms of Service</a>
+                        <div className="mt-12 pt-8 border-t border-border flex gap-6 text-[10px] uppercase tracking-widest font-bold">
+                            <Link href="/privacy" className="text-muted hover:text-teal transition">Privacy Policy</Link>
+                            <Link href="/terms" className="text-muted hover:text-teal transition">Terms of Service</Link>
                         </div>
                     </div>
                 </div>
@@ -298,22 +144,43 @@ export default function PricingPage() {
     );
 }
 
-function FAQItem({ q, a }: { q: string; a: string }) {
+function TableRow({ label, free, founder, operator, isCheck = false }: any) {
     return (
-        <div className="border-b border-neutral-100 pb-6">
-            <h4 className="font-semibold text-neutral-900 mb-2">{q}</h4>
-            <p className="text-sm text-neutral-500 leading-relaxed">{a}</p>
+        <tr className="border-b border-border/50 hover:bg-surface-2/30 transition-colors">
+            <td className="py-5 px-6 text-muted-2">{label}</td>
+            <td className={`py-5 px-6 text-center ${isCheck && free === '✓' ? 'text-teal font-bold' : 'text-muted'}`}>{free}</td>
+            <td className={`py-5 px-6 text-center ${isCheck && founder === '✓' ? 'text-teal font-bold' : 'text-text font-medium'}`}>{founder}</td>
+            <td className={`py-5 px-6 text-center ${isCheck && operator === '✓' ? 'text-teal font-bold' : 'text-text font-medium'}`}>{operator}</td>
+        </tr>
+    );
+}
+
+function CostRow({ label, sub, cost }: any) {
+    return (
+        <div className="flex justify-between items-center text-sm">
+            <div className="flex flex-col">
+                <span className="text-text font-medium">{label}</span>
+                <span className="text-muted text-[10px] uppercase tracking-widest mt-1">{sub}</span>
+            </div>
+            <span className="font-mono text-text">{cost}</span>
         </div>
     );
 }
 
-function Feature({ text }: { text: string }) {
+function FAQItem({ q, a }: { q: string; a: string }) {
     return (
-        <div className="flex items-center gap-2 text-neutral-600">
-            <svg className="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-            </svg>
-            {text}
+        <div className="group">
+            <h4 className="font-bold text-text mb-3 group-hover:text-teal transition-colors">{q}</h4>
+            <p className="text-sm text-muted-2 leading-relaxed font-light">{a}</p>
+        </div>
+    );
+}
+
+function DataPoint({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="space-y-1">
+            <span className="text-muted uppercase text-[9px] tracking-[0.2em] font-bold">{label}</span>
+            <p className="font-light">{value}</p>
         </div>
     );
 }
